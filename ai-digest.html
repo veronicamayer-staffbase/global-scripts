@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Staffbase brand color via ?brand= URL param (sb-brand-url-param) -->
+<script>(function(){try{var b=new URLSearchParams(location.search).get('brand');if(b&&/^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$/.test(b)){document.documentElement.style.setProperty('--sb-brand',b);}}catch(e){}})();</script>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="widget-name" content="AI Digest">
+<meta name="widget-description" content="AI-curated weekly digest card with an expandable action-items overlay">
+<meta name="widget-tags" content="Communications">
+<title>AI Digest</title>
+
+<style>
+    :root {
+        --primary: var(--sb-brand, #2563eb);
+        --success: #10b981;
+        --warning: #f59e0b;
+        --danger: #ef4444;
+        --text: #1f2937;
+        --text-light: #6b7280;
+        --bg: #ffffff;
+        --bg-gray: #f9fafb;
+        --border: #e5e7eb;
+
+        --digest-btn-text: #16213a;
+        --digest-source-bg: #f1f3f6;
+        --digest-overlay-bg: rgba(15, 23, 42, 0.6);
+        --dg-action-bg: #D0E4FF;
+        --dg-action-text: #1E40AF;
+    }
+    @media (prefers-color-scheme: dark) {
+        :root {
+            --primary: var(--sb-brand, #3b9eff);
+            --success: #34d399;
+            --warning: #fbbf24;
+            --danger: #f87171;
+            --text: #f3f4f6;
+            --text-light: #9ca3af;
+            --bg: #1f2937;
+            --bg-gray: #111827;
+            --border: #374151;
+
+            --digest-btn-text: #16213a;
+            --digest-source-bg: #28303d;
+            --digest-overlay-bg: rgba(0, 0, 0, 0.7);
+            --dg-action-bg: rgba(30, 64, 175, 0.32);
+            --dg-action-text: #93c5fd;
+        }
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        background: var(--bg-gray);
+        color: var(--text);
+        margin: 0;
+        padding: 20px;
+        min-height: 100vh;
+        -webkit-font-smoothing: antialiased;
+    }
+
+    /* Badge — gradient-border pill with sparkle icon, matches the native AI Digest badge */
+    .cw-badge {
+        position: relative;
+        align-self: flex-start;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 2px 8px;
+        border-radius: 8px;
+        font-size: 14px;
+        line-height: 18px;
+        font-weight: 500;
+        color: var(--text);
+        border: 1px solid transparent;
+        background:
+            linear-gradient(var(--bg), var(--bg)) padding-box,
+            linear-gradient(to left bottom, #006CFF 0%, #974FE1 81%) border-box;
+    }
+    .cw-badge-icon { width: 16px; height: 16px; flex-shrink: 0; }
+
+    /* Pills (Action Required / Stay Informed) */
+    .cw-pill {
+        align-self: flex-start;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 2px 8px;
+        border-radius: 8px;
+        font-size: 14px;
+        line-height: 18px;
+        font-weight: 500;
+    }
+    .cw-pill-action { background: var(--dg-action-bg); color: var(--dg-action-text); }
+    .cw-pill-neutral { background: var(--bg-gray); color: var(--text); }
+
+    /* Buttons */
+    .cw-btn {
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-family: inherit;
+        font-weight: 700;
+        transition: filter 0.15s, opacity 0.15s;
+    }
+    .cw-btn:hover { filter: brightness(0.96); }
+    .cw-btn-open {
+        background: var(--warning);
+        color: var(--digest-btn-text);
+        padding: 10px 20px;
+        font-size: 14.5px;
+        white-space: nowrap;
+    }
+    .cw-close-btn {
+        position: absolute;
+        top: 14px;
+        right: 16px;
+        background: none;
+        border: none;
+        color: var(--text-light);
+        font-size: 22px;
+        line-height: 1;
+        cursor: pointer;
+        padding: 4px;
+    }
+    .cw-close-btn:hover { color: var(--text); }
+    .cw-thumb {
+        background: none;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        font-size: 16px;
+        padding: 6px 10px;
+        cursor: pointer;
+        line-height: 1;
+    }
+    .cw-thumb:hover { background: var(--bg-gray); }
+    .cw-thumb.selected { border-color: var(--primary); background: var(--digest-pill-bg); }
+
+    .cw-divider {
+        border: none;
+        border-top: 1px solid var(--border);
+        margin: 18px 0;
+    }
+
+    .cw-source-chip {
+        display: inline-flex;
+        align-items: baseline;
+        gap: 5px;
+        background: var(--digest-source-bg);
+        color: var(--text-light);
+        border-radius: 999px;
+        padding: 5px 12px;
+        font-size: 12px;
+        white-space: nowrap;
+        max-width: 220px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .cw-source-chip sup { color: var(--text-light); font-weight: 700; }
+
+    /* Digest card (collapsed view) */
+    .digest-card {
+        width: 100%;
+        max-width: 460px;
+        margin: 0 auto;
+        background: var(--bg);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 16px;
+        box-shadow: 0 1px 3px rgba(15, 23, 42, 0.1), 0 1px 2px rgba(15, 23, 42, 0.06);
+    }
+    @media (prefers-color-scheme: dark) {
+        .digest-card { box-shadow: none; }
+    }
+
+    /* The card clips content to a fixed height with a fade-to-bg overlay,
+       so both sections render in full but the second is naturally cut off
+       behind the floating "Open Digest" button — matches the native widget. */
+    .digest-clip {
+        position: relative;
+        max-height: 320px;
+        overflow: hidden;
+    }
+    .digest-stack {
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+    }
+    .digest-fade {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        height: 96px;
+        padding-bottom: 16px;
+        display: flex;
+        align-items: flex-end;
+        justify-content: center;
+        background: linear-gradient(to top, var(--bg), transparent);
+        pointer-events: none;
+    }
+    .digest-fade .cw-btn { pointer-events: auto; }
+
+    .digest-headline {
+        margin: 0;
+        font-size: 18px;
+        line-height: 1.4;
+        font-weight: 600;
+        color: var(--text);
+    }
+
+    .digest-section {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    /* Rendered "markdown" block: a bold heading line followed by a list,
+       flowing together with an 8px gap — mirrors content-digest-markdown. */
+    .digest-markdown {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        color: var(--text);
+    }
+    .digest-markdown strong {
+        font-size: 16px;
+        line-height: 24px;
+        font-weight: 700;
+    }
+    .digest-markdown strong sup { color: var(--text-light); font-weight: 700; margin-left: 1px; }
+    .digest-markdown ul {
+        margin: 0;
+        padding-left: 20px;
+        font-size: 16px;
+        line-height: 24px;
+    }
+    .digest-markdown li { margin-bottom: 4px; }
+    .digest-markdown li:last-child { margin-bottom: 0; }
+
+    .digest-link {
+        color: var(--primary);
+        text-decoration: underline;
+    }
+
+    /* Modal (expanded digest) */
+    .cw-modal-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: var(--digest-overlay-bg);
+        z-index: 1000;
+        justify-content: center;
+        align-items: center;
+        padding: 16px;
+    }
+    .cw-modal-overlay.active { display: flex; }
+
+    .cw-modal {
+        position: relative;
+        background: var(--bg);
+        color: var(--text);
+        width: 100%;
+        max-width: 640px;
+        max-height: 90vh;
+        overflow-y: auto;
+        border-radius: 14px;
+        padding: 24px 28px 20px 28px;
+        animation: digestModalIn 0.18s ease;
+    }
+    @keyframes digestModalIn {
+        from { opacity: 0; transform: translateY(-10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .digest-columns {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 24px;
+    }
+    @media (max-width: 480px) {
+        .digest-columns { grid-template-columns: 1fr; gap: 20px; }
+    }
+
+    .digest-column {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .digest-feedback {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 10px;
+        font-size: 14px;
+        font-weight: 600;
+    }
+    .digest-thumbs { display: flex; gap: 8px; }
+
+    .digest-sources {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 8px;
+        font-size: 13px;
+    }
+    .digest-sources-label {
+        color: var(--text-light);
+        font-weight: 700;
+        margin-right: 2px;
+    }
+</style>
+</head>
+
+<body>
+
+<div class="digest-card">
+    <div class="digest-clip">
+        <div class="digest-stack">
+            <span class="cw-badge"><span class="cw-badge-icon-slot"></span><span data-i18n="badge">Your AI Digest</span></span>
+            <p class="digest-headline" data-i18n="headline">PPE training due, a Factory 56 milestone, and an e-bike for sale this week</p>
+
+            <div class="digest-section">
+                <span class="cw-pill cw-pill-action" data-i18n="actionRequired">Action Required</span>
+                <div class="digest-markdown">
+                    <strong data-i18n="actionHeading">PPE refresher training</strong>
+                    <ul>
+                        <li id="cardActionBullet"></li>
+                        <li><a href="#" class="digest-link cw-demo-link"><span aria-hidden="true">👉</span> <span data-i18n="actionLink">PPE Refresher – Enroll Now</span></a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="digest-section">
+                <span class="cw-pill cw-pill-neutral" data-i18n="stayInformed">Stay Informed</span>
+                <div class="digest-markdown">
+                    <strong data-i18n="infoHeading1">Factory 56 production update</strong>
+                    <ul><li id="cardInfoBullet1"></li></ul>
+                    <strong data-i18n="infoHeading2">For sale: e-bike &amp; winter tires</strong>
+                    <ul><li id="cardInfoBullet2"></li></ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="digest-fade">
+            <button class="cw-btn cw-btn-open" id="openDigestBtn" data-i18n="openDigest">Open Digest</button>
+        </div>
+    </div>
+</div>
+
+<div class="cw-modal-overlay" id="digestOverlay">
+    <div class="cw-modal" role="dialog" aria-modal="true" aria-labelledby="digestModalTitle">
+        <button class="cw-close-btn" id="closeDigestBtn" data-i18n-aria-label="closeLabel" aria-label="Close">&times;</button>
+
+        <span class="cw-badge"><span class="cw-badge-icon-slot"></span><span data-i18n="badge">Your AI Digest</span></span>
+        <h2 class="digest-headline" id="digestModalTitle" data-i18n="headline">PPE training due, a Factory 56 milestone, and an e-bike for sale this week</h2>
+
+        <hr class="cw-divider">
+
+        <div class="digest-columns">
+            <div class="digest-column">
+                <span class="cw-pill cw-pill-action" data-i18n="actionRequired">Action Required</span>
+                <div class="digest-markdown">
+                    <strong><span data-i18n="actionHeading">PPE refresher training</span><sup>2</sup></strong>
+                    <ul>
+                        <li id="modalActionBullet"></li>
+                        <li><a href="#" class="digest-link cw-demo-link"><span aria-hidden="true">👉</span> <span data-i18n="actionLink">PPE Refresher – Enroll Now</span></a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="digest-column">
+                <span class="cw-pill cw-pill-neutral" data-i18n="stayInformed">Stay Informed</span>
+                <div class="digest-markdown">
+                    <strong><span data-i18n="infoHeading1">Factory 56 production update</span><sup>1</sup></strong>
+                    <ul><li id="modalInfoBullet1"></li></ul>
+                    <strong><span data-i18n="infoHeading2">For sale: e-bike &amp; winter tires</span><sup>3</sup></strong>
+                    <ul><li id="modalInfoBullet2"></li></ul>
+                </div>
+            </div>
+        </div>
+
+        <hr class="cw-divider">
+
+        <div class="digest-feedback">
+            <span data-i18n="feedbackQuestion">Was this digest relevant to you?</span>
+            <div class="digest-thumbs">
+                <button class="cw-thumb" id="thumbUp" data-i18n-aria-label="thumbUpLabel" aria-label="Relevant">👍</button>
+                <button class="cw-thumb" id="thumbDown" data-i18n-aria-label="thumbDownLabel" aria-label="Not relevant">👎</button>
+            </div>
+        </div>
+
+        <hr class="cw-divider">
+
+        <div class="digest-sources">
+            <span class="digest-sources-label" data-i18n="sourcesLabel">Sources:</span>
+            <span class="cw-source-chip"><sup>1</sup><span data-i18n="source1">Factory 56 Production Update</span></span>
+            <span class="cw-source-chip"><sup>2</sup><span data-i18n="source2">PPE Refresher Training</span></span>
+            <span class="cw-source-chip"><sup>3</sup><span data-i18n="source3">For Sale: E-Bike &amp; Winter Tires</span></span>
+        </div>
+    </div>
+</div>
+
+<script>
+    // --- Language detection (per widgets/MULTILANGUAGE.md) ---
+    const LANG = (() => {
+        const l = navigator.language || '';
+        if (l.startsWith('de')) return 'de';
+        if (l.startsWith('fr')) return 'fr';
+        if (l.startsWith('es')) return 'es';
+        if (l.startsWith('ja')) return 'ja';
+        if (l === 'en-GB')      return 'en-GB';
+        return 'en-US';
+    })();
+    document.documentElement.lang = LANG;
+
+    const LOCALE = {
+        'de': 'de-DE', 'fr': 'fr-FR', 'es': 'es-ES',
+        'ja': 'ja-JP', 'en-GB': 'en-GB', 'en-US': 'en-US'
+    }[LANG];
+
+    // --- Translations ---
+    const T = {
+        de: {
+            badge: "Dein KI-Digest",
+            headline: "PSA-Schulung fällig, Meilenstein in Factory 56 und ein E-Bike zu verkaufen – diese Woche",
+            actionRequired: "Handlungsbedarf",
+            stayInformed: "Gut zu wissen",
+            openDigest: "Digest öffnen",
+            closeLabel: "Schließen",
+            actionHeading: "PSA-Auffrischungsschulung",
+            actionBulletLead: "Fällig am ${date}",
+            actionBulletRest: "— schließe das 15-minütige E-Learning-Modul zur neuen Richtlinie für schnittfeste Handschuhe vor deiner nächsten Schicht im Karosseriebau ab. 🧤",
+            actionLink: "PSA-Auffrischung – Jetzt anmelden",
+            infoHeading1: "Produktionsupdate aus Factory 56",
+            infoBullet1Lead: "Die Produktion von EQS und S-Klasse ist diesen Monat um 4 % gestiegen",
+            infoBullet1Rest: "— Factory 56 hat gerade die Marke von 250.000 gefertigten Fahrzeugen erreicht. 🏭",
+            infoHeading2: "Zu verkaufen: E-Bike & Winterreifen",
+            infoBullet2Lead: "Eine Kollegin aus dem Lackierwerk verkauft ein Bosch-E-Bike (${price1}) und einen Satz mit 4 Winterreifen (${price2})",
+            infoBullet2Rest: "— Details am Marktplatz-Board.",
+            feedbackQuestion: "War dieses Digest für dich relevant?",
+            thumbUpLabel: "Relevant",
+            thumbDownLabel: "Nicht relevant",
+            sourcesLabel: "Quellen:",
+            source1: "Produktionsupdate Factory 56",
+            source2: "PSA-Auffrischungsschulung",
+            source3: "Zu verkaufen: E-Bike & Winterreifen",
+        },
+        fr: {
+            badge: "Votre digest IA",
+            headline: "Formation EPI à faire, une étape franchie chez Factory 56 et un vélo électrique à vendre cette semaine",
+            actionRequired: "Action requise",
+            stayInformed: "À savoir",
+            openDigest: "Ouvrir le digest",
+            closeLabel: "Fermer",
+            actionHeading: "Formation de recyclage EPI",
+            actionBulletLead: "À faire avant le ${date}",
+            actionBulletRest: "— terminez le module e-learning de 15 minutes sur la nouvelle politique de gants anticoupure avant votre prochaine équipe à l'atelier de carrosserie. 🧤",
+            actionLink: "Recyclage EPI – Inscrivez-vous",
+            infoHeading1: "Mise à jour de production – Factory 56",
+            infoBullet1Lead: "La production des EQS et Classe S a augmenté de 4 % ce mois-ci",
+            infoBullet1Rest: "— Factory 56 vient de franchir le cap des 250 000 véhicules produits. 🏭",
+            infoHeading2: "À vendre : vélo électrique et pneus hiver",
+            infoBullet2Lead: "Une collègue de l'atelier de peinture vend un vélo électrique Bosch (${price1}) et un jeu de 4 pneus hiver (${price2})",
+            infoBullet2Rest: "— détails sur le tableau de la bourse d'échange.",
+            feedbackQuestion: "Ce résumé vous a-t-il été utile ?",
+            thumbUpLabel: "Pertinent",
+            thumbDownLabel: "Non pertinent",
+            sourcesLabel: "Sources :",
+            source1: "Mise à jour production Factory 56",
+            source2: "Formation de recyclage EPI",
+            source3: "À vendre : vélo électrique et pneus",
+        },
+        es: {
+            badge: "Tu resumen con IA",
+            headline: "Formación de EPP pendiente, un hito en Factory 56 y una bicicleta eléctrica en venta esta semana",
+            actionRequired: "Acción requerida",
+            stayInformed: "Para tu información",
+            openDigest: "Abrir resumen",
+            closeLabel: "Cerrar",
+            actionHeading: "Formación de repaso de EPP",
+            actionBulletLead: "Antes del ${date}",
+            actionBulletRest: "— completa el módulo de e-learning de 15 minutos sobre la nueva política de guantes anticorte antes de tu próximo turno en el taller de carrocería. 🧤",
+            actionLink: "Repaso de EPP – Inscríbete ahora",
+            infoHeading1: "Actualización de producción – Factory 56",
+            infoBullet1Lead: "La producción de los EQS y Clase S ha aumentado un 4 % este mes",
+            infoBullet1Rest: "— Factory 56 acaba de superar el hito de 250.000 vehículos producidos. 🏭",
+            infoHeading2: "En venta: bicicleta eléctrica y neumáticos de invierno",
+            infoBullet2Lead: "Una compañera del taller de pintura vende una bicicleta eléctrica Bosch (${price1}) y un juego de 4 neumáticos de invierno (${price2})",
+            infoBullet2Rest: "— detalles en el tablón del mercadillo interno.",
+            feedbackQuestion: "¿Te ha resultado útil este resumen?",
+            thumbUpLabel: "Relevante",
+            thumbDownLabel: "No relevante",
+            sourcesLabel: "Fuentes:",
+            source1: "Actualización de producción Factory 56",
+            source2: "Formación de repaso de EPP",
+            source3: "En venta: bicicleta eléctrica y neumáticos",
+        },
+        ja: {
+            badge: "あなたのAIダイジェスト",
+            headline: "PPEトレーニングの期限、Factory 56のマイルストーン、そして今週販売中の電動アシスト自転車",
+            actionRequired: "対応が必要",
+            stayInformed: "お知らせ",
+            openDigest: "ダイジェストを開く",
+            closeLabel: "閉じる",
+            actionHeading: "PPE（保護具）再教育研修",
+            actionBulletLead: "${date}までに",
+            actionBulletRest: "— ボディショップでの次のシフトまでに、新しい耐切創手袋ポリシーに関する15分のeラーニングモジュールを完了してください。🧤",
+            actionLink: "PPE再教育 – 今すぐ登録",
+            infoHeading1: "Factory 56 生産アップデート",
+            infoBullet1Lead: "今月はEQSとSクラスの生産台数が4%増加",
+            infoBullet1Rest: "— Factory 56は生産台数25万台の節目を達成しました。🏭",
+            infoHeading2: "販売中：電動アシスト自転車とスタッドレスタイヤ",
+            infoBullet2Lead: "ペイントショップの同僚がBosch製の電動アシスト自転車（${price1}）とスタッドレスタイヤ4本セット（${price2}）を販売中",
+            infoBullet2Rest: "— 詳細は社内マーケットプレイスの掲示板をご確認ください。",
+            feedbackQuestion: "このダイジェストは役に立ちましたか？",
+            thumbUpLabel: "役に立った",
+            thumbDownLabel: "役に立たなかった",
+            sourcesLabel: "出典：",
+            source1: "Factory 56 生産アップデート",
+            source2: "PPE再教育研修",
+            source3: "販売中：電動自転車とタイヤ",
+        },
+        'en-GB': {
+            badge: "Your AI Digest",
+            headline: "PPE training due, a Factory 56 milestone, and an e-bike for sale this week",
+            actionRequired: "Action Required",
+            stayInformed: "Stay Informed",
+            openDigest: "Open Digest",
+            closeLabel: "Close",
+            actionHeading: "PPE refresher training",
+            actionBulletLead: "Due ${date}",
+            actionBulletRest: "— complete the 15-minute e-learning module for the new cut-resistant glove policy before your next shift in the Body Shop. 🧤",
+            actionLink: "PPE Refresher – Enrol Now",
+            infoHeading1: "Factory 56 production update",
+            infoBullet1Lead: "EQS and S-Class output is up 4% this month",
+            infoBullet1Rest: "— Factory 56 just passed the 250,000-vehicle milestone. 🏭",
+            infoHeading2: "For sale: e-bike & winter tyres",
+            infoBullet2Lead: "A colleague from the Paint Shop is selling a Bosch e-bike (${price1}) and a set of 4 winter tyres (${price2})",
+            infoBullet2Rest: "— details on the marketplace board.",
+            feedbackQuestion: "Was this digest relevant to you?",
+            thumbUpLabel: "Relevant",
+            thumbDownLabel: "Not relevant",
+            sourcesLabel: "Sources:",
+            source1: "Factory 56 Production Update",
+            source2: "PPE Refresher Training",
+            source3: "For Sale: E-Bike & Winter Tyres",
+        },
+        'en-US': {
+            badge: "Your AI Digest",
+            headline: "PPE training due, a Factory 56 milestone, and an e-bike for sale this week",
+            actionRequired: "Action Required",
+            stayInformed: "Stay Informed",
+            openDigest: "Open Digest",
+            closeLabel: "Close",
+            actionHeading: "PPE refresher training",
+            actionBulletLead: "Due ${date}",
+            actionBulletRest: "— complete the 15-minute e-learning module for the new cut-resistant glove policy before your next shift in the Body Shop. 🧤",
+            actionLink: "PPE Refresher – Enroll Now",
+            infoHeading1: "Factory 56 production update",
+            infoBullet1Lead: "EQS and S-Class output is up 4% this month",
+            infoBullet1Rest: "— Factory 56 just passed the 250,000-vehicle milestone. 🏭",
+            infoHeading2: "For sale: e-bike & winter tires",
+            infoBullet2Lead: "A colleague from the Paint Shop is selling a Bosch e-bike (${price1}) and a set of 4 winter tires (${price2})",
+            infoBullet2Rest: "— details on the marketplace board.",
+            feedbackQuestion: "Was this digest relevant to you?",
+            thumbUpLabel: "Relevant",
+            thumbDownLabel: "Not relevant",
+            sourcesLabel: "Sources:",
+            source1: "Factory 56 Production Update",
+            source2: "PPE Refresher Training",
+            source3: "For Sale: E-Bike & Winter Tires",
+        },
+    };
+    const t = T[LANG] ?? T['en-US'];
+
+    // --- Interpolation helper (see widgets/MULTILANGUAGE.md §4) ---
+    function tr(key, vars = {}) {
+        let s = t[key] || key;
+        for (const [k, v] of Object.entries(vars)) {
+            s = s.replace(`\${${k}}`, v);
+        }
+        return s;
+    }
+
+    // --- Staffbase brand color passthrough ---
+    function applySBBrand() {
+        var sb = getComputedStyle(document.documentElement).getPropertyValue('--sb-brand').trim();
+        if (sb) {
+            document.documentElement.style.setProperty('--primary', sb);
+            return;
+        }
+        try {
+            sb = window.parent.getComputedStyle(window.parent.document.documentElement)
+                    .getPropertyValue('--sb-brand').trim();
+            if (sb) document.documentElement.style.setProperty('--primary', sb);
+        } catch (e) { /* cross-origin, ignore */ }
+    }
+
+    // --- Apply translations on DOM ready ---
+    function applyTranslations() {
+        document.querySelectorAll('[data-i18n]').forEach(el => {
+            const key = el.dataset.i18n;
+            if (t[key] !== undefined) el.textContent = t[key];
+        });
+        document.querySelectorAll('[data-i18n-aria-label]').forEach(el => {
+            const key = el.dataset.i18nAriaLabel;
+            if (t[key] !== undefined) el.setAttribute('aria-label', t[key]);
+        });
+    }
+
+    // --- Date helpers (see widgets/CLAUDE.md §6 — never hardcode absolute dates) ---
+    const now = new Date();
+    const daysFromNow = n => { const d = new Date(now); d.setDate(d.getDate() + n); return d; };
+    function nextFriday() {
+        const day = now.getDay(); // 0 = Sun … 6 = Sat, Friday = 5
+        return daysFromNow((5 - day + 7) % 7);
+    }
+    const dateFormatter = new Intl.DateTimeFormat(LOCALE, { weekday: 'long', month: 'long', day: 'numeric' });
+    // Marketplace item is priced by the seller in EUR regardless of the viewer's browser locale.
+    const priceFormatter = new Intl.NumberFormat(LOCALE, { style: 'currency', currency: 'EUR' });
+
+    function renderContent() {
+        const date = dateFormatter.format(nextFriday());
+        const price1 = priceFormatter.format(450);
+        const price2 = priceFormatter.format(120);
+
+        const actionHtml = `<strong>${tr('actionBulletLead', { date })}</strong> ${t.actionBulletRest}`;
+        const info1Html = `<strong>${t.infoBullet1Lead}</strong> ${t.infoBullet1Rest}`;
+        const info2Html = `<strong>${tr('infoBullet2Lead', { price1, price2 })}</strong> ${t.infoBullet2Rest}`;
+
+        document.getElementById('cardActionBullet').innerHTML = actionHtml;
+        document.getElementById('cardInfoBullet1').innerHTML = info1Html;
+        document.getElementById('cardInfoBullet2').innerHTML = info2Html;
+        document.getElementById('modalActionBullet').innerHTML = actionHtml;
+        document.getElementById('modalInfoBullet1').innerHTML = info1Html;
+        document.getElementById('modalInfoBullet2').innerHTML = info2Html;
+    }
+
+    // --- Sparkle badge icon (verbatim gradient artwork from the native AI Digest badge) ---
+    let sparkleIconCount = 0;
+    function sparkleIconSVG() {
+        const id = 'digestSparkle' + (sparkleIconCount++);
+        return `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none" class="cw-badge-icon" aria-hidden="true">
+<path d="M9.42762 13.9818C9.38913 13.9957 9.34802 14.0023 9.30656 13.9993C9.20821 13.9917 9.11973 13.9307 9.05952 13.8526C8.9523 13.7134 8.90821 13.5169 8.85722 13.3513C8.799 13.162 8.74866 12.9701 8.70031 12.7782C8.60558 12.4026 8.51973 12.0237 8.39768 11.6557C7.87168 10.0705 6.72434 8.86087 5.14966 8.29994C4.75986 8.16112 4.35822 8.05955 3.95855 7.9527C3.76085 7.89995 3.56315 7.84586 3.36776 7.7855C3.1898 7.73042 2.96611 7.68461 2.80789 7.58369C2.7819 7.56719 2.75921 7.5461 2.7398 7.52234C2.67993 7.44881 2.65427 7.34822 2.67237 7.25525C2.70592 7.07979 2.85789 6.99636 3.01019 6.93933C3.18881 6.87237 3.37204 6.81763 3.55591 6.76751C3.93881 6.66299 4.3273 6.57957 4.70854 6.46909C4.77368 6.4503 4.83848 6.43051 4.90295 6.40973C6.05953 6.03575 7.02598 5.37031 7.71907 4.36416C8.17103 3.70794 8.42039 2.94387 8.63092 2.18178C8.68914 1.97072 8.74504 1.75935 8.80228 1.54797C8.83025 1.44541 8.85757 1.34252 8.88782 1.24062C8.91808 1.13873 8.93385 1.02825 8.97859 0.928664C9.02332 0.829073 9.09077 0.744322 9.1855 0.698815C9.30621 0.640777 9.4602 0.663201 9.56182 0.75092C9.69866 0.869305 9.71348 1.05398 9.75753 1.21688C9.80162 1.37978 9.84372 1.54566 9.88781 1.70988C9.974 2.0281 10.0648 2.34567 10.1684 2.65862C10.3664 3.25748 10.6141 3.84413 10.9645 4.37077C11.3335 4.92577 11.8131 5.39602 12.3694 5.76105C12.397 5.7792 12.4246 5.797 12.4526 5.8145C12.9138 6.10566 13.4243 6.29826 13.946 6.44995C14.4677 6.60164 14.9888 6.71739 15.4996 6.88723C15.6441 6.93536 15.8055 6.96932 15.9102 7.08969C15.9845 7.1751 16.0207 7.29711 15.9878 7.4056C15.9618 7.49201 15.8954 7.56192 15.819 7.61009C15.7082 7.67999 15.5753 7.71525 15.4516 7.75452C15.3181 7.79704 15.1832 7.83596 15.0477 7.8729C14.7733 7.94774 14.4967 8.0147 14.2217 8.08789C14.0345 8.1377 13.8483 8.19011 13.6641 8.25047C11.9595 8.8101 10.7806 10.0507 10.2352 11.7539C10.1237 12.1025 10.0431 12.46 9.95392 12.8144C9.90919 12.9925 9.86247 13.1706 9.8092 13.3463C9.76085 13.5053 9.72202 13.686 9.62595 13.8239C9.57729 13.8938 9.50722 13.9532 9.42861 13.9815L9.42762 13.9818Z" fill="url(#${id}a)"></path>
+<path d="M4.03771 5.32607C4.02232 5.3316 4.00587 5.33424 3.98929 5.33305C3.94995 5.33003 3.91456 5.30562 3.89048 5.27436C3.84759 5.2187 3.82995 5.14008 3.80956 5.07386C3.78627 4.99815 3.76613 4.92138 3.74679 4.8446C3.7089 4.69436 3.67456 4.5428 3.62574 4.39559C3.41534 3.76152 2.9564 3.27768 2.32653 3.05331C2.17061 2.99778 2.00995 2.95715 1.85009 2.91441C1.77101 2.89331 1.69193 2.87168 1.61377 2.84753C1.54259 2.8255 1.45311 2.80718 1.38982 2.76681C1.37943 2.76021 1.37035 2.75177 1.36259 2.74227C1.33864 2.71286 1.32838 2.67262 1.33561 2.63543C1.34903 2.56525 1.40982 2.53188 1.47074 2.50907C1.54219 2.48228 1.61548 2.46038 1.68903 2.44034C1.84219 2.39853 1.99759 2.36516 2.15008 2.32097C2.17614 2.31345 2.20206 2.30554 2.22785 2.29722C2.69048 2.14763 3.07706 1.88146 3.35429 1.479C3.53508 1.21651 3.63482 0.910881 3.71903 0.606044C3.74232 0.521623 3.76468 0.437071 3.78758 0.35252C3.79876 0.311496 3.80969 0.270342 3.8218 0.229583C3.8339 0.188824 3.84021 0.144634 3.8581 0.104799C3.876 0.0649625 3.90297 0.0310623 3.94087 0.0128593C3.98915 -0.0103561 4.05075 -0.00138641 4.0914 0.0337012C4.14613 0.0810554 4.15206 0.154923 4.16968 0.220085C4.18731 0.285246 4.20416 0.351597 4.22179 0.417285C4.25627 0.544575 4.29258 0.671602 4.33403 0.796781C4.41323 1.03632 4.51232 1.27099 4.65245 1.48164C4.80007 1.70364 4.99192 1.89174 5.21443 2.03776C5.22548 2.04501 5.23653 2.05213 5.24771 2.05913C5.43219 2.1756 5.6364 2.25264 5.84508 2.31331C6.05376 2.37399 6.26217 2.42029 6.46652 2.48822C6.52429 2.50748 6.58889 2.52106 6.63074 2.56921C6.66046 2.60337 6.67494 2.65218 6.66179 2.69557C6.65139 2.73014 6.62481 2.7581 6.59428 2.77737C6.54994 2.80533 6.49678 2.81943 6.44732 2.83514C6.3939 2.85215 6.33994 2.86772 6.28574 2.88249C6.176 2.91243 6.06534 2.93921 5.95534 2.96849C5.88047 2.98841 5.806 3.00938 5.73232 3.03352C5.05047 3.25737 4.5789 3.75361 4.36074 4.43489C4.31614 4.57432 4.2839 4.71731 4.24824 4.85911C4.23034 4.93035 4.21166 5.00157 4.19035 5.07187C4.17101 5.13545 4.15547 5.20774 4.11705 5.26289C4.09758 5.29085 4.06916 5.31473 4.03771 5.32607Z" fill="url(#${id}b)"></path>
+<path d="M3.38048 15.9909C3.36123 15.9978 3.34067 16.0011 3.31995 15.9996C3.27077 15.9959 3.22653 15.9654 3.19643 15.9263C3.14281 15.8567 3.12077 15.7584 3.09528 15.6757C3.06617 15.581 3.041 15.4851 3.01682 15.3891C2.96946 15.2013 2.92653 15.0118 2.86551 14.8278C2.60251 14.0352 2.02884 13.4304 1.2415 13.15C1.0466 13.0806 0.845776 13.0298 0.64594 12.9764C0.547092 12.95 0.448244 12.9229 0.350547 12.8927C0.261566 12.8652 0.149724 12.8423 0.0706124 12.7918C0.0576186 12.7836 0.0462702 12.7731 0.0365664 12.7612C0.00663229 12.7244 -0.0061967 12.6741 0.00284923 12.6276C0.0196255 12.5399 0.0956131 12.4982 0.171764 12.4697C0.261072 12.4362 0.352684 12.4088 0.444624 12.3838C0.636071 12.3315 0.830315 12.2898 1.02094 12.2345C1.0535 12.2251 1.08591 12.2153 1.11814 12.2049C1.69643 12.0179 2.17965 11.6852 2.5262 11.1821C2.75218 10.854 2.87686 10.4719 2.98213 10.0909C3.01124 9.98536 3.03919 9.87967 3.06781 9.77398C3.08179 9.7227 3.09545 9.67126 3.11058 9.62031C3.12571 9.56936 3.13359 9.51413 3.15596 9.46433C3.17833 9.41454 3.21205 9.37216 3.25942 9.34941C3.31977 9.32039 3.39677 9.3316 3.44758 9.37546C3.516 9.43465 3.52341 9.52699 3.54543 9.60844C3.56748 9.68989 3.58853 9.77283 3.61057 9.85494C3.65367 10.0141 3.69905 10.1728 3.75087 10.3293C3.84987 10.6287 3.97373 10.9221 4.1489 11.1854C4.33342 11.4629 4.57324 11.698 4.85136 11.8805C4.86518 11.8896 4.87899 11.8985 4.89297 11.9072C5.12357 12.0528 5.37883 12.1491 5.63968 12.225C5.90053 12.3008 6.16105 12.3587 6.41649 12.4436C6.4887 12.4677 6.56944 12.4847 6.62176 12.5448C6.65891 12.5876 6.67701 12.6486 6.66057 12.7028C6.64758 12.746 6.61435 12.781 6.57619 12.805C6.52076 12.84 6.45431 12.8576 6.39248 12.8773C6.3257 12.8985 6.25826 12.918 6.19051 12.9365C6.05333 12.9739 5.91501 13.0073 5.77751 13.0439C5.68392 13.0689 5.59083 13.0951 5.49873 13.1252C4.64642 13.4051 4.05695 14.0253 3.78425 14.877C3.72851 15.0512 3.68821 15.23 3.64363 15.4072C3.62126 15.4963 3.5979 15.5853 3.57127 15.6732C3.54709 15.7526 3.52767 15.843 3.47964 15.9119C3.45531 15.9469 3.41978 15.9767 3.38048 15.9909Z" fill="url(#${id}c)"></path>
+<defs>
+<linearGradient id="${id}a" x1="7.49068e-07" y1="16" x2="16" y2="1.33333" gradientUnits="userSpaceOnUse"><stop stop-color="#006CFF"></stop><stop offset="1" stop-color="#BC0BFC"></stop></linearGradient>
+<linearGradient id="${id}b" x1="7.49068e-07" y1="16" x2="16" y2="1.33333" gradientUnits="userSpaceOnUse"><stop stop-color="#006CFF"></stop><stop offset="1" stop-color="#BC0BFC"></stop></linearGradient>
+<linearGradient id="${id}c" x1="7.49068e-07" y1="16" x2="16" y2="1.33333" gradientUnits="userSpaceOnUse"><stop stop-color="#006CFF"></stop><stop offset="1" stop-color="#BC0BFC"></stop></linearGradient>
+</defs>
+</svg>`;
+    }
+    function renderBadgeIcons() {
+        document.querySelectorAll('.cw-badge-icon-slot').forEach(el => {
+            el.outerHTML = sparkleIconSVG();
+        });
+    }
+
+    function initModal() {
+        const overlay = document.getElementById('digestOverlay');
+        const openBtn = document.getElementById('openDigestBtn');
+        const closeBtn = document.getElementById('closeDigestBtn');
+        const thumbUp = document.getElementById('thumbUp');
+        const thumbDown = document.getElementById('thumbDown');
+
+        function openModal() { overlay.classList.add('active'); }
+        function closeModal() { overlay.classList.remove('active'); }
+
+        openBtn.addEventListener('click', openModal);
+        closeBtn.addEventListener('click', closeModal);
+        overlay.addEventListener('click', e => { if (e.target === overlay) closeModal(); });
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape' && overlay.classList.contains('active')) closeModal();
+        });
+
+        function selectThumb(chosen, other) {
+            chosen.classList.add('selected');
+            other.classList.remove('selected');
+        }
+        thumbUp.addEventListener('click', () => selectThumb(thumbUp, thumbDown));
+        thumbDown.addEventListener('click', () => selectThumb(thumbDown, thumbUp));
+
+        document.querySelectorAll('.cw-demo-link').forEach(a => {
+            a.addEventListener('click', e => e.preventDefault());
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        applySBBrand();
+        applyTranslations();
+        renderContent();
+        renderBadgeIcons();
+        initModal();
+    });
+</script>
+
+<!-- Widget usage counter — see CLAUDE.md -->
+<script>(function(){try{if(location.search.indexOf('preview=1')!==-1)return;var n=location.pathname.split('/').pop();if(!n||n==='index.html')return;var url='https://widget-counter.klauejohann.workers.dev/bump/'+encodeURIComponent(n);if(navigator.sendBeacon)navigator.sendBeacon(url);else fetch(url,{method:'POST',keepalive:true}).catch(function(){});var k='widgetCounts',c=JSON.parse(localStorage.getItem(k)||'{}');c[n]=(c[n]||0)+1;localStorage.setItem(k,JSON.stringify(c));}catch(e){}})();</script>
+
+</body>
+</html>
