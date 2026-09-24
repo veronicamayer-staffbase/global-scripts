@@ -636,13 +636,27 @@
         document.getElementById('modalInfoBullet2').innerHTML = info2Html;
     }
 
-    // --- Full-page overlay handoff via ?overlayHost= URL param (same convention as ?brand=) ---
-    // Opt-in only: whoever embeds the widget passes the exact host origin that has a
-    // matching listener installed (e.g. the Tampermonkey script for a specific demo env).
-    // Everywhere else this stays null and the widget falls back to its own clipped modal.
+    // --- Full-page overlay handoff: resolve the parent (host page) origin ---
+    // Prefer an explicit ?overlayHost= param if present, otherwise fall back to the
+    // referring page's origin. Either way it must be an allowed Staffbase host.
     const OVERLAY_HOST = (() => {
-        const raw = new URLSearchParams(location.search).get('overlayHost');
-        return raw && /^https:\/\/[a-z0-9.-]+\.staffbase\.(rocks|com)$/i.test(raw) ? raw : null;
+    const ALLOWED = /^https:\/\/([a-z0-9-]+\.)*staffbase\.(rocks|com)$/i;
+
+    function originOf(url) {
+        try { return new URL(url).origin; } catch (e) { return null; }
+    }
+
+    // 1) Explicit opt-in via URL param (value should be a full origin, e.g.
+    //    ?overlayHost=https://mercedesdemo.staffbase.rocks)
+    const raw = new URLSearchParams(location.search).get('overlayHost');
+    const fromParam = raw ? originOf(raw) : null;
+    if (fromParam && ALLOWED.test(fromParam)) return fromParam;
+
+    // 2) Fallback: the origin of the page that embedded this iframe.
+    const fromReferrer = document.referrer ? originOf(document.referrer) : null;
+    if (fromReferrer && ALLOWED.test(fromReferrer)) return fromReferrer;
+
+    return null;
     })();
 
     // Plain-data snapshot of the modal content — no HTML — so the host page never has to
