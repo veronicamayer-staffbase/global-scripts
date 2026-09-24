@@ -619,15 +619,14 @@
     const dateFormatter = new Intl.DateTimeFormat(LOCALE, { weekday: 'long', month: 'long', day: 'numeric' });
     // Marketplace item is priced by the seller in EUR regardless of the viewer's browser locale.
     const priceFormatter = new Intl.NumberFormat(LOCALE, { style: 'currency', currency: 'EUR' });
+    const digestDate = dateFormatter.format(nextFriday());
+    const digestPrice1 = priceFormatter.format(450);
+    const digestPrice2 = priceFormatter.format(120);
 
     function renderContent() {
-        const date = dateFormatter.format(nextFriday());
-        const price1 = priceFormatter.format(450);
-        const price2 = priceFormatter.format(120);
-
-        const actionHtml = `<strong>${tr('actionBulletLead', { date })}</strong> ${t.actionBulletRest}`;
+        const actionHtml = `<strong>${tr('actionBulletLead', { date: digestDate })}</strong> ${t.actionBulletRest}`;
         const info1Html = `<strong>${t.infoBullet1Lead}</strong> ${t.infoBullet1Rest}`;
-        const info2Html = `<strong>${tr('infoBullet2Lead', { price1, price2 })}</strong> ${t.infoBullet2Rest}`;
+        const info2Html = `<strong>${tr('infoBullet2Lead', { price1: digestPrice1, price2: digestPrice2 })}</strong> ${t.infoBullet2Rest}`;
 
         document.getElementById('cardActionBullet').innerHTML = actionHtml;
         document.getElementById('cardInfoBullet1').innerHTML = info1Html;
@@ -635,6 +634,43 @@
         document.getElementById('modalActionBullet').innerHTML = actionHtml;
         document.getElementById('modalInfoBullet1').innerHTML = info1Html;
         document.getElementById('modalInfoBullet2').innerHTML = info2Html;
+    }
+
+    // --- Full-page overlay handoff via ?overlayHost= URL param (same convention as ?brand=) ---
+    // Opt-in only: whoever embeds the widget passes the exact host origin that has a
+    // matching listener installed (e.g. the Tampermonkey script for a specific demo env).
+    // Everywhere else this stays null and the widget falls back to its own clipped modal.
+    const OVERLAY_HOST = (() => {
+        const raw = new URLSearchParams(location.search).get('overlayHost');
+        return raw && /^https:\/\/[a-z0-9.-]+\.staffbase\.(rocks|com)$/i.test(raw) ? raw : null;
+    })();
+
+    // Plain-data snapshot of the modal content — no HTML — so the host page never has to
+    // parse/inject markup it didn't author itself.
+    function buildDigestPayload() {
+        return {
+            lang: LANG,
+            badge: t.badge,
+            headline: t.headline,
+            actionLabel: t.actionRequired,
+            infoLabel: t.stayInformed,
+            closeLabel: t.closeLabel,
+            actionHeading: t.actionHeading,
+            actionBulletLead: tr('actionBulletLead', { date: digestDate }),
+            actionBulletRest: t.actionBulletRest,
+            actionLinkText: t.actionLink,
+            infoHeading1: t.infoHeading1,
+            infoBullet1Lead: t.infoBullet1Lead,
+            infoBullet1Rest: t.infoBullet1Rest,
+            infoHeading2: t.infoHeading2,
+            infoBullet2Lead: tr('infoBullet2Lead', { price1: digestPrice1, price2: digestPrice2 }),
+            infoBullet2Rest: t.infoBullet2Rest,
+            feedbackQuestion: t.feedbackQuestion,
+            thumbUpLabel: t.thumbUpLabel,
+            thumbDownLabel: t.thumbDownLabel,
+            sourcesLabel: t.sourcesLabel,
+            sources: [t.source1, t.source2, t.source3],
+        };
     }
 
     // --- Sparkle badge icon (verbatim gradient artwork from the native AI Digest badge) ---
@@ -665,7 +701,16 @@
         const thumbUp = document.getElementById('thumbUp');
         const thumbDown = document.getElementById('thumbDown');
 
-        function openModal() { overlay.classList.add('active'); }
+        function openModal() {
+            // If an embedder configured a trusted host origin, hand the digest off to that
+            // page's own listener so it can render a true full-page takeover instead of the
+            // overlay being clipped to this iframe's box. Never postMessage to '*'.
+            if (OVERLAY_HOST && window.parent !== window) {
+                window.parent.postMessage({ type: 'aiDigest:open', payload: buildDigestPayload() }, OVERLAY_HOST);
+                return;
+            }
+            overlay.classList.add('active');
+        }
         function closeModal() { overlay.classList.remove('active'); }
 
         openBtn.addEventListener('click', openModal);
