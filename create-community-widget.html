@@ -166,11 +166,13 @@
     const COMMUNITY_IFRAME_WIDTH = 712;
 
     // --- Full-page overlay handoff: resolve the parent (host page) origin ---
-    // Prefer an explicit ?overlayHost= param if present, otherwise fall back to the
-    // referring page's origin. Either way it must be an allowed Staffbase host.
-    // Mirrors the ai-digest widget's handoff so the same parent-page userscript
-    // pattern (see create-community-full-page-overlay.js) can render this as a
-    // true full-page overlay instead of one clipped to this widget's iframe box.
+    // Prefer an explicit ?overlayHost= param if present, then the referring page's
+    // origin, and finally a hardcoded default. The param/referrer paths are unreliable
+    // here because Staffbase renders this widget into a `srcdoc` iframe (location.href
+    // is "about:srcdoc"), which drops any query string and can leave document.referrer
+    // unset — so without the default, detection silently fails and the button falls
+    // back to the local, iframe-clipped modal instead of posting to the parent.
+    const DEFAULT_OVERLAY_HOST = 'https://mercedesdemo.staffbase.rocks';
     const OVERLAY_HOST = (() => {
         const ALLOWED = /^https:\/\/([a-z0-9-]+\.)*staffbase\.(rocks|com)$/i;
 
@@ -185,7 +187,7 @@
         const fromReferrer = document.referrer ? originOf(document.referrer) : null;
         if (fromReferrer && ALLOWED.test(fromReferrer)) return fromReferrer;
 
-        return null;
+        return DEFAULT_OVERLAY_HOST;
     })();
 
     function buildCommunityPayload() {

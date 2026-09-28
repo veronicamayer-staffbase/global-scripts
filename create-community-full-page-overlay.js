@@ -13,9 +13,8 @@
   'use strict';
 
   // Must match the origin the create-community widget iframe is actually served from
-  // (inspect the widget's iframe `src` on this page to confirm — defaults to the
-  // shared solutions-monorepo gallery's GitHub Pages origin).
-  const WIDGET_ORIGIN = 'https://staffbase.github.io';
+  // (inspect the widget's iframe `src` on this page to confirm).
+  const WIDGET_ORIGIN = 'https://veronicamayer-staffbase.github.io';
 
   const OVERLAY_ID = 'createCommunityFullPageOverlay';
   const STYLE_ID = 'createCommunityFullPageOverlayStyles';
