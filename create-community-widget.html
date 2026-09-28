@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Staffbase brand color via ?brand= URL param (sb-brand-url-param) -->
+<script>(function(){try{var b=new URLSearchParams(location.search).get('brand');if(b&&/^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$/.test(b)){document.documentElement.style.setProperty('--sb-brand',b);}}catch(e){}})();</script>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="widget-name" content="Create Community">
+<meta name="widget-description" content="Card with a Create Community button that opens the community-creation flow in an overlay">
+<meta name="widget-tags" content="Communities">
+<title>Create Community</title>
+
+<style>
+    :root {
+        --primary: var(--sb-brand, #2563eb);
+        --text: #1f2937;
+        --text-light: #6b7280;
+        --bg: #ffffff;
+        --bg-gray: #f9fafb;
+        --border: #e5e7eb;
+        --cc-overlay-bg: rgba(15, 23, 42, 0.6);
+    }
+    @media (prefers-color-scheme: dark) {
+        :root {
+            --primary: var(--sb-brand, #3b9eff);
+            --text: #f3f4f6;
+            --text-light: #9ca3af;
+            --bg: #1f2937;
+            --bg-gray: #111827;
+            --border: #374151;
+            --cc-overlay-bg: rgba(0, 0, 0, 0.7);
+        }
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        background: transparent;
+        color: var(--text);
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+        -webkit-font-smoothing: antialiased;
+    }
+
+    .cw-btn {
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-family: inherit;
+        font-weight: 700;
+        transition: filter 0.15s, opacity 0.15s;
+    }
+    .cw-btn:hover { filter: brightness(0.96); }
+    .cw-btn-open {
+        background: #0078D6;
+        color: #ffffff;
+        padding: 10px 20px;
+        font-size: 14.5px;
+        white-space: nowrap;
+    }
+    .cw-close-btn {
+        position: absolute;
+        top: 14px;
+        right: 16px;
+        background: none;
+        border: none;
+        color: var(--text-light);
+        font-size: 22px;
+        line-height: 1;
+        cursor: pointer;
+        padding: 4px;
+        z-index: 1;
+    }
+    .cw-close-btn:hover { color: var(--text); }
+
+    /* Card (collapsed view) */
+    .community-card {
+        width: 100%;
+        max-width: 460px;
+        margin: 0 auto;
+        background: var(--bg);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 14px;
+        box-shadow: 0 1px 3px rgba(15, 23, 42, 0.1), 0 1px 2px rgba(15, 23, 42, 0.06);
+    }
+    @media (prefers-color-scheme: dark) {
+        .community-card { box-shadow: none; }
+    }
+    .community-headline {
+        margin: 0;
+        font-size: 18px;
+        line-height: 1.4;
+        font-weight: 600;
+        color: var(--text);
+    }
+    .community-subtext {
+        margin: 0;
+        font-size: 14.5px;
+        line-height: 1.5;
+        color: var(--text-light);
+    }
+
+    /* Local fallback modal — only used when this widget is not embedded with a
+       trusted overlay host (see OVERLAY_HOST below), so the community-creation
+       iframe still opens even when clipped to this widget's own box. */
+    .cw-modal-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: var(--cc-overlay-bg);
+        z-index: 1000;
+        justify-content: center;
+        align-items: center;
+        padding: 16px;
+    }
+    .cw-modal-overlay.active { display: flex; }
+
+    .community-modal {
+        position: relative;
+        background: var(--bg);
+        width: 100%;
+        max-width: 712px;
+        height: 90vh;
+        border-radius: 14px;
+        overflow: hidden;
+        animation: communityModalIn 0.18s ease;
+    }
+    @keyframes communityModalIn {
+        from { opacity: 0; transform: translateY(-10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    .community-modal iframe {
+        width: 100%;
+        height: 100%;
+        border: none;
+        display: block;
+    }
+</style>
+</head>
+
+<body>
+
+<div class="community-card">
+    <p class="community-headline">Bring your team together</p>
+    <p class="community-subtext">Start a new community for your team, project, or interest group in just a few clicks.</p>
+    <button class="cw-btn cw-btn-open" id="createCommunityBtn">Create Community</button>
+</div>
+
+<div class="cw-modal-overlay" id="communityOverlay">
+    <div class="community-modal" role="dialog" aria-modal="true" aria-label="Create Community">
+        <button class="cw-close-btn" id="closeCommunityBtn" aria-label="Close">&times;</button>
+        <iframe id="communityIframe" title="Create Community"></iframe>
+    </div>
+</div>
+
+<script>
+    // --- Community-creation iframe target ---
+    const COMMUNITY_IFRAME_SRC = 'https://mercedes-communities.vercel.app/?embed_token=KiqGMKdZq31spMKpDV4zG5EfKT7WemKN';
+    const COMMUNITY_IFRAME_WIDTH = 712;
+
+    // --- Full-page overlay handoff: resolve the parent (host page) origin ---
+    // Prefer an explicit ?overlayHost= param if present, otherwise fall back to the
+    // referring page's origin. Either way it must be an allowed Staffbase host.
+    // Mirrors the ai-digest widget's handoff so the same parent-page userscript
+    // pattern (see create-community-full-page-overlay.js) can render this as a
+    // true full-page overlay instead of one clipped to this widget's iframe box.
+    const OVERLAY_HOST = (() => {
+        const ALLOWED = /^https:\/\/([a-z0-9-]+\.)*staffbase\.(rocks|com)$/i;
+
+        function originOf(url) {
+            try { return new URL(url).origin; } catch (e) { return null; }
+        }
+
+        const raw = new URLSearchParams(location.search).get('overlayHost');
+        const fromParam = raw ? originOf(raw) : null;
+        if (fromParam && ALLOWED.test(fromParam)) return fromParam;
+
+        const fromReferrer = document.referrer ? originOf(document.referrer) : null;
+        if (fromReferrer && ALLOWED.test(fromReferrer)) return fromReferrer;
+
+        return null;
+    })();
+
+    function buildCommunityPayload() {
+        return {
+            src: COMMUNITY_IFRAME_SRC,
+            width: COMMUNITY_IFRAME_WIDTH,
+            closeLabel: 'Close',
+        };
+    }
+
+    function initCreateCommunity() {
+        const overlay = document.getElementById('communityOverlay');
+        const openBtn = document.getElementById('createCommunityBtn');
+        const closeBtn = document.getElementById('closeCommunityBtn');
+        const iframe = document.getElementById('communityIframe');
+
+        function openModal() {
+            // If an embedder configured a trusted host origin, hand the open request off to
+            // that page's own listener so it can render a true full-page takeover instead of
+            // the overlay being clipped to this iframe's box. Never postMessage to '*'.
+            if (OVERLAY_HOST && window.parent !== window) {
+                window.parent.postMessage({ type: 'createCommunity:open', payload: buildCommunityPayload() }, OVERLAY_HOST);
+                return;
+            }
+            if (!iframe.src) iframe.src = COMMUNITY_IFRAME_SRC;
+            overlay.classList.add('active');
+        }
+        function closeModal() { overlay.classList.remove('active'); }
+
+        openBtn.addEventListener('click', openModal);
+        closeBtn.addEventListener('click', closeModal);
+        overlay.addEventListener('click', e => { if (e.target === overlay) closeModal(); });
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape' && overlay.classList.contains('active')) closeModal();
+        });
+    }
+
+    initCreateCommunity();
+</script>
+
+</body>
+</html>
