@@ -13,7 +13,8 @@
   'use strict';
 
   // Must match the origin the create-community widget iframe is actually served from
-  // (inspect the widget's iframe `src` on this page to confirm).
+  // (inspect the widget's iframe `src` on this page to confirm — defaults to the
+  // shared solutions-monorepo gallery's GitHub Pages origin).
   const WIDGET_ORIGIN = 'https://veronicamayer-staffbase.github.io';
 
   const OVERLAY_ID = 'createCommunityFullPageOverlay';
@@ -29,6 +30,7 @@
       align-items: center;
       justify-content: center;
       padding: 16px;
+      padding-top: 86px;
       background: rgba(15, 23, 42, 0.6);
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     }
@@ -66,7 +68,7 @@
     #${OVERLAY_ID} .cc-close:hover {
       background: rgba(0, 0, 0, 0.06);
     }
-    #${OVERLAY_ID} iframe {
+      #${OVERLAY_ID} iframe {
       width: 100%;
       height: 100%;
       border: none;
@@ -137,10 +139,13 @@
     document.body.appendChild(overlay);
   }
 
-  window.addEventListener('message', (e) => {
-    if (e.origin !== WIDGET_ORIGIN) return;
-    const data = e.data;
-    if (!data || data.type !== 'createCommunity:open' || !data.payload) return;
-    openOverlay(data.payload);
-  });
+ // The widget runs in a srcdoc iframe, so its messages carry the HOST page's
+// origin (e.g. https://mercedesdemo.staffbase.rocks), NOT the github.io origin
+// the widget code was downloaded from.
+window.addEventListener('message', (e) => {
+  if (e.origin !== window.location.origin) return;
+  const data = e.data;
+  if (!data || data.type !== 'createCommunity:open' || !data.payload) return;
+  openOverlay(data.payload);
+});
 })();
