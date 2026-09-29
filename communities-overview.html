@@ -593,6 +593,34 @@
   .ce-about-video video { width: 100%; max-height: 320px; display: block; background: #000; }
   .ce-about-video-caption { margin: 0; padding: 10px 14px; font-size: 13px; font-weight: 600; color: var(--ce-text-strong); }
 
+  .ce-about-h3 { font-size: 15px; font-weight: 700; color: var(--ce-text-strong); margin: 0 0 8px; }
+  .ce-about-list { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 6px; font-size: 14px; color: var(--ce-text-medium); }
+  .ce-about-list li { line-height: 1.45; }
+
+  .ce-info-box { display: flex; gap: 12px; padding: 16px; border-radius: var(--ce-radius-md); margin-bottom: 16px; }
+  .ce-info-box-icon {
+    width: 22px; height: 22px; min-width: 22px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(255,255,255,0.55);
+  }
+  .ce-info-box-icon svg { width: 13px; height: 13px; }
+  .ce-info-box-body { flex: 1; min-width: 0; }
+  .ce-info-box-title { margin: 0 0 6px; font-size: 13px; font-weight: 700; }
+  .ce-info-box-list { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 5px; font-size: 13px; }
+
+  .ce-accordion { border-top: 1px solid var(--ce-border); }
+  .ce-accordion-item { border-bottom: 1px solid var(--ce-border); }
+  .ce-accordion-trigger {
+    width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    padding: 14px 2px; background: none; border: none; text-align: left;
+    font-size: 14px; font-weight: 600; color: var(--ce-text-strong);
+  }
+  .ce-accordion-trigger:hover { color: #2563eb; }
+  .ce-accordion-chevron { width: 16px; height: 16px; min-width: 16px; color: var(--ce-text-medium); transition: transform .15s ease; }
+  .ce-accordion-item.is-open .ce-accordion-chevron { transform: rotate(180deg); }
+  .ce-accordion-panel { display: none; padding: 0 22px 14px 2px; font-size: 13px; line-height: 1.5; color: var(--ce-text-medium); }
+  .ce-accordion-item.is-open .ce-accordion-panel { display: block; }
+
   .ce-meta-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
   .ce-meta-label { font-size: 12px; color: var(--ce-text-medium); margin: 0 0 2px; }
   .ce-meta-value { font-size: 14px; font-weight: 600; color: var(--ce-text-strong); margin: 0; }
@@ -842,6 +870,9 @@
     postReportedToast: { en: "Post reported — thanks for flagging this.", de: "Beitrag gemeldet – danke für den Hinweis." },
     attachFile: { en: "Attach a file", de: "Datei anhängen" },
     videoCaption: { en: "Community highlight reel —", de: "Community-Highlight-Video –" },
+    howItWorksTitle: { en: "How it works", de: "So funktioniert's" },
+    quickFactsTitle: { en: "At a glance", de: "Auf einen Blick" },
+    faqTitle: { en: "Frequently asked questions", de: "Häufig gestellte Fragen" },
     postUpdated: { en: "Post updated", de: "Beitrag aktualisiert" },
     justNow: { en: "Just now", de: "Gerade eben" }
   };
@@ -879,6 +910,8 @@
   var FLAG_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 21V4"/><path d="M5 4h13l-3 4 3 4H5"/></svg>';
   var PAPERCLIP_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 12l6.5-6.5a3 3 0 114.24 4.24L9.5 19a5 5 0 11-7.07-7.07L11 3.35"/></svg>';
   var DOC_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h9l5 5v15H6z"/><path d="M15 2v5h5"/></svg>';
+  var CHEVRON_ICON = '<svg class="ce-accordion-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>';
+  var INFO_ICON = '<svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="1.8"/><line x1="12" y1="11" x2="12" y2="16.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="7.8" r="1.15"/></svg>';
 
   var communities = [
     {
@@ -893,6 +926,7 @@
         de: ["Ein entspannter Lesekreis für alle, die Bücher lieben — Romane, Sachbücher, Graphic Novels, alle willkommen.", "Wir stimmen zu Beginn jedes Monats über eine Buchempfehlung ab, diskutieren hier in Threads und treffen uns jeden Mittwoch zu „Lunch & Pages“."]
       },
       created: { en: "March 2024", de: "März 2024" },
+      howItWorks: { en: ["We vote on next month's pick in the first week — anyone can nominate a title.", "Join the discussion thread any time during the month, no need to have finished the book.", "Prefer talking out loud? Come to Lunch & Pages every Wednesday.", "Mix of genres — fiction, non-fiction, graphic novels, whatever people bring."], de: ["In der ersten Woche stimmen wir über die nächste Buchempfehlung ab – jede:r kann einen Titel vorschlagen.", "Der Diskussions-Thread ist den ganzen Monat offen, du musst das Buch nicht schon fertig gelesen haben.", "Lieber persönlich austauschen? Komm jeden Mittwoch zu Lunch & Pages vorbei.", "Genre-Mix – Romane, Sachbücher, Graphic Novels, was die Runde gerade mitbringt."] }, quickFacts: { en: ["New pick: first Monday of the month", "Discussion: ongoing in the feed", "In person: Lunch & Pages, Wednesdays, kitchen lounge", "Open to: everyone, no reading pace required"], de: ["Neue Empfehlung: erster Montag im Monat", "Diskussion: laufend im Feed", "Vor Ort: Lunch & Pages, mittwochs, Küchen-Lounge", "Offen für: alle, unabhängig vom Lesetempo"] }, faq: [ { q: { en: "Do I have to finish the book before joining the discussion?", de: "Muss ich das Buch fertig gelesen haben, um mitzudiskutieren?" }, a: { en: "No — jump in whenever you like, spoiler tags are used for anything past the halfway point.", de: "Nein – steig ein, wann du willst. Für alles ab der Buchmitte nutzen wir Spoiler-Tags." } }, { q: { en: "Can I suggest a book?", de: "Kann ich ein Buch vorschlagen?" }, a: { en: "Yes, drop your pick in the feed before the first Monday of the month and we'll include it in the vote.", de: "Klar, poste deinen Vorschlag vor dem ersten Montag im Monat im Feed, dann kommt er mit in die Abstimmung." } }, { q: { en: "Is Lunch & Pages the same as the book discussion?", de: "Ist Lunch & Pages dasselbe wie die Buchdiskussion?" }, a: { en: "No — Lunch & Pages is just quiet reading time together, no discussion pressure at all.", de: "Nein – bei Lunch & Pages wird nur gemeinsam in Ruhe gelesen, ganz ohne Diskussionsdruck." } } ],
       managers: [
         { name: "Gio Gaspari", initials: "GG", color: "pink", pronouns: { en: "he/him", de: "er/ihm" }, role: { en: "Internal Comms Lead", de: "Leitung Interne Kommunikation" } },
         { name: "Renick Büttner", initials: "RB", color: "orange", pronouns: { en: "he/him", de: "er/ihm" }, role: { en: "Account Executive", de: "Account Executive" } }
@@ -931,6 +965,7 @@
         de: ["Der Anlaufpunkt des Design-Teams, um Work-in-Progress zu teilen, sich gegenseitig Feedback zu geben und zwischen Projekten inspiriert zu bleiben.", "Wir veranstalten eine wöchentliche Kritikrunde und pflegen eine offene Figma-Bibliothek, damit jede:r an gemeinsamen Komponenten weiterbauen kann."]
       },
       created: { en: "June 2022", de: "Juni 2022" },
+      howItWorks: { en: ["Share work-in-progress any time — polished or rough, feedback is welcome either way.", "Join the weekly critique session to walk through a piece live.", "Browse the shared Figma library before starting something new — there's probably a component for it.", "Tag teammates directly if you want a second opinion fast."], de: ["Teile Work-in-Progress jederzeit – ob poliert oder roh, Feedback ist immer willkommen.", "Nimm an der wöchentlichen Kritikrunde teil, um etwas live durchzugehen.", "Schau vor einem neuen Projekt in der gemeinsamen Figma-Bibliothek vorbei – es gibt wahrscheinlich schon eine passende Komponente.", "Markiere Kolleg:innen direkt, wenn du schnell eine zweite Meinung brauchst."] }, quickFacts: { en: ["Critique session: Tuesdays, 11:00, design studio", "Shared library: open Figma, always up to date", "Feedback style: direct but kind", "New here: post an intro with your focus area"], de: ["Kritikrunde: dienstags, 11:00 Uhr, Design-Studio", "Gemeinsame Bibliothek: offenes Figma, immer aktuell", "Feedback-Stil: direkt, aber wertschätzend", "Neu hier: stell dich kurz mit deinem Schwerpunkt vor"] }, faq: [ { q: { en: "Do I need to be a designer to join?", de: "Muss ich Designer:in sein, um mitzumachen?" }, a: { en: "No — PMs and engineers who work closely with design are very welcome too.", de: "Nein – auch PMs und Engineers, die eng mit Design zusammenarbeiten, sind herzlich willkommen." } }, { q: { en: "How do I get feedback fast?", de: "Wie bekomme ich schnell Feedback?" }, a: { en: "Post in the feed and tag one or two teammates directly instead of waiting for the weekly session.", de: "Poste im Feed und markiere direkt ein bis zwei Kolleg:innen, statt auf die wöchentliche Runde zu warten." } }, { q: { en: "Can I reuse components from the shared library for my own project?", de: "Darf ich Komponenten aus der Bibliothek für eigene Projekte nutzen?" }, a: { en: "Yes, everything in the library is approved for use across all internal projects.", de: "Ja, alles in der Bibliothek ist für die Nutzung in allen internen Projekten freigegeben." } } ],
       managers: [ { name: "Anna Hoffmann", initials: "AH", color: "cyan", pronouns: { en: "she/her", de: "sie/ihr" }, role: { en: "Product Designer", de: "Product Designer" } }, { name: "Leo Brandt", initials: "LB", color: "pink", pronouns: { en: "he/him", de: "er/ihm" }, role: { en: "Design Systems Lead", de: "Design Systems Lead" } } ],
       events: [ { day: "8", month: { en: "Oct", de: "Okt" }, title: { en: "Design Critique", de: "Design Critique" }, time: { en: "11:00am", de: "11:00 Uhr" }, location: { en: "Design studio, 2nd floor", de: "Design-Studio, 2. Stock" }, going: 6 } ],
       posts: [
@@ -947,6 +982,7 @@
       desc: { en: "Pickup games, tournament sign-ups and everything else for the office beach volleyball crew.", de: "Spontane Spiele, Turnier-Anmeldungen und alles rund um die Beach-Volleyball-Truppe im Büro." },
       about: { en: ["For anyone who wants to play — casual pickup games most weeks and the occasional tournament on the rooftop court.", "No experience needed — we rotate teams every game so it stays fun and fair for everyone."], de: ["Für alle, die mitspielen wollen — meist spontane Spiele und ab und zu ein Turnier auf dem Dach-Court.", "Keine Erfahrung nötig – wir mischen die Teams bei jedem Spiel neu, damit es für alle fair und unterhaltsam bleibt."] },
       created: { en: "May 2023", de: "Mai 2023" },
+      howItWorks: { en: ["Pickup games happen most weeks — just show up, teams are formed on the spot.", "Sign-up for tournaments opens a few days before, first come first served.", "No gear? No problem, spare balls and knee pads are in the rooftop storage box.", "Teams rotate every game to keep it fair and mix up who plays with whom."], de: ["Spontane Spiele finden fast jede Woche statt – einfach vorbeikommen, Teams werden vor Ort gebildet.", "Die Turnier-Anmeldung öffnet ein paar Tage vorher, first come first served.", "Keine Ausrüstung? Kein Problem, Ersatzbälle und Knieschoner liegen in der Dachbox.", "Die Teams wechseln bei jedem Spiel, damit es fair bleibt und sich die Paarungen mischen."] }, quickFacts: { en: ["Pickup games: most weeks, rooftop court", "Tournaments: monthly, sign-up in advance", "Skill level: all welcome, beginners included", "Gear: spare balls available on-site"], de: ["Spontane Spiele: fast jede Woche, Dach-Court", "Turniere: monatlich, Anmeldung vorab", "Niveau: alle willkommen, auch Anfänger:innen", "Ausrüstung: Ersatzbälle vor Ort vorhanden"] }, faq: [ { q: { en: "Do I need to sign up for the casual pickup games?", de: "Muss ich mich für die spontanen Spiele anmelden?" }, a: { en: "No, those are drop-in — just show up on the rooftop court.", de: "Nein, die sind offen für alle – einfach auf dem Dach-Court vorbeikommen." } }, { q: { en: "What if I've never played beach volleyball before?", de: "Was, wenn ich noch nie Beach-Volleyball gespielt habe?" }, a: { en: "Totally fine, plenty of regulars are happy to show you the basics.", de: "Kein Problem, viele Stammspieler:innen zeigen dir gerne die Grundlagen." } }, { q: { en: "Is there a tournament every month?", de: "Gibt es jeden Monat ein Turnier?" }, a: { en: "Yes, usually the first Saturday — the exact date is always posted in the feed.", de: "Ja, meist am ersten Samstag – das genaue Datum steht immer im Feed." } } ],
       managers: [ { name: "Tom Cassidy", initials: "TC", color: "purple", pronouns: { en: "he/him", de: "er/ihm" }, role: { en: "Sales Development Rep", de: "Sales Development Rep" } }, { name: "Nadia Brooks", initials: "NB", color: "teal", pronouns: { en: "she/her", de: "sie/ihr" }, role: { en: "Customer Success", de: "Customer Success" } } ],
       events: [ { day: "5", month: { en: "Oct", de: "Okt" }, title: { en: "Rooftop Tournament", de: "Turnier auf dem Dach-Court" }, time: { en: "10:00am", de: "10:00 Uhr" }, location: { en: "Rooftop court", de: "Dach-Court" }, going: 10 } ],
       posts: [
@@ -963,6 +999,7 @@
       desc: { en: "The cross-functional home base for everyone working on Project Phoenix — updates, blockers and wins.", de: "Der Anlaufpunkt für alle, die an Project Phoenix arbeiten – Updates, Blocker und Erfolge." },
       about: { en: ["A cross-functional space for everyone contributing to Project Phoenix — engineering, design and product, all in one place.", "Weekly stand-up notes and the current roadmap are always pinned at the top of the feed."], de: ["Ein bereichsübergreifender Raum für alle, die an Project Phoenix mitarbeiten — Engineering, Design und Product an einem Ort.", "Wöchentliche Stand-up-Notizen und die aktuelle Roadmap sind immer oben im Feed angepinnt."] },
       created: { en: "January 2024", de: "Januar 2024" },
+      howItWorks: { en: ["Weekly stand-up notes are posted every Monday — read them to stay in sync without a meeting.", "Blockers get flagged in the feed the same day so the right person can jump in fast.", "The roadmap is pinned at the top and updated after every planning session.", "Cross-functional means exactly that — design, engineering and product all post here."], de: ["Jeden Montag werden die Stand-up-Notizen gepostet – so bleibst du ohne Meeting auf dem Laufenden.", "Blocker werden noch am selben Tag im Feed gemeldet, damit die richtige Person schnell reagieren kann.", "Die Roadmap ist oben angepinnt und wird nach jedem Planning aktualisiert.", "Bereichsübergreifend heißt hier wirklich alle – Design, Engineering und Product posten gemeinsam."] }, quickFacts: { en: ["Stand-up notes: every Monday", "Sprint review: Thursdays, 2:00pm, war room", "Roadmap: pinned post, updated after planning", "Blockers: flag same-day in the feed"], de: ["Stand-up-Notizen: jeden Montag", "Sprint Review: donnerstags, 14:00 Uhr, War Room", "Roadmap: angepinnter Post, aktualisiert nach jedem Planning", "Blocker: noch am selben Tag im Feed melden"] }, faq: [ { q: { en: "I'm not on the core team, can I still follow along?", de: "Ich bin nicht im Kernteam, kann ich trotzdem mitlesen?" }, a: { en: "Yes, the community is open to anyone who wants visibility into Project Phoenix.", de: "Ja, die Community ist offen für alle, die Einblick in Project Phoenix haben möchten." } }, { q: { en: "Where do I raise a blocker?", de: "Wo melde ich einen Blocker?" }, a: { en: "Post it directly in the feed and tag whoever owns that area — no need to wait for stand-up.", de: "Poste ihn direkt im Feed und markiere die zuständige Person – du musst nicht bis zum Stand-up warten." } }, { q: { en: "How often does the roadmap change?", de: "Wie oft ändert sich die Roadmap?" }, a: { en: "It's reviewed after every planning session, roughly every two weeks.", de: "Sie wird nach jedem Planning überprüft, also etwa alle zwei Wochen." } } ],
       managers: [ { name: "Alex Kramer", initials: "AK", color: "cyan", pronouns: { en: "she/her", de: "sie/ihr" }, role: { en: "Program Manager", de: "Program Manager" } }, { name: "Rana Javid", initials: "RJ", color: "pink", pronouns: { en: "she/her", de: "sie/ihr" }, role: { en: "Staff Engineer", de: "Staff Engineer" } } ],
       events: [ { day: "3", month: { en: "Oct", de: "Okt" }, title: { en: "Sprint Review", de: "Sprint Review" }, time: { en: "2:00pm", de: "14:00 Uhr" }, location: { en: "War room, 4th floor", de: "War Room, 4. Stock" }, going: 11 } ],
       posts: [
@@ -979,6 +1016,7 @@
       desc: { en: "Photos, walk meetups and advice for anyone sharing their life with a very good dog.", de: "Fotos, gemeinsame Spaziergänge und Tipps für alle, die ihr Leben mit einem sehr guten Hund teilen." },
       about: { en: ["For dog people. Share photos, swap advice, and join the occasional group walk.", "From puppy advice to trusted vet recommendations — if it's dog-related, someone here has an answer."], de: ["Für Hundemenschen. Teilt Fotos, tauscht Tipps aus und macht bei gelegentlichen Gruppenspaziergängen mit.", "Von Welpen-Tipps bis zu vertrauenswürdigen Tierarzt-Empfehlungen – wenn es um Hunde geht, hat hier jemand eine Antwort."] },
       created: { en: "September 2023", de: "September 2023" },
+      howItWorks: { en: ["Share photos any time — that's most of what happens here, and it's very welcome.", "Group walks are casual, just post in the feed if you're planning one.", "Got a dog-related question? Someone in this community has probably solved it already.", "New dog or foster? Introduce them, the community loves a good intro post."], de: ["Teile jederzeit Fotos – das macht einen Großteil der Community aus, und es ist sehr willkommen.", "Gruppenspaziergänge sind locker organisiert, einfach im Feed posten, wenn du einen planst.", "Eine Frage rund um Hunde? Wahrscheinlich hat schon jemand hier eine Lösung dafür.", "Neuer Hund oder Pflegehund? Stell ihn vor, die Community liebt gute Vorstellungsposts."] }, quickFacts: { en: ["Group walks: casual, announced in the feed", "Topics: photos, advice, vet recommendations", "Meetup spot: usually the central park entrance", "New members: intro posts encouraged"], de: ["Gruppenspaziergänge: locker, im Feed angekündigt", "Themen: Fotos, Tipps, Tierarzt-Empfehlungen", "Treffpunkt: meist der Eingang zum Stadtpark", "Neue Mitglieder: Vorstellungsposts erwünscht"] }, faq: [ { q: { en: "Do I need a dog to join?", de: "Muss ich einen Hund haben, um mitzumachen?" }, a: { en: "Not at all — plenty of members just enjoy the photos and are considering getting one.", de: "Überhaupt nicht – viele Mitglieder genießen einfach die Fotos oder überlegen sich einen Hund anzuschaffen." } }, { q: { en: "Are group walks limited by dog size or breed?", de: "Sind die Gruppenspaziergänge auf bestimmte Größen oder Rassen beschränkt?" }, a: { en: "No, all dogs and sizes are welcome, just keep leashes handy around the group.", de: "Nein, alle Hunde und Größen sind willkommen, bitte in der Gruppe die Leine griffbereit halten." } }, { q: { en: "Where do I ask for vet recommendations?", de: "Wo frage ich nach Tierarzt-Empfehlungen?" }, a: { en: "Just post your question in the feed — this community is great about sharing trusted contacts.", de: "Poste deine Frage einfach im Feed – hier werden gerne vertrauenswürdige Kontakte geteilt." } } ],
       managers: [ { name: "Petra Hahn", initials: "PH", color: "pink", pronouns: { en: "she/her", de: "sie/ihr" }, role: { en: "Office Manager", de: "Office Manager" } }, { name: "Kim Turner", initials: "KT", color: "teal", pronouns: { en: "she/her", de: "sie/ihr" }, role: { en: "Recruiter", de: "Recruiter" } } ],
       events: [ { day: "9", month: { en: "Oct", de: "Okt" }, title: { en: "Park Walk", de: "Spaziergang im Park" }, time: { en: "5:30pm", de: "17:30 Uhr" }, location: { en: "Central park entrance", de: "Eingang Stadtpark" }, going: 7 } ],
       posts: [
@@ -995,6 +1033,7 @@
       desc: { en: "Guided meditations, wellness challenges and tips for staying balanced during the workday.", de: "Angeleitete Meditationen, Wellness-Challenges und Tipps für mehr Balance im Arbeitsalltag." },
       about: { en: ["A space to reset — guided meditations, wellness challenges, and practical tips for staying balanced during the workday.", "New challenges launch on the first Monday of every month — no pressure, just progress."], de: ["Ein Ort zum Auftanken — angeleitete Meditationen, Wellness-Challenges und praktische Tipps für mehr Balance im Arbeitsalltag.", "Neue Challenges starten jeden ersten Montag im Monat – kein Druck, nur Fortschritt."] },
       created: { en: "April 2023", de: "April 2023" },
+      howItWorks: { en: ["Guided meditations run most days at lunchtime — drop in whenever it fits your schedule.", "New challenges launch on the first Monday of the month, no sign-up needed.", "Share what's working for you — the best tips here come from other members, not just experts.", "Everything is opt-in, there's no pressure to participate in every activity."], de: ["Geführte Meditationen finden fast täglich in der Mittagspause statt – komm einfach vorbei, wenn es passt.", "Neue Challenges starten jeden ersten Montag im Monat, keine Anmeldung nötig.", "Teile, was bei dir funktioniert – die besten Tipps kommen hier von anderen Mitgliedern, nicht nur von Expert:innen.", "Alles ist freiwillig, es gibt keinen Druck, an jeder Aktivität teilzunehmen."] }, quickFacts: { en: ["Meditation: most weekdays, 12:30pm, quiet room", "New challenge: first Monday of the month", "Format: guided sessions + peer tips", "Commitment: fully opt-in"], de: ["Meditation: an den meisten Werktagen, 12:30 Uhr, Ruheraum", "Neue Challenge: erster Montag im Monat", "Format: geführte Sessions + Tipps von Kolleg:innen", "Verbindlichkeit: komplett freiwillig"] }, faq: [ { q: { en: "Do I need any experience with meditation?", de: "Brauche ich Erfahrung mit Meditation?" }, a: { en: "No, sessions are guided start to finish and beginners are the majority of the room.", de: "Nein, die Sessions sind komplett angeleitet und die meisten Teilnehmenden sind Anfänger:innen." } }, { q: { en: "What happens if I miss a monthly challenge?", de: "Was passiert, wenn ich eine Monats-Challenge verpasse?" }, a: { en: "Nothing — join whenever, challenges are about progress, not streaks.", de: "Nichts – steig ein, wann du willst, es geht um Fortschritt, nicht um lückenlose Teilnahme." } }, { q: { en: "Is the quiet room only for this community?", de: "Ist der Ruheraum nur für diese Community reserviert?" }, a: { en: "No, it's shared, but this is usually a good time to find it free.", de: "Nein, er wird geteilt, aber zu dieser Zeit ist er meist frei." } } ],
       managers: [ { name: "Rita Lang", initials: "RL", color: "teal", pronouns: { en: "she/her", de: "sie/ihr" }, role: { en: "People & Culture", de: "People & Culture" } }, { name: "Amir Cohen", initials: "AC", color: "purple", pronouns: { en: "he/him", de: "er/ihm" }, role: { en: "Wellness Coach", de: "Wellness Coach" } } ],
       events: [ { day: "7", month: { en: "Oct", de: "Okt" }, title: { en: "Guided Meditation", de: "Geführte Meditation" }, time: { en: "12:30pm", de: "12:30 Uhr" }, location: { en: "Quiet room, 3rd floor", de: "Ruheraum, 3. Stock" }, going: 9 } ],
       posts: [
@@ -1011,6 +1050,7 @@
       desc: { en: "A space for working parents to swap scheduling tips, childcare recommendations and moral support.", de: "Ein Ort für berufstätige Eltern zum Austausch über Terminplanung, Kinderbetreuung und gegenseitige Unterstützung." },
       about: { en: ["A space for working parents to swap scheduling tips, childcare recommendations, and a bit of moral support.", "From school holidays to daycare waitlists, this is the place to ask the questions Google can't answer."], de: ["Ein Ort für berufstätige Eltern zum Austausch über Terminplanung, Kinderbetreuung und gegenseitige Unterstützung.", "Von Schulferien bis Kita-Wartelisten – hier stellt ihr die Fragen, die Google nicht beantworten kann."] },
       created: { en: "October 2022", de: "Oktober 2022" },
+      howItWorks: { en: ["Ask anything — childcare, schools, logistics — chances are someone here has been through it.", "The monthly meetup is casual, just swap stories and tips over coffee.", "Recommendations get collected in the feed so they're easy to search later.", "No topic is too small, from nap schedules to school holiday planning."], de: ["Frag einfach alles – Kinderbetreuung, Schule, Organisation – wahrscheinlich hat hier schon jemand Ähnliches erlebt.", "Der monatliche Austausch ist locker, einfach bei einem Kaffee Erfahrungen und Tipps teilen.", "Empfehlungen werden im Feed gesammelt, damit sie später leicht wiederzufinden sind.", "Kein Thema ist zu klein, vom Mittagsschlaf-Rhythmus bis zur Ferienplanung."] }, quickFacts: { en: ["Monthly meetup: first Friday, 4:00pm, kitchen lounge", "Topics: childcare, school, scheduling, moral support", "Recommendations: collected in the feed", "Open to: parents and caregivers of any kind"], de: ["Monatlicher Austausch: erster Freitag, 16:00 Uhr, Küchen-Lounge", "Themen: Kinderbetreuung, Schule, Organisation, gegenseitige Unterstützung", "Empfehlungen: werden im Feed gesammelt", "Offen für: Eltern und alle Betreuungspersonen"] }, faq: [ { q: { en: "Do I need to have kids already to join?", de: "Muss ich schon Kinder haben, um mitzumachen?" }, a: { en: "No, expecting parents and anyone planning ahead are very welcome.", de: "Nein, auch werdende Eltern und alle, die vorausplanen, sind herzlich willkommen." } }, { q: { en: "Where do I find past recommendations?", de: "Wo finde ich frühere Empfehlungen?" }, a: { en: "Search the feed, most tips and provider names are shared there and stay searchable.", de: "Durchsuche den Feed, die meisten Tipps und Kontakte werden dort geteilt und bleiben auffindbar." } }, { q: { en: "Is the monthly meetup only during work hours?", de: "Findet der monatliche Austausch nur während der Arbeitszeit statt?" }, a: { en: "Yes, it's scheduled at 4pm so it fits around pickup times.", de: "Ja, er ist bewusst auf 16 Uhr gelegt, damit er zu Abholzeiten passt." } } ],
       managers: [ { name: "Sara Petrov", initials: "SP", color: "pink", pronouns: { en: "she/her", de: "sie/ihr" }, role: { en: "HR Business Partner", de: "HR Business Partner" } }, { name: "Dan Kessler", initials: "DK", color: "cyan", pronouns: { en: "he/him", de: "er/ihm" }, role: { en: "Engineering Manager", de: "Engineering Manager" } } ],
       events: [ { day: "11", month: { en: "Oct", de: "Okt" }, title: { en: "Monthly Meetup", de: "Monatlicher Austausch" }, time: { en: "4:00pm", de: "16:00 Uhr" }, location: { en: "Kitchen lounge, 3rd floor", de: "Küchen-Lounge, 3. Stock" }, going: 13 } ],
       posts: [
@@ -1027,6 +1067,7 @@
       desc: { en: "Engineers across the company trading notes on architecture, tooling and best practices.", de: "Engineers aus dem ganzen Unternehmen tauschen sich über Architektur, Tools und Best Practices aus." },
       about: { en: ["Engineers across the company trading notes on architecture, tooling, and best practices — plus a weekly guild talk.", "Recordings of every guild talk are archived here, so you can always catch up later."], de: ["Engineers aus dem ganzen Unternehmen tauschen sich über Architektur, Tools und Best Practices aus — inklusive wöchentlichem Guild-Talk.", "Aufzeichnungen aller Guild-Talks werden hier archiviert, damit ihr jederzeit nachschauen könnt."] },
       created: { en: "December 2021", de: "Dezember 2021" },
+      howItWorks: { en: ["RFCs are posted for open comment before any major architecture decision.", "The weekly guild talk covers a different topic each time, recordings go up for anyone who misses it.", "Tooling and best-practice discussions happen right in the feed, searchable for later.", "Cross-team by design — this isn't scoped to one codebase or stack."], de: ["RFCs werden vor größeren Architekturentscheidungen zur offenen Kommentierung gepostet.", "Der wöchentliche Guild-Talk behandelt jedes Mal ein anderes Thema, Aufzeichnungen gibt's für alle, die nicht live dabei sein können.", "Diskussionen zu Tools und Best Practices laufen direkt im Feed und bleiben durchsuchbar.", "Bewusst teamübergreifend – nicht auf eine Codebase oder einen Stack beschränkt."] }, quickFacts: { en: ["Guild talk: weekly, 3:00pm, tech hub & Teams", "RFCs: open comment period before decisions", "Recordings: archived for every session", "Scope: all teams, all stacks"], de: ["Guild-Talk: wöchentlich, 15:00 Uhr, Tech-Hub & Teams", "RFCs: offene Kommentierungsphase vor Entscheidungen", "Aufzeichnungen: für jede Session archiviert", "Umfang: alle Teams, alle Stacks"] }, faq: [ { q: { en: "Can I comment on an RFC even if it's not my team's area?", de: "Darf ich einen RFC kommentieren, auch wenn es nicht mein Team betrifft?" }, a: { en: "Yes, cross-team perspective is exactly what makes RFCs here stronger.", de: "Ja, die teamübergreifende Perspektive macht die RFCs hier gerade stärker." } }, { q: { en: "Where do I find past guild talk recordings?", de: "Wo finde ich Aufzeichnungen vergangener Guild-Talks?" }, a: { en: "They're linked in the feed under each talk's original post.", de: "Sie sind im Feed beim jeweiligen ursprünglichen Post verlinkt." } }, { q: { en: "How long does an RFC stay open for comments?", de: "Wie lange bleibt ein RFC offen für Kommentare?" }, a: { en: "Typically until the Friday noted in the post, then a decision is posted.", de: "In der Regel bis zu dem im Post genannten Freitag, danach wird die Entscheidung gepostet." } } ],
       managers: [ { name: "Kim Park", initials: "KP", color: "teal", pronouns: { en: "she/her", de: "sie/ihr" }, role: { en: "Staff Engineer", de: "Staff Engineer" } }, { name: "Ivan Rossi", initials: "IR", color: "cyan", pronouns: { en: "he/him", de: "er/ihm" }, role: { en: "Principal Engineer", de: "Principal Engineer" } } ],
       events: [ { day: "10", month: { en: "Oct", de: "Okt" }, title: { en: "Guild Talk: Scalable Event Pipelines", de: "Guild-Talk: Skalierbare Event-Pipelines" }, time: { en: "3:00pm", de: "15:00 Uhr" }, location: { en: "Tech hub & Teams", de: "Tech-Hub & Teams" }, going: 22 } ],
       posts: [
@@ -1043,6 +1084,7 @@
       desc: { en: "Meetups, restaurant tips and everything else about life in and around Berlin.", de: "Meetups, Restauranttipps und alles rund ums Leben in und um Berlin." },
       about: { en: ["For everyone living in or curious about Berlin — meetups, restaurant tips, and everything about life in the city.", "Whether you're new to the city or a long-time local, this is the place for tips, meetups, and recommendations."], de: ["Für alle, die in Berlin leben oder sich dafür interessieren — Meetups, Restauranttipps und alles rund ums Leben in der Stadt.", "Ob neu in der Stadt oder schon lange hier – hier gibt's Tipps, Meetups und Empfehlungen."] },
       created: { en: "July 2022", de: "Juli 2022" },
+      howItWorks: { en: ["Meetups get posted whenever someone has an idea, no fixed schedule.", "New to the city? Ask here first, this community answers fast.", "Restaurant and event tips are shared as they come up, no need to wait for a round-up.", "Flat-share and neighborhood questions are always welcome."], de: ["Meetups werden gepostet, sobald jemand eine Idee hat, ohne festen Rhythmus.", "Neu in der Stadt? Frag hier zuerst, die Community antwortet schnell.", "Restaurant- und Veranstaltungstipps werden geteilt, sobald sie aufkommen, keine feste Zusammenfassung nötig.", "Fragen zu WGs und Kiezen sind immer willkommen."] }, quickFacts: { en: ["Meetups: posted as they're planned", "Topics: restaurants, events, neighborhoods, flat-shares", "Newcomers: always welcome, ask anything", "Reach: 234 members across the company"], de: ["Meetups: werden gepostet, sobald geplant", "Themen: Restaurants, Events, Kieze, WGs", "Neuankömmlinge: immer willkommen, fragt einfach", "Reichweite: 234 Mitglieder im ganzen Unternehmen"] }, faq: [ { q: { en: "I just moved to Berlin, where do I start?", de: "Ich bin gerade nach Berlin gezogen, wo fange ich an?" }, a: { en: "Post an intro in the feed — you'll usually get recommendations within the hour.", de: "Poste eine kurze Vorstellung im Feed – meistens bekommst du innerhalb einer Stunde Empfehlungen." } }, { q: { en: "Is this only for people who live in Berlin?", de: "Ist das nur für Leute, die in Berlin wohnen?" }, a: { en: "Mostly, but anyone curious about the city or visiting is welcome too.", de: "Größtenteils, aber auch alle, die neugierig sind oder zu Besuch kommen, sind willkommen." } }, { q: { en: "How do I find a flat-share recommendation?", de: "Wie finde ich eine WG-Empfehlung?" }, a: { en: "Post what you're looking for, members often know of openings before they're listed publicly.", de: "Poste, wonach du suchst, Mitglieder wissen oft von freien Zimmern, bevor sie öffentlich inseriert werden." } } ],
       managers: [ { name: "Finn Meyer", initials: "FM", color: "cyan", pronouns: { en: "he/him", de: "er/ihm" }, role: { en: "Office Experience Lead", de: "Office Experience Lead" } }, { name: "Hana Lindgren", initials: "HL", color: "pink", pronouns: { en: "she/her", de: "sie/ihr" }, role: { en: "Talent Acquisition", de: "Talent Acquisition" } } ],
       events: [ { day: "12", month: { en: "Oct", de: "Okt" }, title: { en: "Kreuzberg Street Food Market", de: "Streetfood-Markt Kreuzberg" }, time: { en: "12:00pm", de: "12:00 Uhr" }, location: { en: "Meet at the main entrance", de: "Treffpunkt Haupteingang" }, going: 18 } ],
       posts: [
@@ -1059,6 +1101,7 @@
       desc: { en: "Share your shots, swap gear advice and join monthly photo challenges.", de: "Zeig deine Fotos, tausche Ausrüstungstipps aus und mach bei monatlichen Foto-Challenges mit." },
       about: { en: ["For anyone who loves a good photo — share your shots, swap gear advice, and join the monthly challenge.", "Every month brings a new challenge theme, plus feedback threads where all skill levels are welcome."], de: ["Für alle, die gute Fotos lieben — teilt eure Bilder, tauscht Ausrüstungstipps aus und macht bei der monatlichen Challenge mit.", "Jeden Monat gibt es ein neues Challenge-Thema, plus Feedback-Threads für alle Erfahrungsstufen."] },
       created: { en: "February 2023", de: "Februar 2023" },
+      howItWorks: { en: ["A new challenge theme drops on the first of the month — submit anytime before the deadline.", "Feedback threads are for everyone, first-timers get just as much attention as regulars.", "Gear questions are welcome, from phone cameras to full manual setups.", "Monthly favorites get featured in the Media tab."], de: ["Am Monatsersten gibt's ein neues Challenge-Thema – einreichen kannst du jederzeit bis zur Deadline.", "Die Feedback-Threads sind für alle da, Neulinge bekommen genauso viel Aufmerksamkeit wie Stammmitglieder.", "Fragen zur Ausrüstung sind willkommen, vom Handy bis zum vollmanuellen Setup.", "Die Favoriten des Monats werden im Media-Tab vorgestellt."] }, quickFacts: { en: ["New challenge: first of the month", "Submission deadline: end of the month", "Skill level: all welcome, phone cameras included", "Highlights: featured in the Media tab"], de: ["Neue Challenge: Monatsanfang", "Einreichfrist: Monatsende", "Niveau: alle willkommen, auch mit dem Handy", "Highlights: im Media-Tab vorgestellt"] }, faq: [ { q: { en: "Do I need a professional camera to participate?", de: "Brauche ich eine professionelle Kamera, um mitzumachen?" }, a: { en: "Not at all, plenty of great entries come from phone cameras.", de: "Überhaupt nicht, viele tolle Beiträge entstehen mit dem Handy." } }, { q: { en: "Can I submit more than one photo per challenge?", de: "Darf ich mehr als ein Foto pro Challenge einreichen?" }, a: { en: "Yes, submit as many as you like, just tag them with the challenge theme.", de: "Ja, reich so viele ein wie du willst, markiere sie einfach mit dem Challenge-Thema." } }, { q: { en: "How are monthly favorites chosen?", de: "Wie werden die Favoriten des Monats ausgewählt?" }, a: { en: "Informally, based on reactions and comments — no formal judging panel.", de: "Informell, anhand von Reaktionen und Kommentaren – es gibt keine offizielle Jury." } } ],
       managers: [ { name: "Elena Wagner", initials: "EW", color: "teal", pronouns: { en: "she/her", de: "sie/ihr" }, role: { en: "Brand Designer", de: "Brand Designer" } }, { name: "Jamie Diaz", initials: "JD", color: "cyan", pronouns: { en: "he/him", de: "er/ihm" }, role: { en: "Content Creator", de: "Content Creator" } } ],
       events: [ { day: "9", month: { en: "Oct", de: "Okt" }, title: { en: "Photo Walk Downtown", de: "Foto-Walk Innenstadt" }, time: { en: "6:00pm", de: "18:00 Uhr" }, location: { en: "Meet at the main lobby", de: "Treffpunkt Empfangshalle" }, going: 9 } ],
       posts: [
@@ -1075,6 +1118,7 @@
       desc: { en: "Weekly trivia questions, team challenges and bragging rights for the office's most useless knowledge.", de: "Wöchentliche Quizfragen, Team-Challenges und Ruhm für die Kolleg:innen mit dem nutzlosesten Wissen." },
       about: { en: ["Weekly trivia, team challenges, and bragging rights for the office's most useless knowledge.", "Teams of up to four, new categories every week, and bragging rights on the line."], de: ["Wöchentliche Quizfragen, Team-Challenges und Ruhm für die Kolleg:innen mit dem nutzlosesten Wissen.", "Teams mit bis zu vier Personen, jede Woche neue Kategorien, und das Prestige steht auf dem Spiel."] },
       created: { en: "November 2023", de: "November 2023" },
+      howItWorks: { en: ["Teams of up to four, form your own or join one on the spot.", "A new category drops every week, nobody knows the topic in advance.", "Scores get posted in the feed afterward, bragging rights included.", "No prep needed — that's kind of the point."], de: ["Teams mit bis zu vier Personen, entweder selbst zusammenstellen oder spontan dazustoßen.", "Jede Woche gibt es eine neue Kategorie, das Thema ist vorher nicht bekannt.", "Die Ergebnisse werden danach im Feed gepostet, samt Angeberrechten.", "Vorbereitung ist nicht nötig – das ist eigentlich der Sinn der Sache."] }, quickFacts: { en: ["When: weekly, 5:00pm, break room", "Teams: up to 4 people, form on the spot", "Categories: new and secret every week", "Reigning champs: Quizteama Aguilera"], de: ["Wann: wöchentlich, 17:00 Uhr, Pausenraum", "Teams: bis zu 4 Personen, spontan bildbar", "Kategorien: jede Woche neu und geheim", "Amtierende Champions: Quizteama Aguilera"] }, faq: [ { q: { en: "Do I need a team before showing up?", de: "Brauche ich schon ein Team, bevor ich komme?" }, a: { en: "No, solo players get grouped into a team on arrival.", de: "Nein, Einzelspieler:innen werden vor Ort einem Team zugeteilt." } }, { q: { en: "What if I have to leave early?", de: "Was, wenn ich früher gehen muss?" }, a: { en: "Totally fine, teams can play short-handed, nobody minds.", de: "Völlig okay, Teams können auch in kleinerer Besetzung spielen, das stört niemanden." } }, { q: { en: "Is there a prize for winning?", de: "Gibt es einen Preis fürs Gewinnen?" }, a: { en: "Just bragging rights — and a very competitive scoreboard in the feed.", de: "Nur Angeberrechte – und eine sehr kompetitive Punktetabelle im Feed." } } ],
       managers: [ { name: "Ben Hoffmann", initials: "BH", color: "teal", pronouns: { en: "he/him", de: "er/ihm" }, role: { en: "Workplace Experience", de: "Workplace Experience" } }, { name: "Nora Price", initials: "NP", color: "cyan", pronouns: { en: "she/her", de: "sie/ihr" }, role: { en: "Event Coordinator", de: "Event Coordinator" } } ],
       events: [ { day: "10", month: { en: "Oct", de: "Okt" }, title: { en: "90s Movie Quiz", de: "Filmquiz der 90er" }, time: { en: "5:00pm", de: "17:00 Uhr" }, location: { en: "Break room", de: "Pausenraum" }, going: 16 } ],
       posts: [
@@ -1091,6 +1135,7 @@
       desc: { en: "Weekly picks, spoiler-free discussions and recommendations for movie nights in and out of the office.", de: "Wöchentliche Filmtipps, spoilerfreie Diskussionen und Empfehlungen für Kinoabende drinnen und draußen." },
       about: { en: ["Weekly picks, spoiler-free discussions, and recommendations for movie nights in and out of the office.", "Picks rotate genres each week and there's always a vegan popcorn option."], de: ["Wöchentliche Filmtipps, spoilerfreie Diskussionen und Empfehlungen für Kinoabende drinnen und draußen.", "Die Auswahl wechselt wöchentlich das Genre, und es gibt immer eine vegane Popcorn-Option."] },
       created: { en: "August 2023", de: "August 2023" },
+      howItWorks: { en: ["One pick per week, announced a few days ahead so you can clear your calendar.", "Genres rotate on purpose, so nobody's stuck with only one type of film.", "Discussions stay spoiler-free until everyone's had a chance to watch.", "Suggestions are always open, drop yours in the feed any time."], de: ["Eine Auswahl pro Woche, ein paar Tage vorher angekündigt, damit du dir Zeit freihalten kannst.", "Die Genres wechseln bewusst, damit niemand auf einen einzigen Filmtyp festgelegt ist.", "Diskussionen bleiben spoilerfrei, bis alle die Chance hatten, den Film zu sehen.", "Vorschläge sind immer offen, poste deinen jederzeit im Feed."] }, quickFacts: { en: ["Showtime: weekly, 7:00pm, town hall / big screen", "Genres: rotate every week", "Spoilers: held back until everyone's watched", "Snacks: vegan popcorn always available"], de: ["Termin: wöchentlich, 19:00 Uhr, Town Hall / Leinwand", "Genres: wechseln jede Woche", "Spoiler: erst, wenn alle geschaut haben", "Snacks: veganes Popcorn immer verfügbar"] }, faq: [ { q: { en: "Can I suggest a movie?", de: "Kann ich einen Film vorschlagen?" }, a: { en: "Yes, drop it in the feed any time, picks are chosen from community suggestions.", de: "Ja, poste ihn jederzeit im Feed, die Auswahl kommt aus den Vorschlägen der Community." } }, { q: { en: "What if I haven't seen the movie yet when we discuss it?", de: "Was, wenn ich den Film noch nicht gesehen habe, wenn er besprochen wird?" }, a: { en: "Discussions stay spoiler-free for the first few days, so you're safe to catch up.", de: "Die Diskussion bleibt die ersten Tage spoilerfrei, du kannst also in Ruhe nachholen." } }, { q: { en: "Is there always vegan popcorn?", de: "Gibt es immer veganes Popcorn?" }, a: { en: "Yes, it's a standing request from the group and always stocked.", de: "Ja, das ist ein Dauerwunsch der Gruppe und immer vorrätig." } } ],
       managers: [ { name: "Chloe Evans", initials: "CE", color: "pink", pronouns: { en: "she/her", de: "sie/ihr" }, role: { en: "Employee Experience", de: "Employee Experience" } }, { name: "Zack Sullivan", initials: "ZS", color: "teal", pronouns: { en: "he/him", de: "er/ihm" }, role: { en: "IT Support", de: "IT Support" } } ],
       events: [ { day: "11", month: { en: "Oct", de: "Okt" }, title: { en: "Office Movie Night", de: "Kinoabend im Büro" }, time: { en: "7:00pm", de: "19:00 Uhr" }, location: { en: "Town hall / big screen", de: "Town Hall / Leinwand" }, going: 20 } ],
       posts: [
@@ -1105,6 +1150,7 @@
   var notifOn = {};
   var attending = {};
   var openComments = {};
+  var openFaqItems = {};
   var openComposerId = null;
   var editingPostId = null;
   var replyingCommentId = null;
@@ -1294,9 +1340,11 @@
   function tabContentHtml(c) {
     if (activeDetailTab === "about") {
       var paras = c.about[LANG].map(function (p) { return '<p class="ce-about-text">' + p + '</p>'; }).join("");
+      var howItWorksHtml = (c.howItWorks[LANG] || []).map(function (li) { return '<li>' + li + '</li>'; }).join("");
       var galleryHtml = c.aboutImages.map(function (seed) {
         return '<img src="https://picsum.photos/seed/' + seed + '/300/220" alt="">';
       }).join("");
+      var quickFactsHtml = (c.quickFacts[LANG] || []).map(function (li) { return '<li>' + li + '</li>'; }).join("");
       var managersHtml = c.managers.map(function (m) {
         return (
           '<div class="ce-manager-tile">' +
@@ -1311,16 +1359,43 @@
           '</div>'
         );
       }).join("");
+      var faqHtml = (c.faq || []).map(function (item, i) {
+        var itemId = c.id + "-faq-" + i;
+        var isOpen = openFaqItems[itemId];
+        return (
+          '<div class="ce-accordion-item' + (isOpen ? " is-open" : "") + '">' +
+            '<button type="button" class="ce-accordion-trigger" data-faq-toggle data-id="' + itemId + '">' +
+              '<span>' + item.q[LANG] + '</span>' + CHEVRON_ICON +
+            '</button>' +
+            '<div class="ce-accordion-panel">' + item.a[LANG] + '</div>' +
+          '</div>'
+        );
+      }).join("");
       return (
         '<div class="ce-panel-box" style="margin-bottom:16px;">' + paras + '</div>' +
+        '<div class="ce-panel-box" style="margin-bottom:16px;">' +
+          '<p class="ce-about-h3">' + t("howItWorksTitle") + '</p>' +
+          '<ul class="ce-about-list">' + howItWorksHtml + '</ul>' +
+        '</div>' +
         '<div class="ce-about-gallery">' + galleryHtml + '</div>' +
         '<div class="ce-about-video">' +
           '<video controls preload="none" poster="https://picsum.photos/seed/' + c.bannerSeed + '/800/450" src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4"></video>' +
           '<p class="ce-about-video-caption">' + t("videoCaption") + ' ' + c.name + '</p>' +
         '</div>' +
+        '<div class="ce-info-box" style="background:' + c.iconBg + ';color:' + c.iconFg + ';">' +
+          '<div class="ce-info-box-icon" style="color:' + c.iconFg + ';">' + INFO_ICON + '</div>' +
+          '<div class="ce-info-box-body">' +
+            '<p class="ce-info-box-title">' + t("quickFactsTitle") + '</p>' +
+            '<ul class="ce-info-box-list">' + quickFactsHtml + '</ul>' +
+          '</div>' +
+        '</div>' +
         '<div class="ce-panel-box" style="margin-bottom:16px;">' +
           '<p class="ce-managers-title">' + USERS_ICON + t("communityManagers") + '</p>' +
           '<div class="ce-manager-grid">' + managersHtml + '</div>' +
+        '</div>' +
+        '<div class="ce-panel-box" style="margin-bottom:16px;">' +
+          '<p class="ce-about-h3">' + t("faqTitle") + '</p>' +
+          '<div class="ce-accordion">' + faqHtml + '</div>' +
         '</div>' +
         '<div class="ce-panel-box">' +
           '<div class="ce-meta-grid">' +
@@ -1891,6 +1966,16 @@
     renderDetail();
   }
 
+  function handleFaqToggle(e) {
+    var btn = e.target.closest("[data-faq-toggle]");
+    if (!btn) return;
+    e.stopPropagation();
+    var id = btn.getAttribute("data-id");
+    openFaqItems[id] = !openFaqItems[id];
+    var item = btn.closest(".ce-accordion-item");
+    if (item) item.classList.toggle("is-open", !!openFaqItems[id]);
+  }
+
   function handleAttachClick(e) {
     var btn = e.target.closest("[data-attach-btn]");
     if (!btn) return;
@@ -2014,6 +2099,7 @@
     handleCommentSend(e);
     handleReplySend(e);
     handleReportPost(e);
+    handleFaqToggle(e);
     handleAttachClick(e);
     handleRemovePendingAttach(e);
     handleMediaUploadClick(e);
