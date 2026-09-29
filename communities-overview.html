@@ -1054,6 +1054,194 @@
   function nextPostId() { return "post-" + (postIdCounter++); }
   function nextCommentId() { return "comment-" + (commentIdCounter++); }
 
+  /* ---- Real communities, merged alongside the hardcoded examples above using the
+     exact same data shape / card component.
+
+     GET /api/communities itself returns no entries on this instance — each community
+     is actually a "communities"-plugin installation living inside a space, so they
+     have to be discovered as: all spaces -> each space's installations -> keep the
+     ones with pluginID "communities" -> fetch each one's detail + its member group. ---- */
+
+  var AVATAR_COLORS = ["cyan", "pink", "purple", "teal", "orange"];
+  var MAX_GROUP_PAGES = 5; // 5 * 200 = 1000 members per community, a generous ceiling
+
+  function apiGet(path) {
+    return fetch(path, { credentials: "same-origin", headers: { Accept: "application/json" } })
+      .then(function (res) {
+        if (!res.ok) throw new Error(path + " responded with " + res.status);
+        return res.json();
+      });
+  }
+
+  function apiLocalizedPair(entry, field) {
+    var loc = (entry && entry.config && entry.config.localization) || {};
+    var en = (loc.en_US && loc.en_US[field]) || "";
+    var de = (loc.de_DE && loc.de_DE[field]) || "";
+    return { en: en || de, de: de || en };
+  }
+
+  function formatCreatedDate(iso) {
+    var d = iso ? new Date(iso) : null;
+    if (!d || isNaN(d.getTime())) return { en: "", de: "" };
+    try {
+      return {
+        en: new Intl.DateTimeFormat("en-US", { month: "long", year: "numeric" }).format(d),
+        de: new Intl.DateTimeFormat("de-DE", { month: "long", year: "numeric" }).format(d)
+      };
+    } catch (e) {
+      return { en: "", de: "" };
+    }
+  }
+
+  function userDisplayName(u) {
+    return [u.firstName, u.lastName].filter(Boolean).join(" ") || (LANG === "de" ? "Unbekannt" : "Unknown");
+  }
+
+  function userInitials(u) {
+    return (((u.firstName || "")[0] || "") + ((u.lastName || "")[0] || "")).toUpperCase() || "?";
+  }
+
+  function fetchAllGroupMembers(groupId) {
+    if (!groupId) return Promise.resolve([]);
+    function page(offset, acc, pageCount) {
+      if (pageCount >= MAX_GROUP_PAGES) return acc;
+      return apiGet("/api/groups/" + groupId + "/users?limit=200&offset=" + offset).then(function (data) {
+        var batch = (data && data.data) || [];
+        var combined = acc.concat(batch);
+        if (batch.length > 0 && combined.length < (data.total || 0)) {
+          return page(offset + 200, combined, pageCount + 1);
+        }
+        return combined;
+      });
+    }
+    return page(0, [], 0).catch(function () { return []; });
+  }
+
+  function discoverCommunityInstallationIds() {
+    return apiGet("/api/spaces?limit=200")
+      .then(function (data) {
+        var spaces = (data && data.data) || [];
+        return Promise.all(spaces.map(function (s) {
+          return apiGet("/api/spaces/" + s.id + "/installations?limit=200")
+            .then(function (d) { return (d && d.data) || []; })
+            .catch(function () { return []; });
+        }));
+      })
+      .then(function (perSpace) {
+        var ids = [];
+        perSpace.forEach(function (installations) {
+          installations.forEach(function (inst) {
+            if (inst.pluginID === "communities") ids.push(inst.id);
+          });
+        });
+        return ids;
+      });
+  }
+
+  function normalizeRealCommunity(detail, members) {
+    if (!detail || !detail.id) return null;
+    var title = apiLocalizedPair(detail, "title");
+    var description = apiLocalizedPair(detail, "description");
+    var name = title[LANG] || title.en || title.de || (LANG === "de" ? "Unbenannte Community" : "Untitled community");
+
+    var membersById = {};
+    members.forEach(function (u) { membersById[u.id] = u; });
+
+    var adminIds = ((detail.admins && detail.admins.users && detail.admins.users.data) || []).map(function (a) { return a.id; });
+    if (!adminIds.length && detail.owner && detail.owner.id) adminIds = [detail.owner.id];
+    var managers = adminIds.map(function (id, i) {
+      var u = membersById[id] || ((detail.owner && detail.owner.id === id) ? detail.owner : null);
+      if (!u) return null;
+      return {
+        name: userDisplayName(u),
+        initials: userInitials(u),
+        color: AVATAR_COLORS[i % AVATAR_COLORS.length],
+        pronouns: { en: "", de: "" },
+        role: { en: u.position || "", de: u.position || "" }
+      };
+    }).filter(Boolean);
+
+    var avatars = members.slice(0, 5).map(function (u, i) {
+      return [userInitials(u), AVATAR_COLORS[i % AVATAR_COLORS.length]];
+    });
+
+    var iconUrl = detail.icon && ((detail.icon.thumb && detail.icon.thumb.url) || (detail.icon.original && detail.icon.original.url));
+    var bannerUrl = (detail.bannerImage && detail.bannerImage.imageUrl) || null;
+
+    return {
+      id: "api-" + detail.id,
+      apiId: detail.id,
+      isApi: true,
+      joined: false,
+      recommended: false,
+      iconBg: "#e2e8f0", iconFg: "#334155", glyph: "grid",
+      bannerSeed: null,
+      image: iconUrl || bannerUrl || null,
+      detailBanner: bannerUrl,
+      members: typeof detail.memberCount === "number" ? detail.memberCount : members.length,
+      order: -(Date.parse(detail.created) || 0),
+      avatars: avatars,
+      name: name,
+      desc: description,
+      about: { en: description.en ? [description.en] : [], de: description.de ? [description.de] : [] },
+      created: formatCreatedDate(detail.created),
+      managers: managers,
+      events: [],
+      posts: []
+    };
+  }
+
+  function showDiscoverLoading(isLoading) {
+    var el = root.querySelector("[data-api-loading]");
+    if (isLoading) {
+      if (!el) {
+        el = document.createElement("p");
+        el.setAttribute("data-api-loading", "");
+        el.style.cssText = "font-size:12px;color:var(--ce-text-weak);margin:0 0 8px;";
+        el.textContent = LANG === "de" ? "Communities werden geladen…" : "Loading communities…";
+        grid.parentNode.insertBefore(el, grid);
+      }
+    } else if (el) {
+      el.remove();
+    }
+  }
+
+  function fetchRealCommunities() {
+    showDiscoverLoading(true);
+    return discoverCommunityInstallationIds()
+      .then(function (ids) {
+        return Promise.all(ids.map(function (id) {
+          return apiGet("/api/communities/" + id)
+            .then(function (detail) {
+              var groupId = detail.typedContributorIds && detail.typedContributorIds.groupIds && detail.typedContributorIds.groupIds[0];
+              return fetchAllGroupMembers(groupId).then(function (members) {
+                return normalizeRealCommunity(detail, members);
+              });
+            })
+            .catch(function () { return null; });
+        }));
+      })
+      .then(function (normalizedList) {
+        var existingIds = {};
+        communities.forEach(function (c) { existingIds[c.id] = true; });
+        normalizedList.filter(Boolean).forEach(function (c) {
+          if (!existingIds[c.id]) {
+            communities.push(c);
+            notifOn[c.id] = true;
+            existingIds[c.id] = true;
+          }
+        });
+      })
+      .catch(function (err) {
+        // Network/parse failure: fall back to just the hardcoded examples.
+        console.warn("Communities widget: failed to load real communities, showing examples only.", err);
+      })
+      .then(function () {
+        showDiscoverLoading(false);
+        renderList();
+      });
+  }
+
   function showToast(msg) {
     var toast = document.createElement("div");
     toast.className = "ce-toast";
@@ -1105,6 +1293,9 @@
   }
 
   function tileHtml(c, extraClass) {
+    if (c.image) {
+      return '<div class="ce-tile' + (extraClass ? " " + extraClass : "") + '" style="overflow:hidden;padding:0;"><img src="' + c.image + '" alt="" style="width:100%;height:100%;object-fit:cover;"></div>';
+    }
     return '<div class="ce-tile' + (extraClass ? " " + extraClass : "") + '" style="background:' + c.iconBg + ';color:' + c.iconFg + ';">' + (ICONS[c.glyph] || "") + '</div>';
   }
 
@@ -1205,7 +1396,7 @@
             '<div class="ce-manager-info">' +
               '<span class="ce-avatar c-' + m.color + '" style="position:static;margin:0;width:32px;height:32px;font-size:11px;">' + m.initials + '</span>' +
               '<div>' +
-                '<div class="ce-manager-name">' + m.name + ' <span>(' + m.pronouns[LANG] + ')</span></div>' +
+                '<div class="ce-manager-name">' + m.name + (m.pronouns[LANG] ? ' <span>(' + m.pronouns[LANG] + ')</span>' : '') + '</div>' +
                 '<div class="ce-manager-role">' + m.role[LANG] + '</div>' +
               '</div>' +
             '</div>' +
@@ -1476,7 +1667,8 @@
   function renderDetail() {
     var c = byId(currentDetailId);
     if (!c) return;
-    detailBanner.innerHTML = '<img src="https://picsum.photos/seed/' + c.bannerSeed + '/900/300" alt="">';
+    var bannerSrc = c.detailBanner || ('https://picsum.photos/seed/' + c.bannerSeed + '/900/300');
+    detailBanner.innerHTML = '<img src="' + bannerSrc + '" alt="">';
     detailContent.innerHTML = detailHtml(c);
   }
 
@@ -1817,6 +2009,13 @@
   applyStaticText();
   document.documentElement.lang = LANG;
   renderList();
+  fetchRealCommunities();
+
+  // Safari/Firefox can restore this page from bfcache on an iframe "reload" without
+  // re-running the script, which would otherwise leave real communities stale.
+  window.addEventListener("pageshow", function (e) {
+    if (e.persisted) fetchRealCommunities();
+  });
 })();
 </script>
 
