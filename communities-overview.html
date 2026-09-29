@@ -305,11 +305,13 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 12px;
-    margin-top: 4px;
+    gap: 16px;
+    margin-top: 24px;
     flex-wrap: wrap;
   }
   .ce-footer-row .ce-btn { height: 40px; padding: 0 18px; font-size: 14px; }
+  .ce-footer-row .ce-btn--primary { background: #0078D6; }
+  .ce-footer-row .ce-btn--primary:hover { background: #0067b8; }
 
   .ce-empty {
     padding: 32px 8px;
@@ -584,6 +586,50 @@
   }
   .ce-media-tile svg { width: 22px; height: 22px; }
   .ce-media-tile u { color: #2563eb; text-decoration: underline; }
+
+  /* Create Community overlay/modal — mirrors create-community-widget.html so the
+     "Create Community" button opens the same community-creation iframe. Used as a
+     local fallback when the parent page's full-page-overlay userscript isn't active. */
+  .cw-modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.6);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+    padding: 16px;
+  }
+  .cw-modal-overlay.active { display: flex; }
+  .community-modal {
+    position: relative;
+    background: #ffffff;
+    width: 100%;
+    max-width: 712px;
+    height: 90vh;
+    border-radius: 14px;
+    overflow: hidden;
+    animation: communityModalIn 0.18s ease;
+  }
+  @keyframes communityModalIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .community-modal iframe { width: 100%; height: 100%; border: none; display: block; }
+  .cw-close-btn {
+    position: absolute;
+    top: 14px;
+    right: 16px;
+    background: none;
+    border: none;
+    color: var(--ce-text-medium);
+    font-size: 22px;
+    line-height: 1;
+    cursor: pointer;
+    padding: 4px;
+    z-index: 1;
+  }
+  .cw-close-btn:hover { color: var(--ce-text-strong); }
 </style>
 </head>
 <body>
@@ -641,7 +687,7 @@
             <p class="ce-empty" data-empty-msg style="display:none;" data-t="noResults"></p>
 
             <div class="ce-footer-row">
-              <button type="button" class="ce-btn ce-btn--ghost" style="height:40px;padding:0 18px;font-size:14px;" data-t="requestCommunity"></button>
+              <button type="button" class="ce-btn ce-btn--primary" id="createCommunityBtn" style="height:40px;padding:0 18px;font-size:14px;" data-t="createCommunity"></button>
               <button type="button" class="ce-btn ce-btn--primary" data-see-more style="height:40px;padding:0 18px;font-size:14px;display:none;" data-t="seeMore"></button>
             </div>
           </div>
@@ -658,6 +704,13 @@
       <div class="ce-detail-card" data-detail-content></div>
     </div>
 
+  </div>
+</div>
+
+<div class="cw-modal-overlay" id="communityOverlay">
+  <div class="community-modal" role="dialog" aria-modal="true" aria-label="Create Community">
+    <button class="cw-close-btn" id="closeCommunityBtn" aria-label="Close">&times;</button>
+    <iframe id="communityIframe" title="Create Community"></iframe>
   </div>
 </div>
 
@@ -682,7 +735,7 @@
     sortOldest: { en: "Oldest", de: "Älteste" },
     sortAZ: { en: "A–Z", de: "A–Z" },
     seeMore: { en: "See more", de: "Mehr anzeigen" },
-    requestCommunity: { en: "Request community", de: "Community anfragen" },
+    createCommunity: { en: "Create Community", de: "Community erstellen" },
     noResults: { en: "No communities found.", de: "Keine Communities gefunden." },
     membersLabel: { en: "members", de: "Mitglieder" },
     onlineLabel: { en: "online", de: "online" },
@@ -1764,6 +1817,77 @@
   applyStaticText();
   document.documentElement.lang = LANG;
   renderList();
+})();
+</script>
+
+<script>
+(function () {
+  // Create Community button — ported from create-community-widget.html so this
+  // page opens the same community-creation iframe (see create-community-full-page-overlay.js).
+  var COMMUNITY_IFRAME_SRC = 'https://mercedes-communities.vercel.app/?embed_token=KiqGMKdZq31spMKpDV4zG5EfKT7WemKN';
+  var COMMUNITY_IFRAME_WIDTH = 712;
+
+  // Prefer an explicit ?overlayHost= param if present, then the referring page's
+  // origin, and finally a hardcoded default. The param/referrer paths are unreliable
+  // when this page is rendered into a `srcdoc` iframe (location.href is "about:srcdoc"),
+  // which drops any query string and can leave document.referrer unset — so without
+  // the default, detection silently fails and the button falls back to the local,
+  // iframe-clipped modal instead of posting to the parent.
+  var DEFAULT_OVERLAY_HOST = 'https://mercedesdemo.staffbase.rocks';
+  var OVERLAY_HOST = (function () {
+    var ALLOWED = /^https:\/\/([a-z0-9-]+\.)*staffbase\.(rocks|com)$/i;
+
+    function originOf(url) {
+      try { return new URL(url).origin; } catch (e) { return null; }
+    }
+
+    var raw = new URLSearchParams(location.search).get('overlayHost');
+    var fromParam = raw ? originOf(raw) : null;
+    if (fromParam && ALLOWED.test(fromParam)) return fromParam;
+
+    var fromReferrer = document.referrer ? originOf(document.referrer) : null;
+    if (fromReferrer && ALLOWED.test(fromReferrer)) return fromReferrer;
+
+    return DEFAULT_OVERLAY_HOST;
+  })();
+
+  function buildCommunityPayload() {
+    return {
+      src: COMMUNITY_IFRAME_SRC,
+      width: COMMUNITY_IFRAME_WIDTH,
+      closeLabel: 'Close',
+    };
+  }
+
+  function initCreateCommunity() {
+    var overlay = document.getElementById('communityOverlay');
+    var openBtn = document.getElementById('createCommunityBtn');
+    var closeBtn = document.getElementById('closeCommunityBtn');
+    var iframe = document.getElementById('communityIframe');
+    if (!openBtn) return;
+
+    function openModal() {
+      // If an embedder configured a trusted host origin, hand the open request off to
+      // that page's own listener so it can render a true full-page takeover instead of
+      // the overlay being clipped to this iframe's box. Never postMessage to '*'.
+      if (OVERLAY_HOST && window.parent !== window) {
+        window.parent.postMessage({ type: 'createCommunity:open', payload: buildCommunityPayload() }, OVERLAY_HOST);
+        return;
+      }
+      if (!iframe.src) iframe.src = COMMUNITY_IFRAME_SRC;
+      overlay.classList.add('active');
+    }
+    function closeModal() { overlay.classList.remove('active'); }
+
+    openBtn.addEventListener('click', openModal);
+    closeBtn.addEventListener('click', closeModal);
+    overlay.addEventListener('click', function (e) { if (e.target === overlay) closeModal(); });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && overlay.classList.contains('active')) closeModal();
+    });
+  }
+
+  initCreateCommunity();
 })();
 </script>
 </body>
