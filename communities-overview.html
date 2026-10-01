@@ -305,11 +305,13 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 12px;
-    margin-top: 4px;
+    gap: 16px;
+    margin-top: 24px;
     flex-wrap: wrap;
   }
   .ce-footer-row .ce-btn { height: 40px; padding: 0 18px; font-size: 14px; }
+  .ce-footer-row .ce-btn--primary { background: #0078D6; }
+  .ce-footer-row .ce-btn--primary:hover { background: #0067b8; }
 
   .ce-empty {
     padding: 32px 8px;
@@ -417,46 +419,10 @@
     color: var(--ce-text-strong);
     padding-top: 4px;
   }
-  .ce-composer-actions { display: flex; align-items: center; gap: 10px; }
+  .ce-composer-actions { display: flex; justify-content: flex-end; gap: 10px; }
   .ce-composer-actions .ce-btn { height: 34px; padding: 0 16px; }
-  .ce-composer-actions-spacer { flex: 1; }
   .ce-composer-cancel { display: inline-flex; align-items: center; height: 34px; padding: 0 12px; font-size: 13px; font-weight: 600; color: var(--ce-text-medium); background: none; border: none; }
   .ce-composer-cancel:hover { color: var(--ce-text-strong); }
-  .ce-attach-btn, .ce-comment-attach-btn {
-    width: 34px; height: 34px; min-width: 34px; border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    border: 1px solid var(--ce-border-strong); background: var(--ce-surface); color: var(--ce-text-medium);
-  }
-  .ce-attach-btn svg, .ce-comment-attach-btn svg { width: 15px; height: 15px; }
-  .ce-attach-btn:hover, .ce-comment-attach-btn:hover { color: var(--ce-text-strong); background: #f2f3f5; }
-  .ce-comment-attach-btn { width: 30px; height: 30px; min-width: 30px; }
-  .ce-comment-attach-btn svg { width: 13px; height: 13px; }
-
-  .ce-attach-chips { display: flex; flex-wrap: wrap; gap: 8px; }
-  .ce-attach-chip {
-    display: flex; align-items: center; gap: 6px;
-    border: 1px solid var(--ce-border); border-radius: 999px;
-    padding: 4px 10px 4px 4px; font-size: 12px; color: var(--ce-text-strong); background: #f7f8f9;
-  }
-  .ce-attach-chip img { width: 22px; height: 22px; border-radius: 50%; object-fit: cover; }
-  .ce-attach-chip-icon { width: 22px; height: 22px; border-radius: 50%; background: var(--ce-border); display: flex; align-items: center; justify-content: center; color: var(--ce-text-medium); }
-  .ce-attach-chip-icon svg { width: 12px; height: 12px; }
-  .ce-attach-chip-name { max-width: 140px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .ce-attach-chip-remove { border: none; background: none; color: var(--ce-text-weak); font-size: 15px; line-height: 1; padding: 0; }
-  .ce-attach-chip-remove:hover { color: var(--ce-text-strong); }
-
-  .ce-attachments { display: flex; flex-direction: column; gap: 8px; margin-top: 8px; }
-  .ce-doc-attachment {
-    display: flex; align-items: center; gap: 10px;
-    border: 1px solid var(--ce-border); border-radius: var(--ce-radius-sm);
-    padding: 10px 12px; color: var(--ce-text-strong);
-  }
-  .ce-doc-attachment:hover { background: #f7f8f9; }
-  .ce-doc-attachment svg { width: 20px; height: 20px; color: var(--ce-text-medium); }
-  .ce-doc-attachment-info { display: flex; flex-direction: column; }
-  .ce-doc-attachment-name { font-size: 13px; font-weight: 600; }
-  .ce-doc-attachment-size { font-size: 11px; color: var(--ce-text-weak); }
-  .ce-comment-bubble .ce-post-image { max-height: 160px; }
 
   .ce-post-edit textarea {
     width: 100%;
@@ -523,8 +489,89 @@
   .ce-post-tools { position: absolute; top: 16px; right: 0; display: flex; gap: 8px; color: var(--ce-text-weak); background: none; border: none; padding: 4px; }
   .ce-post-tools svg { width: 15px; height: 15px; }
   .ce-post-tools button { display: flex; background: none; border: none; padding: 0; color: inherit; }
-  .ce-post-tools button.is-reported { color: #dc2626; }
   .ce-post-action-btn.is-active { color: #2563eb; }
+
+  .ce-composer-attach-group { display: flex; gap: 6px; margin-right: auto; }
+  .ce-composer-actions { justify-content: flex-start; }
+  .ce-composer-attach-btn {
+    display: flex; align-items: center; justify-content: center;
+    width: 32px; height: 32px; border-radius: 50%; border: none; background: none;
+    color: var(--ce-text-medium);
+  }
+  .ce-composer-attach-btn:hover { background: #f2f3f5; color: var(--ce-text-strong); }
+  .ce-composer-attach-btn svg { width: 18px; height: 18px; }
+  .ce-composer-attachments { display: flex; flex-wrap: wrap; gap: 8px; }
+  .ce-composer-chip {
+    position: relative; display: flex; align-items: center; gap: 6px;
+    border: 1px solid var(--ce-border); border-radius: var(--ce-radius-sm);
+    background: var(--ce-surface); font-size: 12px; color: var(--ce-text-strong);
+    overflow: hidden;
+  }
+  .ce-composer-chip.is-image { width: 64px; height: 64px; padding: 0; }
+  .ce-composer-chip.is-image img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .ce-composer-chip.is-doc { padding: 6px 10px; max-width: 200px; }
+  .ce-composer-chip.is-doc svg { width: 16px; height: 16px; min-width: 16px; color: var(--ce-text-medium); }
+  .ce-composer-chip-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .ce-composer-chip-remove {
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(15,23,42,.6); color: #fff; border: none; border-radius: 50%;
+    width: 16px; height: 16px; padding: 0;
+  }
+  .ce-composer-chip.is-image .ce-composer-chip-remove { position: absolute; top: 3px; right: 3px; }
+  .ce-composer-chip.is-doc .ce-composer-chip-remove { background: none; color: var(--ce-text-weak); margin-left: 2px; }
+  .ce-composer-chip-remove svg { width: 10px; height: 10px; }
+
+  .ce-post-menu { position: absolute; top: 16px; right: 0; }
+  .ce-post-menu-btn { display: flex; background: none; border: none; padding: 4px; color: var(--ce-text-weak); }
+  .ce-post-menu-btn svg { width: 16px; height: 16px; }
+  .ce-post-menu-dropdown {
+    display: none; position: absolute; top: 26px; right: 0; z-index: 20;
+    background: #fff; border: 1px solid var(--ce-border); border-radius: var(--ce-radius-sm);
+    box-shadow: 0 8px 24px rgba(0,0,0,.12); min-width: 140px; overflow: hidden;
+  }
+  .ce-post-menu.is-open .ce-post-menu-dropdown { display: block; }
+  .ce-post-menu-dropdown button {
+    display: flex; align-items: center; gap: 8px; width: 100%; padding: 10px 12px;
+    background: none; border: none; font-size: 13px; font-weight: 600; color: var(--ce-text-strong); text-align: left;
+  }
+  .ce-post-menu-dropdown button:hover { background: #f2f3f5; }
+  .ce-post-menu-dropdown svg { width: 15px; height: 15px; }
+
+  .ce-post-reported-notice { display: flex; align-items: center; gap: 6px; margin-top: 6px; font-size: 12px; color: var(--ce-text-weak); font-style: italic; }
+  .ce-post-reported-notice svg { width: 14px; height: 14px; }
+
+  .ce-post-gallery { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 6px; margin-top: 8px; }
+  .ce-post-gallery img { width: 100%; height: 160px; object-fit: cover; border-radius: var(--ce-radius-sm); display: block; }
+
+  .ce-post-docs { display: flex; flex-direction: column; gap: 6px; margin-top: 8px; }
+  .ce-post-doc-chip {
+    display: flex; align-items: center; gap: 8px; padding: 8px 10px;
+    border: 1px solid var(--ce-border); border-radius: var(--ce-radius-sm); font-size: 13px; color: var(--ce-text-strong);
+  }
+  .ce-post-doc-chip svg:first-child { width: 18px; height: 18px; min-width: 18px; color: var(--ce-text-medium); }
+  .ce-post-doc-name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .ce-post-doc-size { color: var(--ce-text-weak); font-size: 12px; }
+  .ce-post-doc-chip a { display: flex; color: var(--ce-text-medium); }
+  .ce-post-doc-chip a svg { width: 16px; height: 16px; }
+
+  .ce-report-modal {
+    position: relative; background: #fff; width: 100%; max-width: 400px;
+    border-radius: 14px; padding: 20px; animation: communityModalIn 0.18s ease;
+  }
+  .ce-report-modal h3 { margin: 0 0 4px; font-size: 16px; font-weight: 700; color: var(--ce-text-strong); }
+  .ce-report-modal p { margin: 0 0 14px; font-size: 13px; color: var(--ce-text-weak); }
+  .ce-report-reasons { display: flex; flex-direction: column; gap: 10px; margin-bottom: 12px; }
+  .ce-report-reason-row { display: flex; align-items: center; gap: 8px; font-size: 14px; color: var(--ce-text-strong); }
+  .ce-report-details {
+    width: 100%; border: 1px solid var(--ce-border-strong); border-radius: var(--ce-radius-sm);
+    padding: 8px 10px; font-family: inherit; font-size: 13px; resize: vertical; min-height: 60px; margin-bottom: 16px;
+  }
+  .ce-report-actions { display: flex; justify-content: flex-end; gap: 10px; }
+  .ce-report-actions .ce-btn { height: 34px; padding: 0 16px; }
+
+  .ce-media-section-title { font-size: 13px; font-weight: 700; color: var(--ce-text-strong); margin: 20px 0 12px; }
+  .ce-media-section-title:first-child { margin-top: 0; }
+  .ce-media-doc-list { display: flex; flex-direction: column; gap: 8px; }
 
   .ce-comments-wrap { margin-top: 10px; display: flex; flex-direction: column; gap: 8px; }
   .ce-comment-row { display: flex; gap: 10px; }
@@ -568,17 +615,22 @@
 
   .ce-about-text { font-size: 14px; color: var(--ce-text-medium); margin: 0 0 10px; }
   .ce-about-text:last-of-type { margin-bottom: 0; }
+  .ce-about-list { margin: 12px 0 0; padding: 0 0 0 18px; display: flex; flex-direction: column; gap: 6px; }
+  .ce-about-list li { font-size: 14px; color: var(--ce-text-medium); }
+  .ce-about-photo { border-radius: var(--ce-radius-md); overflow: hidden; margin-bottom: 16px; }
+  .ce-about-photo img { width: 100%; height: 180px; object-fit: cover; display: block; }
+  .ce-info-box { display: flex; align-items: flex-start; gap: 10px; border-radius: var(--ce-radius-md); padding: 14px 16px; margin-bottom: 16px; }
+  .ce-info-box svg { width: 18px; height: 18px; min-width: 18px; margin-top: 1px; }
+  .ce-info-box p { margin: 0; font-size: 13px; font-weight: 600; line-height: 1.4; }
   .ce-managers-title { display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: var(--ce-text-strong); margin: 0 0 10px; }
   .ce-managers-title svg { width: 15px; height: 15px; }
-  .ce-manager-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; }
-  .ce-manager-tile {
-    border: 1px solid var(--ce-border); border-radius: var(--ce-radius-md);
-    padding: 14px; display: flex; flex-direction: column; align-items: flex-start; gap: 6px;
-  }
-  .ce-manager-tile-name { font-size: 13px; font-weight: 700; color: var(--ce-text-strong); margin-top: 4px; }
-  .ce-manager-tile-name span { font-weight: 400; color: var(--ce-text-weak); }
-  .ce-manager-tile-role { font-size: 12px; color: var(--ce-text-medium); }
-  .ce-manager-tile-actions { display: flex; gap: 6px; margin-top: 4px; }
+  .ce-manager-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--ce-border); }
+  .ce-manager-row:last-child { border-bottom: none; }
+  .ce-manager-info { display: flex; align-items: center; gap: 10px; min-width: 0; }
+  .ce-manager-name { font-size: 13px; font-weight: 600; color: var(--ce-text-strong); }
+  .ce-manager-name span { font-weight: 400; color: var(--ce-text-weak); }
+  .ce-manager-role { font-size: 12px; color: var(--ce-text-medium); }
+  .ce-manager-actions { display: flex; gap: 6px; flex-shrink: 0; }
   .ce-icon-btn {
     width: 28px; height: 28px; border-radius: 50%;
     border: 1px solid var(--ce-border-strong);
@@ -586,40 +638,6 @@
     color: #2563eb; background: var(--ce-surface);
   }
   .ce-icon-btn svg { width: 14px; height: 14px; }
-
-  .ce-about-gallery { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 16px; }
-  .ce-about-gallery img { width: 100%; height: 110px; object-fit: cover; border-radius: var(--ce-radius-sm); display: block; }
-  .ce-about-video { border: 1px solid var(--ce-border); border-radius: var(--ce-radius-md); overflow: hidden; margin-bottom: 16px; }
-  .ce-about-video video { width: 100%; max-height: 320px; display: block; background: #000; }
-  .ce-about-video-caption { margin: 0; padding: 10px 14px; font-size: 13px; font-weight: 600; color: var(--ce-text-strong); }
-
-  .ce-about-h3 { font-size: 15px; font-weight: 700; color: var(--ce-text-strong); margin: 0 0 8px; }
-  .ce-about-list { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 6px; font-size: 14px; color: var(--ce-text-medium); }
-  .ce-about-list li { line-height: 1.45; }
-
-  .ce-info-box { display: flex; gap: 12px; padding: 16px; border-radius: var(--ce-radius-md); margin-bottom: 16px; }
-  .ce-info-box-icon {
-    width: 22px; height: 22px; min-width: 22px; border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    background: rgba(255,255,255,0.55);
-  }
-  .ce-info-box-icon svg { width: 13px; height: 13px; }
-  .ce-info-box-body { flex: 1; min-width: 0; }
-  .ce-info-box-title { margin: 0 0 6px; font-size: 13px; font-weight: 700; }
-  .ce-info-box-list { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 5px; font-size: 13px; }
-
-  .ce-accordion { border-top: 1px solid var(--ce-border); }
-  .ce-accordion-item { border-bottom: 1px solid var(--ce-border); }
-  .ce-accordion-trigger {
-    width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 12px;
-    padding: 14px 2px; background: none; border: none; text-align: left;
-    font-size: 14px; font-weight: 600; color: var(--ce-text-strong);
-  }
-  .ce-accordion-trigger:hover { color: #2563eb; }
-  .ce-accordion-chevron { width: 16px; height: 16px; min-width: 16px; color: var(--ce-text-medium); transition: transform .15s ease; }
-  .ce-accordion-item.is-open .ce-accordion-chevron { transform: rotate(180deg); }
-  .ce-accordion-panel { display: none; padding: 0 22px 14px 2px; font-size: 13px; line-height: 1.5; color: var(--ce-text-medium); }
-  .ce-accordion-item.is-open .ce-accordion-panel { display: block; }
 
   .ce-meta-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
   .ce-meta-label { font-size: 12px; color: var(--ce-text-medium); margin: 0 0 2px; }
@@ -650,8 +668,6 @@
   @media (min-width: 640px) { .ce-media-grid { grid-template-columns: repeat(4, 1fr); } }
   .ce-media-tile {
     aspect-ratio: 1;
-    width: 100%;
-    background: none;
     border: 1.5px dashed var(--ce-border-strong);
     border-radius: var(--ce-radius-sm);
     display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px;
@@ -659,18 +675,6 @@
   }
   .ce-media-tile svg { width: 22px; height: 22px; }
   .ce-media-tile u { color: #2563eb; text-decoration: underline; }
-  .ce-media-tile.has-doc {
-    border-style: solid; border-color: var(--ce-border); color: var(--ce-text-strong);
-    justify-content: center; gap: 8px;
-  }
-  .ce-media-tile.has-doc svg { color: var(--ce-text-medium); }
-  .ce-media-doc-name { font-size: 12px; font-weight: 600; padding: 0 8px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 100%; }
-  .ce-media-remove {
-    position: absolute; top: 6px; right: 6px; width: 20px; height: 20px;
-    border-radius: 50%; border: none; background: rgba(0,0,0,0.55); color: #fff;
-    font-size: 13px; line-height: 1; display: flex; align-items: center; justify-content: center;
-  }
-  .ce-media-tile.has-image, .ce-media-tile.has-doc { position: relative; }
 
   /* Create Community overlay/modal — mirrors create-community-widget.html so the
      "Create Community" button opens the same community-creation iframe. Used as a
@@ -789,8 +793,28 @@
       <div class="ce-detail-card" data-detail-content></div>
     </div>
 
-    <input type="file" multiple style="display:none" data-hidden-file-input>
+  </div>
+</div>
 
+<input type="file" id="composerPhotoInput" accept="image/*" multiple style="display:none;">
+<input type="file" id="composerDocInput" accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.csv" multiple style="display:none;">
+
+<div class="cw-modal-overlay" id="reportOverlay">
+  <div class="ce-report-modal" role="dialog" aria-modal="true" aria-label="Report post">
+    <button class="cw-close-btn" data-report-close aria-label="Close">&times;</button>
+    <h3 data-t="reportPostTitle"></h3>
+    <p data-t="reportPostSub"></p>
+    <div class="ce-report-reasons">
+      <label class="ce-report-reason-row"><input type="radio" name="reportReason" value="spam" checked><span data-t="reportReasonSpam"></span></label>
+      <label class="ce-report-reason-row"><input type="radio" name="reportReason" value="inappropriate"><span data-t="reportReasonInappropriate"></span></label>
+      <label class="ce-report-reason-row"><input type="radio" name="reportReason" value="harassment"><span data-t="reportReasonHarassment"></span></label>
+      <label class="ce-report-reason-row"><input type="radio" name="reportReason" value="other"><span data-t="reportReasonOther"></span></label>
+    </div>
+    <textarea class="ce-report-details" id="reportDetailsInput" data-t-placeholder="reportDetailsPlaceholder"></textarea>
+    <div class="ce-report-actions">
+      <button type="button" class="ce-composer-cancel" data-report-cancel data-t="cancel"></button>
+      <button type="button" class="ce-btn ce-btn--primary" id="reportSubmitBtn" data-t="reportSubmit"></button>
+    </div>
   </div>
 </div>
 
@@ -822,7 +846,6 @@
     sortOldest: { en: "Oldest", de: "Älteste" },
     sortAZ: { en: "A–Z", de: "A–Z" },
     seeMore: { en: "See more", de: "Mehr anzeigen" },
-    requestCommunity: { en: "Request community", de: "Community anfragen" },
     createCommunity: { en: "Create Community", de: "Community erstellen" },
     noResults: { en: "No communities found.", de: "Keine Communities gefunden." },
     membersLabel: { en: "members", de: "Mitglieder" },
@@ -851,6 +874,7 @@
     mediaTitle: { en: "Photos and videos", de: "Fotos und Videos" },
     mediaHint: { en: "Drop images into the tiles", de: "Bilder in die Kacheln ziehen" },
     dropPhoto: { en: "Drop a photo", de: "Foto hier ablegen" },
+    dropMedia: { en: "Drop a photo or document", de: "Foto oder Dokument hier ablegen" },
     browseFiles: { en: "or browse files", de: "oder Dateien durchsuchen" },
     backToList: { en: "Back to Communities", de: "Zurück zu Communities" },
     like: { en: "Like", de: "Gefällt mir" },
@@ -865,16 +889,24 @@
     postBtn: { en: "Post", de: "Posten" },
     postedTo: { en: "Posted to", de: "Gepostet in" },
     postDeleted: { en: "Post deleted", de: "Beitrag gelöscht" },
-    report: { en: "Report", de: "Melden" },
-    reported: { en: "Reported", de: "Gemeldet" },
-    postReportedToast: { en: "Post reported — thanks for flagging this.", de: "Beitrag gemeldet – danke für den Hinweis." },
-    attachFile: { en: "Attach a file", de: "Datei anhängen" },
-    videoCaption: { en: "Community highlight reel —", de: "Community-Highlight-Video –" },
-    howItWorksTitle: { en: "How it works", de: "So funktioniert's" },
-    quickFactsTitle: { en: "At a glance", de: "Auf einen Blick" },
-    faqTitle: { en: "Frequently asked questions", de: "Häufig gestellte Fragen" },
     postUpdated: { en: "Post updated", de: "Beitrag aktualisiert" },
-    justNow: { en: "Just now", de: "Gerade eben" }
+    justNow: { en: "Just now", de: "Gerade eben" },
+    addPhoto: { en: "Add photo", de: "Foto hinzufügen" },
+    addDocument: { en: "Add document", de: "Dokument hinzufügen" },
+    removeAttachment: { en: "Remove", de: "Entfernen" },
+    reportPost: { en: "Report", de: "Melden" },
+    reportPostTitle: { en: "Report post", de: "Beitrag melden" },
+    reportPostSub: { en: "Why are you reporting this post?", de: "Warum meldest du diesen Beitrag?" },
+    reportReasonSpam: { en: "Spam", de: "Spam" },
+    reportReasonInappropriate: { en: "Inappropriate content", de: "Unangemessener Inhalt" },
+    reportReasonHarassment: { en: "Harassment", de: "Belästigung" },
+    reportReasonOther: { en: "Other", de: "Sonstiges" },
+    reportDetailsPlaceholder: { en: "Add details (optional)", de: "Weitere Details (optional)" },
+    reportSubmit: { en: "Report", de: "Melden" },
+    reportedNotice: { en: "You reported this post. Thank you.", de: "Du hast diesen Beitrag gemeldet. Danke." },
+    postReported: { en: "Post reported", de: "Beitrag gemeldet" },
+    mediaDocumentsTitle: { en: "Documents", de: "Dokumente" },
+    highlightsTitle: { en: "What to expect", de: "Das erwartet dich" }
   };
 
   function t(key) { return (STRINGS[key] && STRINGS[key][LANG]) || key; }
@@ -907,26 +939,32 @@
   var IMAGE_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 17l-6-6-4 4-3-3-5 5"/></svg>';
   var USERS_ICON = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M13.75,7.75a6.19,6.19,0,0,1-.66,2.79.5.5,0,0,0,.1.58A4.7,4.7,0,0,0,16.5,12.5a4.75,4.75,0,0,0,0-9.5,4.7,4.7,0,0,0-3.32,1.38.5.5,0,0,0-.1.58A6.19,6.19,0,0,1,13.75,7.75Z"/><path d="M16.5,13a7.4,7.4,0,0,0-2.38.39.5.5,0,0,0-.2.83A9,9,0,0,1,16.5,20.5a.5.5,0,0,0,.5.5h6.5a.5.5,0,0,0,.5-.5A7.51,7.51,0,0,0,16.5,13Z"/><circle cx="7.5" cy="7.75" r="4.75"/><path d="M15,20.5a7.5,7.5,0,0,0-15,0,.5.5,0,0,0,.5.5h14A.5.5,0,0,0,15,20.5Z"/></svg>';
   var SEND_ICON = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M2 21l21-9L2 3v7l15 2-15 2z"/></svg>';
+  var KEBAB_ICON = '<svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg>';
   var FLAG_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 21V4"/><path d="M5 4h13l-3 4 3 4H5"/></svg>';
-  var PAPERCLIP_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 12l6.5-6.5a3 3 0 114.24 4.24L9.5 19a5 5 0 11-7.07-7.07L11 3.35"/></svg>';
-  var DOC_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h9l5 5v15H6z"/><path d="M15 2v5h5"/></svg>';
-  var CHEVRON_ICON = '<svg class="ce-accordion-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>';
-  var INFO_ICON = '<svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="1.8"/><line x1="12" y1="11" x2="12" y2="16.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="7.8" r="1.15"/></svg>';
+  var DOC_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h9l4 4v16H6z"/><path d="M15 2v4h4"/></svg>';
+  var DOWNLOAD_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0l-4-4m4 4l4-4"/><path d="M4 19h16"/></svg>';
+  var X_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 5l14 14M19 5L5 19"/></svg>';
+  var INFO_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><line x1="12" y1="11" x2="12" y2="16.5"/><circle cx="12" cy="7.5" r="0.25" fill="currentColor"/></svg>';
 
   var communities = [
     {
       id: "book-club", home: "mine", joined: true, recommended: false,
       iconBg: "#fde68a", iconFg: "#92700c", glyph: "bars",
-      bannerSeed: "popcorn-bowl", aboutImages: ["popcorn-bowl","parent-child","reading-nook"], members: 19, order: 90,
+      bannerSeed: "book-club-banner-2", members: 19, order: 90,
       avatars: [["JW","purple"],["TN","teal"],["OV","cyan"],["GG","pink"]],
       name: "Book Club",
       desc: { en: "Monthly picks across genres, plus chapter-by-chapter discussion threads and recommendations.", de: "Monatliche Buchempfehlungen quer durch alle Genres, plus Diskussionsrunden Kapitel für Kapitel." },
       about: {
-        en: ["A relaxed reading circle for anyone who loves books — fiction, non-fiction, graphic novels, all welcome.", "We vote on a pick at the start of each month, discuss in threads here, and meet for Lunch & Pages every Wednesday."],
-        de: ["Ein entspannter Lesekreis für alle, die Bücher lieben — Romane, Sachbücher, Graphic Novels, alle willkommen.", "Wir stimmen zu Beginn jedes Monats über eine Buchempfehlung ab, diskutieren hier in Threads und treffen uns jeden Mittwoch zu „Lunch & Pages“."]
+        en: ["A relaxed reading circle for anyone who loves books — fiction, non-fiction, graphic novels, all welcome. There's no pressure to finish every pick or to have clever opinions ready; plenty of people just lurk in the threads and join the Lunch & Pages sessions instead.", "We vote on a pick at the start of each month, discuss in threads here, and meet for Lunch & Pages every Wednesday. Genres rotate deliberately — one month a dystopian novel, the next a memoir or a graphic novel — so nobody gets stuck reading only one kind of book.", "New here? The easiest way in is the Wednesday lunch session — no need to have read anything yet."],
+        de: ["Ein entspannter Lesekreis für alle, die Bücher lieben — Romane, Sachbücher, Graphic Novels, alle willkommen. Niemand muss jede Empfehlung durchlesen oder kluge Kommentare parat haben; viele lesen einfach in den Threads mit oder kommen nur zu „Lunch & Pages“ vorbei.", "Wir stimmen zu Beginn jedes Monats über eine Buchempfehlung ab, diskutieren hier in Threads und treffen uns jeden Mittwoch zu „Lunch & Pages“. Die Genres wechseln bewusst — mal ein dystopischer Roman, mal eine Biografie oder Graphic Novel —, damit niemand nur eine Art Buch liest.", "Neu hier? Der einfachste Einstieg ist die Mittwochsrunde — auch ohne bisher etwas gelesen zu haben."]
       },
+      highlights: {
+        en: ["One new pick voted on at the start of every month", "Spoiler-tagged discussion threads for each book", "Weekly Lunch & Pages reading session, no discussion pressure", "Occasional author interviews and live discussions"],
+        de: ["Jeden Monat eine neu abgestimmte Buchempfehlung", "Diskussions-Threads mit Spoiler-Tags zu jedem Buch", "Wöchentliche „Lunch & Pages“-Lesezeit ohne Diskussionsdruck", "Gelegentliche Autor:innen-Interviews und Live-Diskussionen"]
+      },
+      infoTip: { en: "New to the club? Come to a Lunch & Pages session first — you don't need to have read anything yet.", de: "Neu im Club? Komm einfach zu „Lunch & Pages“ vorbei — du musst dafür noch nichts gelesen haben." },
+      aboutImage: "https://picsum.photos/seed/reading-nook-4/700/360",
       created: { en: "March 2024", de: "März 2024" },
-      howItWorks: { en: ["We vote on next month's pick in the first week — anyone can nominate a title.", "Join the discussion thread any time during the month, no need to have finished the book.", "Prefer talking out loud? Come to Lunch & Pages every Wednesday.", "Mix of genres — fiction, non-fiction, graphic novels, whatever people bring."], de: ["In der ersten Woche stimmen wir über die nächste Buchempfehlung ab – jede:r kann einen Titel vorschlagen.", "Der Diskussions-Thread ist den ganzen Monat offen, du musst das Buch nicht schon fertig gelesen haben.", "Lieber persönlich austauschen? Komm jeden Mittwoch zu Lunch & Pages vorbei.", "Genre-Mix – Romane, Sachbücher, Graphic Novels, was die Runde gerade mitbringt."] }, quickFacts: { en: ["New pick: first Monday of the month", "Discussion: ongoing in the feed", "In person: Lunch & Pages, Wednesdays, kitchen lounge", "Open to: everyone, no reading pace required"], de: ["Neue Empfehlung: erster Montag im Monat", "Diskussion: laufend im Feed", "Vor Ort: Lunch & Pages, mittwochs, Küchen-Lounge", "Offen für: alle, unabhängig vom Lesetempo"] }, faq: [ { q: { en: "Do I have to finish the book before joining the discussion?", de: "Muss ich das Buch fertig gelesen haben, um mitzudiskutieren?" }, a: { en: "No — jump in whenever you like, spoiler tags are used for anything past the halfway point.", de: "Nein – steig ein, wann du willst. Für alles ab der Buchmitte nutzen wir Spoiler-Tags." } }, { q: { en: "Can I suggest a book?", de: "Kann ich ein Buch vorschlagen?" }, a: { en: "Yes, drop your pick in the feed before the first Monday of the month and we'll include it in the vote.", de: "Klar, poste deinen Vorschlag vor dem ersten Montag im Monat im Feed, dann kommt er mit in die Abstimmung." } }, { q: { en: "Is Lunch & Pages the same as the book discussion?", de: "Ist Lunch & Pages dasselbe wie die Buchdiskussion?" }, a: { en: "No — Lunch & Pages is just quiet reading time together, no discussion pressure at all.", de: "Nein – bei Lunch & Pages wird nur gemeinsam in Ruhe gelesen, ganz ohne Diskussionsdruck." } } ],
       managers: [
         { name: "Gio Gaspari", initials: "GG", color: "pink", pronouns: { en: "he/him", de: "er/ihm" }, role: { en: "Internal Comms Lead", de: "Leitung Interne Kommunikation" } },
         { name: "Renick Büttner", initials: "RB", color: "orange", pronouns: { en: "he/him", de: "er/ihm" }, role: { en: "Account Executive", de: "Account Executive" } }
@@ -956,17 +994,22 @@
     {
       id: "design-crew", home: "mine", joined: true, recommended: false,
       iconBg: "#ddd6fe", iconFg: "#6d28d9", glyph: "pencil",
-      bannerSeed: "workspace", aboutImages: ["creative-studio","sketchbook","designer-desk"], members: 24, order: 91,
+      bannerSeed: "design-crew-banner", members: 24, order: 91,
       avatars: [["AH","cyan"],["LB","pink"],["MK","purple"]],
       name: "Design Crew",
       desc: { en: "Where the design team shares work in progress, critiques and inspiration.", de: "Hier teilt das Design-Team Work-in-Progress, Feedback und Inspiration." },
       about: {
-        en: ["The design team's home for sharing work in progress, giving each other feedback, and staying inspired between projects.", "We run a weekly critique session and keep an open Figma library so anyone can riff on shared components."],
-        de: ["Der Anlaufpunkt des Design-Teams, um Work-in-Progress zu teilen, sich gegenseitig Feedback zu geben und zwischen Projekten inspiriert zu bleiben.", "Wir veranstalten eine wöchentliche Kritikrunde und pflegen eine offene Figma-Bibliothek, damit jede:r an gemeinsamen Komponenten weiterbauen kann."]
+        en: ["The design team's home for sharing work in progress, giving each other feedback, and staying inspired between projects. It started as a small Figma-file side channel and has grown into the place where most cross-team design decisions actually get made.", "Expect a mix of half-finished mockups, honest critique, and the occasional detour into type foundries or generative art. Nothing needs to be polished before you post it here — that's the point."],
+        de: ["Der Anlaufpunkt des Design-Teams, um Work-in-Progress zu teilen, sich gegenseitig Feedback zu geben und zwischen Projekten inspiriert zu bleiben. Was als kleiner Figma-Nebenkanal begann, ist mittlerweile der Ort, an dem die meisten teamübergreifenden Design-Entscheidungen tatsächlich fallen.", "Erwartet euch ein Mix aus halbfertigen Mockups, ehrlichem Feedback und gelegentlichen Abstechern zu Schriftfoundries oder generativer Kunst. Nichts muss fertig sein, bevor ihr es hier postet — genau darum geht's."]
       },
+      highlights: {
+        en: ["Weekly Design Critique session, open to work at any stage", "Shared Figma library for the design system", "Feedback threads on in-progress mockups", "Inspiration drops: type, color, generative art"],
+        de: ["Wöchentliches Design-Critique, offen für Arbeit in jedem Stadium", "Gemeinsame Figma-Library für das Design-System", "Feedback-Threads zu Work-in-Progress-Mockups", "Inspiration: Typografie, Farbe, generative Kunst"]
+      },
+      infoTip: { en: "Post early, post unfinished — the critique session is more useful before things are polished.", de: "Postet früh, postet unfertig — das Critique bringt am meisten, bevor etwas fertig poliert ist." },
+      aboutImage: "https://picsum.photos/seed/creative-workspace-3/700/360",
       created: { en: "June 2022", de: "Juni 2022" },
-      howItWorks: { en: ["Share work-in-progress any time — polished or rough, feedback is welcome either way.", "Join the weekly critique session to walk through a piece live.", "Browse the shared Figma library before starting something new — there's probably a component for it.", "Tag teammates directly if you want a second opinion fast."], de: ["Teile Work-in-Progress jederzeit – ob poliert oder roh, Feedback ist immer willkommen.", "Nimm an der wöchentlichen Kritikrunde teil, um etwas live durchzugehen.", "Schau vor einem neuen Projekt in der gemeinsamen Figma-Bibliothek vorbei – es gibt wahrscheinlich schon eine passende Komponente.", "Markiere Kolleg:innen direkt, wenn du schnell eine zweite Meinung brauchst."] }, quickFacts: { en: ["Critique session: Tuesdays, 11:00, design studio", "Shared library: open Figma, always up to date", "Feedback style: direct but kind", "New here: post an intro with your focus area"], de: ["Kritikrunde: dienstags, 11:00 Uhr, Design-Studio", "Gemeinsame Bibliothek: offenes Figma, immer aktuell", "Feedback-Stil: direkt, aber wertschätzend", "Neu hier: stell dich kurz mit deinem Schwerpunkt vor"] }, faq: [ { q: { en: "Do I need to be a designer to join?", de: "Muss ich Designer:in sein, um mitzumachen?" }, a: { en: "No — PMs and engineers who work closely with design are very welcome too.", de: "Nein – auch PMs und Engineers, die eng mit Design zusammenarbeiten, sind herzlich willkommen." } }, { q: { en: "How do I get feedback fast?", de: "Wie bekomme ich schnell Feedback?" }, a: { en: "Post in the feed and tag one or two teammates directly instead of waiting for the weekly session.", de: "Poste im Feed und markiere direkt ein bis zwei Kolleg:innen, statt auf die wöchentliche Runde zu warten." } }, { q: { en: "Can I reuse components from the shared library for my own project?", de: "Darf ich Komponenten aus der Bibliothek für eigene Projekte nutzen?" }, a: { en: "Yes, everything in the library is approved for use across all internal projects.", de: "Ja, alles in der Bibliothek ist für die Nutzung in allen internen Projekten freigegeben." } } ],
-      managers: [ { name: "Anna Hoffmann", initials: "AH", color: "cyan", pronouns: { en: "she/her", de: "sie/ihr" }, role: { en: "Product Designer", de: "Product Designer" } }, { name: "Leo Brandt", initials: "LB", color: "pink", pronouns: { en: "he/him", de: "er/ihm" }, role: { en: "Design Systems Lead", de: "Design Systems Lead" } } ],
+      managers: [ { name: "Anna Hoffmann", initials: "AH", color: "cyan", pronouns: { en: "she/her", de: "sie/ihr" }, role: { en: "Product Designer", de: "Product Designer" } } ],
       events: [ { day: "8", month: { en: "Oct", de: "Okt" }, title: { en: "Design Critique", de: "Design Critique" }, time: { en: "11:00am", de: "11:00 Uhr" }, location: { en: "Design studio, 2nd floor", de: "Design-Studio, 2. Stock" }, going: 6 } ],
       posts: [
         { author: "Anna Hoffmann", initials: "AH", color: "cyan", time: { en: "1 day ago", de: "vor 1 Tag" }, text: { en: "New component set for the design system is live in Figma — feedback welcome!", de: "Neues Component-Set für das Design-System ist im Figma verfügbar – Feedback willkommen!" }, reactions: 10, liked: false, comments: [ { author: "Marco Diaz", initials: "MD", color: "orange", time: { en: "22 hours ago", de: "vor 22 Std." }, text: { en: "These look great, especially the new button states.", de: "Sehen super aus, besonders die neuen Button-States." }, liked: false, replies: [] } ] },
@@ -976,31 +1019,47 @@
     {
       id: "beach-volleyball", home: "mine", joined: true, recommended: false,
       iconBg: "#fed7aa", iconFg: "#c2410c", glyph: "ball",
-      bannerSeed: "beach-volleyball-about-2", aboutImages: ["beach-day","coastal","beach-volleyball-about-3"], members: 14, order: 92,
+      bannerSeed: "beach-volleyball-banner", members: 14, order: 92,
       avatars: [["TC","purple"],["NB","teal"],["GF","cyan"]],
       name: "Beach Volleyball",
       desc: { en: "Pickup games, tournament sign-ups and everything else for the office beach volleyball crew.", de: "Spontane Spiele, Turnier-Anmeldungen und alles rund um die Beach-Volleyball-Truppe im Büro." },
-      about: { en: ["For anyone who wants to play — casual pickup games most weeks and the occasional tournament on the rooftop court.", "No experience needed — we rotate teams every game so it stays fun and fair for everyone."], de: ["Für alle, die mitspielen wollen — meist spontane Spiele und ab und zu ein Turnier auf dem Dach-Court.", "Keine Erfahrung nötig – wir mischen die Teams bei jedem Spiel neu, damit es für alle fair und unterhaltsam bleibt."] },
+      about: {
+        en: ["For anyone who wants to play — casual pickup games most weeks and the occasional tournament on the rooftop court. Skill level really doesn't matter; most weeks are just as much about the post-game drinks as the actual volleyball.", "Games are announced here a day or two ahead depending on weather, and teams are shuffled on the spot so it stays social rather than competitive."],
+        de: ["Für alle, die mitspielen wollen — meist spontane Spiele und ab und zu ein Turnier auf dem Dach-Court. Das Level spielt keine große Rolle; oft geht es am Ende genauso um die Drinks danach wie ums Spiel selbst.", "Spiele werden hier meist ein bis zwei Tage vorher je nach Wetter angekündigt, die Teams werden spontan gemischt, damit es locker und sozial bleibt statt sportlich verbissen."]
+      },
+      highlights: {
+        en: ["Pickup games most weeks, weather permitting", "Rooftop tournament a few times a year", "All skill levels — teams are shuffled on the spot", "Post-game drinks are basically mandatory"],
+        de: ["Fast wöchentlich spontane Spiele, wetterabhängig", "Ein paar Mal im Jahr ein Turnier auf dem Dach-Court", "Alle Levels willkommen — Teams werden spontan gemischt", "Drinks danach sind quasi Pflicht"]
+      },
+      infoTip: { en: "No gear, no problem — there are spare balls and a pump in the rooftop storage box.", de: "Keine eigene Ausrüstung? Kein Problem — Ersatzbälle und eine Pumpe liegen in der Dach-Storage-Box." },
+      aboutImage: "https://picsum.photos/seed/coastal-pier-4/700/360",
       created: { en: "May 2023", de: "Mai 2023" },
-      howItWorks: { en: ["Pickup games happen most weeks — just show up, teams are formed on the spot.", "Sign-up for tournaments opens a few days before, first come first served.", "No gear? No problem, spare balls and knee pads are in the rooftop storage box.", "Teams rotate every game to keep it fair and mix up who plays with whom."], de: ["Spontane Spiele finden fast jede Woche statt – einfach vorbeikommen, Teams werden vor Ort gebildet.", "Die Turnier-Anmeldung öffnet ein paar Tage vorher, first come first served.", "Keine Ausrüstung? Kein Problem, Ersatzbälle und Knieschoner liegen in der Dachbox.", "Die Teams wechseln bei jedem Spiel, damit es fair bleibt und sich die Paarungen mischen."] }, quickFacts: { en: ["Pickup games: most weeks, rooftop court", "Tournaments: monthly, sign-up in advance", "Skill level: all welcome, beginners included", "Gear: spare balls available on-site"], de: ["Spontane Spiele: fast jede Woche, Dach-Court", "Turniere: monatlich, Anmeldung vorab", "Niveau: alle willkommen, auch Anfänger:innen", "Ausrüstung: Ersatzbälle vor Ort vorhanden"] }, faq: [ { q: { en: "Do I need to sign up for the casual pickup games?", de: "Muss ich mich für die spontanen Spiele anmelden?" }, a: { en: "No, those are drop-in — just show up on the rooftop court.", de: "Nein, die sind offen für alle – einfach auf dem Dach-Court vorbeikommen." } }, { q: { en: "What if I've never played beach volleyball before?", de: "Was, wenn ich noch nie Beach-Volleyball gespielt habe?" }, a: { en: "Totally fine, plenty of regulars are happy to show you the basics.", de: "Kein Problem, viele Stammspieler:innen zeigen dir gerne die Grundlagen." } }, { q: { en: "Is there a tournament every month?", de: "Gibt es jeden Monat ein Turnier?" }, a: { en: "Yes, usually the first Saturday — the exact date is always posted in the feed.", de: "Ja, meist am ersten Samstag – das genaue Datum steht immer im Feed." } } ],
-      managers: [ { name: "Tom Cassidy", initials: "TC", color: "purple", pronouns: { en: "he/him", de: "er/ihm" }, role: { en: "Sales Development Rep", de: "Sales Development Rep" } }, { name: "Nadia Brooks", initials: "NB", color: "teal", pronouns: { en: "she/her", de: "sie/ihr" }, role: { en: "Customer Success", de: "Customer Success" } } ],
+      managers: [ { name: "Tom Cassidy", initials: "TC", color: "purple", pronouns: { en: "he/him", de: "er/ihm" }, role: { en: "Sales Development Rep", de: "Sales Development Rep" } } ],
       events: [ { day: "5", month: { en: "Oct", de: "Okt" }, title: { en: "Rooftop Tournament", de: "Turnier auf dem Dach-Court" }, time: { en: "10:00am", de: "10:00 Uhr" }, location: { en: "Rooftop court", de: "Dach-Court" }, going: 10 } ],
       posts: [
-        { author: "Tom Cassidy", initials: "TC", color: "purple", time: { en: "4 hours ago", de: "vor 4 Std." }, text: { en: "Next tournament is Saturday on the rooftop court — sign up by Friday noon!", de: "Nächstes Turnier am Samstag auf dem Dach-Court – Anmeldung bis Freitag Mittag!" }, image: "https://picsum.photos/seed/beach-volleyball-about-2/640/360", reactions: 9, liked: false, comments: [ { author: "Ken Osei", initials: "KO", color: "cyan", time: { en: "3 hours ago", de: "vor 3 Std." }, text: { en: "Signed up, let's go!", de: "Angemeldet, auf geht's!" }, liked: false, replies: [] } ] },
+        { author: "Tom Cassidy", initials: "TC", color: "purple", time: { en: "4 hours ago", de: "vor 4 Std." }, text: { en: "Next tournament is Saturday on the rooftop court — sign up by Friday noon!", de: "Nächstes Turnier am Samstag auf dem Dach-Court – Anmeldung bis Freitag Mittag!" }, image: "https://picsum.photos/seed/beach-volleyball-post/640/360", reactions: 9, liked: false, comments: [ { author: "Ken Osei", initials: "KO", color: "cyan", time: { en: "3 hours ago", de: "vor 3 Std." }, text: { en: "Signed up, let's go!", de: "Angemeldet, auf geht's!" }, liked: false, replies: [] } ] },
         { author: "Nadia Brooks", initials: "NB", color: "teal", time: { en: "2 days ago", de: "vor 2 Tagen" }, text: { en: "Still looking for two more players for the weekend's 4-person team.", de: "Suchen noch zwei Mitspieler:innen für das 4er-Team am Wochenende." }, reactions: 4, liked: false, comments: [ { author: "Zoe Martin", initials: "ZM", color: "pink", time: { en: "1 day ago", de: "vor 1 Tag" }, text: { en: "I'm free Saturday, count me in!", de: "Bin Samstag frei, bin dabei!" }, liked: false, replies: [] } ] }
       ]
     },
     {
       id: "project-phoenix", home: "discover", joined: false, recommended: true,
       iconBg: "#fecdd3", iconFg: "#be123c", glyph: "grid",
-      bannerSeed: "office-team", aboutImages: ["meeting-room","modern-office","project-phoenix-about-2"], members: 27, order: 1,
+      bannerSeed: "project-phoenix-banner", members: 27, order: 1,
       avatars: [["AK","cyan"],["RJ","pink"],["LT","purple"]],
       name: "Project Phoenix",
       desc: { en: "The cross-functional home base for everyone working on Project Phoenix — updates, blockers and wins.", de: "Der Anlaufpunkt für alle, die an Project Phoenix arbeiten – Updates, Blocker und Erfolge." },
-      about: { en: ["A cross-functional space for everyone contributing to Project Phoenix — engineering, design and product, all in one place.", "Weekly stand-up notes and the current roadmap are always pinned at the top of the feed."], de: ["Ein bereichsübergreifender Raum für alle, die an Project Phoenix mitarbeiten — Engineering, Design und Product an einem Ort.", "Wöchentliche Stand-up-Notizen und die aktuelle Roadmap sind immer oben im Feed angepinnt."] },
+      about: {
+        en: ["A cross-functional space for everyone contributing to Project Phoenix — engineering, design and product, all in one place. It replaces the scattered mix of Slack threads and status decks that made it hard to see the full picture.", "Expect sprint updates, blockers surfaced early, and the occasional win worth celebrating. If you're new to the project, this is also the fastest way to get context without waiting for a meeting."],
+        de: ["Ein bereichsübergreifender Raum für alle, die an Project Phoenix mitarbeiten — Engineering, Design und Product an einem Ort. Er ersetzt die vorher verstreuten Slack-Threads und Status-Folien, bei denen der Gesamtüberblick oft verloren ging.", "Erwartet Sprint-Updates, früh sichtbar gemachte Blocker und ab und zu einen Erfolg, der gefeiert werden darf. Wer neu im Projekt ist, bekommt hier auch am schnellsten Kontext, ohne auf ein Meeting warten zu müssen."]
+      },
+      highlights: {
+        en: ["Weekly sprint review, open to the whole project team", "Blockers get surfaced and tracked in threads here", "Cross-functional — engineering, design and product together", "Fastest way to get context if you're new to the project"],
+        de: ["Wöchentliches Sprint-Review, offen für das gesamte Projektteam", "Blocker werden hier früh sichtbar gemacht und in Threads verfolgt", "Bereichsübergreifend — Engineering, Design und Product zusammen", "Schnellster Weg, um als Neuzugang Kontext zu bekommen"]
+      },
+      infoTip: { en: "Sprint review slides are due Wednesday — post them here, not just in the deck folder.", de: "Sprint-Review-Folien bitte bis Mittwoch — postet sie hier, nicht nur im Ordner." },
+      aboutImage: "https://picsum.photos/seed/team-meeting-1/700/360",
       created: { en: "January 2024", de: "Januar 2024" },
-      howItWorks: { en: ["Weekly stand-up notes are posted every Monday — read them to stay in sync without a meeting.", "Blockers get flagged in the feed the same day so the right person can jump in fast.", "The roadmap is pinned at the top and updated after every planning session.", "Cross-functional means exactly that — design, engineering and product all post here."], de: ["Jeden Montag werden die Stand-up-Notizen gepostet – so bleibst du ohne Meeting auf dem Laufenden.", "Blocker werden noch am selben Tag im Feed gemeldet, damit die richtige Person schnell reagieren kann.", "Die Roadmap ist oben angepinnt und wird nach jedem Planning aktualisiert.", "Bereichsübergreifend heißt hier wirklich alle – Design, Engineering und Product posten gemeinsam."] }, quickFacts: { en: ["Stand-up notes: every Monday", "Sprint review: Thursdays, 2:00pm, war room", "Roadmap: pinned post, updated after planning", "Blockers: flag same-day in the feed"], de: ["Stand-up-Notizen: jeden Montag", "Sprint Review: donnerstags, 14:00 Uhr, War Room", "Roadmap: angepinnter Post, aktualisiert nach jedem Planning", "Blocker: noch am selben Tag im Feed melden"] }, faq: [ { q: { en: "I'm not on the core team, can I still follow along?", de: "Ich bin nicht im Kernteam, kann ich trotzdem mitlesen?" }, a: { en: "Yes, the community is open to anyone who wants visibility into Project Phoenix.", de: "Ja, die Community ist offen für alle, die Einblick in Project Phoenix haben möchten." } }, { q: { en: "Where do I raise a blocker?", de: "Wo melde ich einen Blocker?" }, a: { en: "Post it directly in the feed and tag whoever owns that area — no need to wait for stand-up.", de: "Poste ihn direkt im Feed und markiere die zuständige Person – du musst nicht bis zum Stand-up warten." } }, { q: { en: "How often does the roadmap change?", de: "Wie oft ändert sich die Roadmap?" }, a: { en: "It's reviewed after every planning session, roughly every two weeks.", de: "Sie wird nach jedem Planning überprüft, also etwa alle zwei Wochen." } } ],
-      managers: [ { name: "Alex Kramer", initials: "AK", color: "cyan", pronouns: { en: "she/her", de: "sie/ihr" }, role: { en: "Program Manager", de: "Program Manager" } }, { name: "Rana Javid", initials: "RJ", color: "pink", pronouns: { en: "she/her", de: "sie/ihr" }, role: { en: "Staff Engineer", de: "Staff Engineer" } } ],
+      managers: [ { name: "Alex Kramer", initials: "AK", color: "cyan", pronouns: { en: "she/her", de: "sie/ihr" }, role: { en: "Program Manager", de: "Program Manager" } } ],
       events: [ { day: "3", month: { en: "Oct", de: "Okt" }, title: { en: "Sprint Review", de: "Sprint Review" }, time: { en: "2:00pm", de: "14:00 Uhr" }, location: { en: "War room, 4th floor", de: "War Room, 4. Stock" }, going: 11 } ],
       posts: [
         { author: "Alex Kramer", initials: "AK", color: "cyan", time: { en: "3 hours ago", de: "vor 3 Std." }, text: { en: "Sprint review is set for Thursday at 2pm — please upload demo slides by Wednesday. 🚀", de: "Sprint-Review ist für Donnerstag 14 Uhr angesetzt – bitte die Demo-Slides bis Mittwoch hochladen. 🚀" }, reactions: 8, liked: false, comments: [ { author: "Priya Nair", initials: "PN", color: "purple", time: { en: "2 hours ago", de: "vor 2 Std." }, text: { en: "On it — I'll have the slides ready tomorrow.", de: "Mach ich – die Slides sind morgen fertig." }, liked: false, replies: [] } ] },
@@ -1010,31 +1069,47 @@
     {
       id: "dog-lovers", home: "discover", joined: false, recommended: false,
       iconBg: "#fed7aa", iconFg: "#c2410c", glyph: "paw",
-      bannerSeed: "puppy-eyes", aboutImages: ["dog-lovers-about-3","puppy-love","dog-walk"], members: 5, order: 2,
+      bannerSeed: "dog-lovers-banner", members: 5, order: 2,
       avatars: [["PH","pink"],["KT","teal"],["WS","cyan"]],
       name: "Dog Lovers",
       desc: { en: "Photos, walk meetups and advice for anyone sharing their life with a very good dog.", de: "Fotos, gemeinsame Spaziergänge und Tipps für alle, die ihr Leben mit einem sehr guten Hund teilen." },
-      about: { en: ["For dog people. Share photos, swap advice, and join the occasional group walk.", "From puppy advice to trusted vet recommendations — if it's dog-related, someone here has an answer."], de: ["Für Hundemenschen. Teilt Fotos, tauscht Tipps aus und macht bei gelegentlichen Gruppenspaziergängen mit.", "Von Welpen-Tipps bis zu vertrauenswürdigen Tierarzt-Empfehlungen – wenn es um Hunde geht, hat hier jemand eine Antwort."] },
+      about: {
+        en: ["For dog people. Share photos, swap advice, and join the occasional group walk. Puppy or old-timer, rescue or purebred — everyone's welcome, and so are the endless photo dumps.", "It's also the place to ask the practical stuff: which vet is good, who can dog-sit over the holidays, and whether anyone's dog is friendly enough for a park meetup."],
+        de: ["Für Hundemenschen. Teilt Fotos, tauscht Tipps aus und macht bei gelegentlichen Gruppenspaziergängen mit. Welpe oder Senior, Mischling oder Rassehund — alle sind willkommen, genau wie die endlosen Foto-Dumps.", "Hier werden auch die praktischen Fragen geklärt: welche:r Tierärzt:in gut ist, wer über die Feiertage aufpassen kann und wessen Hund gesellig genug für ein Park-Treffen ist."]
+      },
+      highlights: {
+        en: ["Group walk in the park most weeks", "Photo threads for new family members", "Practical tips: vets, sitters, gear recommendations", "Casual, no-pressure — join a walk whenever it fits"],
+        de: ["Fast wöchentlich ein gemeinsamer Spaziergang im Park", "Foto-Threads für neue Familienmitglieder", "Praktische Tipps: Tierärzt:innen, Sitter, Ausrüstung", "Locker und unverbindlich — einfach mitlaufen, wenn's passt"]
+      },
+      infoTip: { en: "First time joining a walk? Bring a leash even for the friendliest dog — the meetup point is right by a road.", de: "Erster Spaziergang mit der Gruppe? Bringt auch für den bravsten Hund eine Leine mit — der Treffpunkt liegt direkt an einer Straße." },
+      aboutImage: "https://picsum.photos/seed/green-park-3/700/360",
       created: { en: "September 2023", de: "September 2023" },
-      howItWorks: { en: ["Share photos any time — that's most of what happens here, and it's very welcome.", "Group walks are casual, just post in the feed if you're planning one.", "Got a dog-related question? Someone in this community has probably solved it already.", "New dog or foster? Introduce them, the community loves a good intro post."], de: ["Teile jederzeit Fotos – das macht einen Großteil der Community aus, und es ist sehr willkommen.", "Gruppenspaziergänge sind locker organisiert, einfach im Feed posten, wenn du einen planst.", "Eine Frage rund um Hunde? Wahrscheinlich hat schon jemand hier eine Lösung dafür.", "Neuer Hund oder Pflegehund? Stell ihn vor, die Community liebt gute Vorstellungsposts."] }, quickFacts: { en: ["Group walks: casual, announced in the feed", "Topics: photos, advice, vet recommendations", "Meetup spot: usually the central park entrance", "New members: intro posts encouraged"], de: ["Gruppenspaziergänge: locker, im Feed angekündigt", "Themen: Fotos, Tipps, Tierarzt-Empfehlungen", "Treffpunkt: meist der Eingang zum Stadtpark", "Neue Mitglieder: Vorstellungsposts erwünscht"] }, faq: [ { q: { en: "Do I need a dog to join?", de: "Muss ich einen Hund haben, um mitzumachen?" }, a: { en: "Not at all — plenty of members just enjoy the photos and are considering getting one.", de: "Überhaupt nicht – viele Mitglieder genießen einfach die Fotos oder überlegen sich einen Hund anzuschaffen." } }, { q: { en: "Are group walks limited by dog size or breed?", de: "Sind die Gruppenspaziergänge auf bestimmte Größen oder Rassen beschränkt?" }, a: { en: "No, all dogs and sizes are welcome, just keep leashes handy around the group.", de: "Nein, alle Hunde und Größen sind willkommen, bitte in der Gruppe die Leine griffbereit halten." } }, { q: { en: "Where do I ask for vet recommendations?", de: "Wo frage ich nach Tierarzt-Empfehlungen?" }, a: { en: "Just post your question in the feed — this community is great about sharing trusted contacts.", de: "Poste deine Frage einfach im Feed – hier werden gerne vertrauenswürdige Kontakte geteilt." } } ],
-      managers: [ { name: "Petra Hahn", initials: "PH", color: "pink", pronouns: { en: "she/her", de: "sie/ihr" }, role: { en: "Office Manager", de: "Office Manager" } }, { name: "Kim Turner", initials: "KT", color: "teal", pronouns: { en: "she/her", de: "sie/ihr" }, role: { en: "Recruiter", de: "Recruiter" } } ],
+      managers: [ { name: "Petra Hahn", initials: "PH", color: "pink", pronouns: { en: "she/her", de: "sie/ihr" }, role: { en: "Office Manager", de: "Office Manager" } } ],
       events: [ { day: "9", month: { en: "Oct", de: "Okt" }, title: { en: "Park Walk", de: "Spaziergang im Park" }, time: { en: "5:30pm", de: "17:30 Uhr" }, location: { en: "Central park entrance", de: "Eingang Stadtpark" }, going: 7 } ],
       posts: [
         { author: "Petra Hahn", initials: "PH", color: "pink", time: { en: "2 hours ago", de: "vor 2 Std." }, text: { en: "Anyone up for a group walk in the park on Wednesday after work?", de: "Wer hat Lust auf einen gemeinsamen Spaziergang im Park am Mittwoch nach der Arbeit?" }, reactions: 11, liked: false, comments: [ { author: "Sam Ortiz", initials: "SO", color: "orange", time: { en: "1 hour ago", de: "vor 1 Std." }, text: { en: "Count me in, I'll bring Luna.", de: "Bin dabei, ich bring Luna mit." }, liked: false, replies: [] } ] },
-        { author: "Kim Turner", initials: "KT", color: "teal", time: { en: "5 days ago", de: "vor 5 Tagen" }, text: { en: "New family member: Bruno, 4 months old 🐶", de: "Neuzugang in der Familie: Bruno, 4 Monate alt 🐶" }, image: "https://picsum.photos/seed/puppy-eyes/640/360", reactions: 27, liked: false, comments: [ { author: "Priya Shah", initials: "PS", color: "purple", time: { en: "4 days ago", de: "vor 4 Tagen" }, text: { en: "He's adorable! Welcome, Bruno 🐾", de: "Er ist zuckersüß! Willkommen, Bruno 🐾" }, liked: false, replies: [] } ] }
+        { author: "Kim Turner", initials: "KT", color: "teal", time: { en: "5 days ago", de: "vor 5 Tagen" }, text: { en: "New family member: Bruno, 4 months old 🐶", de: "Neuzugang in der Familie: Bruno, 4 Monate alt 🐶" }, image: "https://picsum.photos/seed/dog-lovers-post/640/360", reactions: 27, liked: false, comments: [ { author: "Priya Shah", initials: "PS", color: "purple", time: { en: "4 days ago", de: "vor 4 Tagen" }, text: { en: "He's adorable! Welcome, Bruno 🐾", de: "Er ist zuckersüß! Willkommen, Bruno 🐾" }, liked: false, replies: [] } ] }
       ]
     },
     {
       id: "wellness-mindfulness", home: "discover", joined: false, recommended: true,
       iconBg: "#e9d5ff", iconFg: "#7e22ce", glyph: "heart",
-      bannerSeed: "wellness-banner", aboutImages: ["meditation-calm","morning-calm","wellness-mindfulness-about-3"], members: 22, order: 4,
+      bannerSeed: "wellness-banner", members: 22, order: 4,
       avatars: [["RL","teal"],["AC","purple"],["BN","cyan"]],
       name: "Wellness & Mindfulness",
       desc: { en: "Guided meditations, wellness challenges and tips for staying balanced during the workday.", de: "Angeleitete Meditationen, Wellness-Challenges und Tipps für mehr Balance im Arbeitsalltag." },
-      about: { en: ["A space to reset — guided meditations, wellness challenges, and practical tips for staying balanced during the workday.", "New challenges launch on the first Monday of every month — no pressure, just progress."], de: ["Ein Ort zum Auftanken — angeleitete Meditationen, Wellness-Challenges und praktische Tipps für mehr Balance im Arbeitsalltag.", "Neue Challenges starten jeden ersten Montag im Monat – kein Druck, nur Fortschritt."] },
+      about: {
+        en: ["A space to reset — guided meditations, wellness challenges, and practical tips for staying balanced during the workday. No wellness background needed, and nothing here requires more than 15 minutes.", "Sessions rotate between breathing exercises, short guided meditations, and the occasional stretch break — all designed to fit inside a normal workday, not replace it."],
+        de: ["Ein Ort zum Auftanken — angeleitete Meditationen, Wellness-Challenges und praktische Tipps für mehr Balance im Arbeitsalltag. Vorerfahrung braucht niemand, und nichts hier dauert länger als 15 Minuten.", "Die Formate wechseln zwischen Atemübungen, kurzen geführten Meditationen und gelegentlichen Dehnpausen — alles so gestaltet, dass es in den normalen Arbeitstag passt, statt ihn zu ersetzen."]
+      },
+      highlights: {
+        en: ["15-minute guided meditation in the quiet room, weekly", "Breathing exercises and practical stress tips", "Seasonal wellness challenges (sleep, movement, focus)", "No experience needed — drop in whenever it fits"],
+        de: ["Wöchentliche 15-Minuten-Meditation im Ruheraum", "Atemübungen und praktische Tipps gegen Stress", "Saisonale Wellness-Challenges (Schlaf, Bewegung, Fokus)", "Keine Vorerfahrung nötig — einfach reinkommen, wenn's passt"]
+      },
+      infoTip: { en: "Feeling overwhelmed today? The quiet room is open outside sessions too, not just at 12:30pm.", de: "Heute überfordert? Der Ruheraum steht auch außerhalb der Session offen, nicht nur um 12:30 Uhr." },
+      aboutImage: "https://picsum.photos/seed/calm-water-4/700/360",
       created: { en: "April 2023", de: "April 2023" },
-      howItWorks: { en: ["Guided meditations run most days at lunchtime — drop in whenever it fits your schedule.", "New challenges launch on the first Monday of the month, no sign-up needed.", "Share what's working for you — the best tips here come from other members, not just experts.", "Everything is opt-in, there's no pressure to participate in every activity."], de: ["Geführte Meditationen finden fast täglich in der Mittagspause statt – komm einfach vorbei, wenn es passt.", "Neue Challenges starten jeden ersten Montag im Monat, keine Anmeldung nötig.", "Teile, was bei dir funktioniert – die besten Tipps kommen hier von anderen Mitgliedern, nicht nur von Expert:innen.", "Alles ist freiwillig, es gibt keinen Druck, an jeder Aktivität teilzunehmen."] }, quickFacts: { en: ["Meditation: most weekdays, 12:30pm, quiet room", "New challenge: first Monday of the month", "Format: guided sessions + peer tips", "Commitment: fully opt-in"], de: ["Meditation: an den meisten Werktagen, 12:30 Uhr, Ruheraum", "Neue Challenge: erster Montag im Monat", "Format: geführte Sessions + Tipps von Kolleg:innen", "Verbindlichkeit: komplett freiwillig"] }, faq: [ { q: { en: "Do I need any experience with meditation?", de: "Brauche ich Erfahrung mit Meditation?" }, a: { en: "No, sessions are guided start to finish and beginners are the majority of the room.", de: "Nein, die Sessions sind komplett angeleitet und die meisten Teilnehmenden sind Anfänger:innen." } }, { q: { en: "What happens if I miss a monthly challenge?", de: "Was passiert, wenn ich eine Monats-Challenge verpasse?" }, a: { en: "Nothing — join whenever, challenges are about progress, not streaks.", de: "Nichts – steig ein, wann du willst, es geht um Fortschritt, nicht um lückenlose Teilnahme." } }, { q: { en: "Is the quiet room only for this community?", de: "Ist der Ruheraum nur für diese Community reserviert?" }, a: { en: "No, it's shared, but this is usually a good time to find it free.", de: "Nein, er wird geteilt, aber zu dieser Zeit ist er meist frei." } } ],
-      managers: [ { name: "Rita Lang", initials: "RL", color: "teal", pronouns: { en: "she/her", de: "sie/ihr" }, role: { en: "People & Culture", de: "People & Culture" } }, { name: "Amir Cohen", initials: "AC", color: "purple", pronouns: { en: "he/him", de: "er/ihm" }, role: { en: "Wellness Coach", de: "Wellness Coach" } } ],
+      managers: [ { name: "Rita Lang", initials: "RL", color: "teal", pronouns: { en: "she/her", de: "sie/ihr" }, role: { en: "People & Culture", de: "People & Culture" } } ],
       events: [ { day: "7", month: { en: "Oct", de: "Okt" }, title: { en: "Guided Meditation", de: "Geführte Meditation" }, time: { en: "12:30pm", de: "12:30 Uhr" }, location: { en: "Quiet room, 3rd floor", de: "Ruheraum, 3. Stock" }, going: 9 } ],
       posts: [
         { author: "Rita Lang", initials: "RL", color: "teal", time: { en: "3 hours ago", de: "vor 3 Std." }, text: { en: "Today at 12:30pm: guided 15-minute meditation in the quiet room.", de: "Heute Mittag 12:30 Uhr: geführte 15-Minuten-Meditation im Ruheraum." }, reactions: 14, liked: false, comments: [ { author: "Noah Fischer", initials: "NF", color: "cyan", time: { en: "2 hours ago", de: "vor 2 Std." }, text: { en: "Perfect timing, I really need this today.", de: "Perfektes Timing, das brauche ich heute wirklich." }, liked: false, replies: [] } ] },
@@ -1044,14 +1119,22 @@
     {
       id: "parents-at-work", home: "discover", joined: false, recommended: true,
       iconBg: "#bbf7d0", iconFg: "#15803d", glyph: "house",
-      bannerSeed: "family-time", aboutImages: ["family-walk","parents-at-work-about-3","family-time"], members: 31, order: 7,
+      bannerSeed: "parents-banner", members: 31, order: 7,
       avatars: [["SP","pink"],["DK","cyan"],["MW","purple"]],
       name: "Parents at work",
       desc: { en: "A space for working parents to swap scheduling tips, childcare recommendations and moral support.", de: "Ein Ort für berufstätige Eltern zum Austausch über Terminplanung, Kinderbetreuung und gegenseitige Unterstützung." },
-      about: { en: ["A space for working parents to swap scheduling tips, childcare recommendations, and a bit of moral support.", "From school holidays to daycare waitlists, this is the place to ask the questions Google can't answer."], de: ["Ein Ort für berufstätige Eltern zum Austausch über Terminplanung, Kinderbetreuung und gegenseitige Unterstützung.", "Von Schulferien bis Kita-Wartelisten – hier stellt ihr die Fragen, die Google nicht beantworten kann."] },
+      about: {
+        en: ["A space for working parents to swap scheduling tips, childcare recommendations, and a bit of moral support. Whether it's newborns, toddlers or teenagers, chances are someone here has already been through it.", "Beyond the monthly meetup, most of the value happens in the day-to-day threads — a quick recommendation for holiday care, a heads-up about a school closure, or just someone to commiserate with."],
+        de: ["Ein Ort für berufstätige Eltern zum Austausch über Terminplanung, Kinderbetreuung und gegenseitige Unterstützung. Ob Neugeborenes, Kleinkind oder Teenager — die Chance ist groß, dass jemand hier das schon erlebt hat.", "Neben dem monatlichen Treffen passiert das meiste im Alltag der Threads — eine schnelle Empfehlung für die Ferienbetreuung, ein Hinweis auf eine Schulschließung, oder einfach jemand zum Austauschen."]
+      },
+      highlights: {
+        en: ["Monthly meetup to swap notes over coffee", "Childcare and school recommendations thread", "Heads-up on closures, holidays and scheduling clashes", "A judgment-free space for the harder days too"],
+        de: ["Monatliches Treffen zum Austausch bei Kaffee", "Thread mit Empfehlungen für Kinderbetreuung und Schulen", "Hinweise zu Schließungen, Ferien und Terminüberschneidungen", "Ein wertungsfreier Raum, auch für die schwierigeren Tage"]
+      },
+      infoTip: { en: "New parent on the team? The monthly meetup is the easiest way to meet others in the same boat.", de: "Neu als Elternteil im Team? Das monatliche Treffen ist der einfachste Weg, andere in derselben Situation kennenzulernen." },
+      aboutImage: "https://picsum.photos/seed/kids-playground-2/700/360",
       created: { en: "October 2022", de: "Oktober 2022" },
-      howItWorks: { en: ["Ask anything — childcare, schools, logistics — chances are someone here has been through it.", "The monthly meetup is casual, just swap stories and tips over coffee.", "Recommendations get collected in the feed so they're easy to search later.", "No topic is too small, from nap schedules to school holiday planning."], de: ["Frag einfach alles – Kinderbetreuung, Schule, Organisation – wahrscheinlich hat hier schon jemand Ähnliches erlebt.", "Der monatliche Austausch ist locker, einfach bei einem Kaffee Erfahrungen und Tipps teilen.", "Empfehlungen werden im Feed gesammelt, damit sie später leicht wiederzufinden sind.", "Kein Thema ist zu klein, vom Mittagsschlaf-Rhythmus bis zur Ferienplanung."] }, quickFacts: { en: ["Monthly meetup: first Friday, 4:00pm, kitchen lounge", "Topics: childcare, school, scheduling, moral support", "Recommendations: collected in the feed", "Open to: parents and caregivers of any kind"], de: ["Monatlicher Austausch: erster Freitag, 16:00 Uhr, Küchen-Lounge", "Themen: Kinderbetreuung, Schule, Organisation, gegenseitige Unterstützung", "Empfehlungen: werden im Feed gesammelt", "Offen für: Eltern und alle Betreuungspersonen"] }, faq: [ { q: { en: "Do I need to have kids already to join?", de: "Muss ich schon Kinder haben, um mitzumachen?" }, a: { en: "No, expecting parents and anyone planning ahead are very welcome.", de: "Nein, auch werdende Eltern und alle, die vorausplanen, sind herzlich willkommen." } }, { q: { en: "Where do I find past recommendations?", de: "Wo finde ich frühere Empfehlungen?" }, a: { en: "Search the feed, most tips and provider names are shared there and stay searchable.", de: "Durchsuche den Feed, die meisten Tipps und Kontakte werden dort geteilt und bleiben auffindbar." } }, { q: { en: "Is the monthly meetup only during work hours?", de: "Findet der monatliche Austausch nur während der Arbeitszeit statt?" }, a: { en: "Yes, it's scheduled at 4pm so it fits around pickup times.", de: "Ja, er ist bewusst auf 16 Uhr gelegt, damit er zu Abholzeiten passt." } } ],
-      managers: [ { name: "Sara Petrov", initials: "SP", color: "pink", pronouns: { en: "she/her", de: "sie/ihr" }, role: { en: "HR Business Partner", de: "HR Business Partner" } }, { name: "Dan Kessler", initials: "DK", color: "cyan", pronouns: { en: "he/him", de: "er/ihm" }, role: { en: "Engineering Manager", de: "Engineering Manager" } } ],
+      managers: [ { name: "Sara Petrov", initials: "SP", color: "pink", pronouns: { en: "she/her", de: "sie/ihr" }, role: { en: "HR Business Partner", de: "HR Business Partner" } } ],
       events: [ { day: "11", month: { en: "Oct", de: "Okt" }, title: { en: "Monthly Meetup", de: "Monatlicher Austausch" }, time: { en: "4:00pm", de: "16:00 Uhr" }, location: { en: "Kitchen lounge, 3rd floor", de: "Küchen-Lounge, 3. Stock" }, going: 13 } ],
       posts: [
         { author: "Sara Petrov", initials: "SP", color: "pink", time: { en: "1 day ago", de: "vor 1 Tag" }, text: { en: "Does anyone know a good holiday care program for the autumn break in Berlin?", de: "Kennt jemand eine gute Ferienbetreuung für die Herbstferien in Berlin?" }, reactions: 6, liked: false, comments: [ { author: "Mara Klein", initials: "MK", color: "teal", time: { en: "22 hours ago", de: "vor 22 Std." }, text: { en: "We used Ferienzauber last year, really recommend it.", de: "Wir haben letztes Jahr Ferienzauber genutzt, sehr zu empfehlen." }, liked: false, replies: [] } ] },
@@ -1061,14 +1144,22 @@
     {
       id: "engineering-guild", home: "discover", joined: false, recommended: false,
       iconBg: "#e2e8f0", iconFg: "#334155", glyph: "gear",
-      bannerSeed: "data-center", aboutImages: ["engineering-guild-about-2","modern-office","engineering-guild-about-3"], members: 52, order: 8,
+      bannerSeed: "engineering-guild-banner", members: 52, order: 8,
       avatars: [["KP","teal"],["IR","cyan"],["WB","purple"]],
       name: "Engineering Guild",
       desc: { en: "Engineers across the company trading notes on architecture, tooling and best practices.", de: "Engineers aus dem ganzen Unternehmen tauschen sich über Architektur, Tools und Best Practices aus." },
-      about: { en: ["Engineers across the company trading notes on architecture, tooling, and best practices — plus a weekly guild talk.", "Recordings of every guild talk are archived here, so you can always catch up later."], de: ["Engineers aus dem ganzen Unternehmen tauschen sich über Architektur, Tools und Best Practices aus — inklusive wöchentlichem Guild-Talk.", "Aufzeichnungen aller Guild-Talks werden hier archiviert, damit ihr jederzeit nachschauen könnt."] },
+      about: {
+        en: ["Engineers across the company trading notes on architecture, tooling, and best practices — plus a weekly guild talk. It spans every team and stack, so questions that would otherwise stay siloed get answered here instead.", "RFCs get posted for open comment before anything ships, and the guild talk is recorded for anyone who can't make it live. No question is considered too basic — the whole point is cross-team learning."],
+        de: ["Engineers aus dem ganzen Unternehmen tauschen sich über Architektur, Tools und Best Practices aus — inklusive wöchentlichem Guild-Talk. Die Gruppe ist team- und stack-übergreifend, sodass Fragen, die sonst im Silo bleiben würden, hier eine Antwort finden.", "RFCs werden vor dem Rollout offen zur Kommentierung gestellt, und der Guild-Talk wird für alle aufgezeichnet, die live nicht dabei sein können. Keine Frage ist zu simpel — es geht genau um das teamübergreifende Lernen."]
+      },
+      highlights: {
+        en: ["Weekly guild talk, recorded for anyone who can't attend", "Open RFC review before major architecture changes ship", "Cross-team — every stack and every seniority level welcome", "Tooling and best-practice threads, updated as things change"],
+        de: ["Wöchentlicher Guild-Talk, aufgezeichnet für alle Abwesenden", "Offene RFC-Reviews vor größeren Architekturänderungen", "Teamübergreifend — jeder Stack und jedes Senioritätslevel willkommen", "Threads zu Tools und Best Practices, laufend aktualisiert"]
+      },
+      infoTip: { en: "Working on an RFC? Post the draft here early — this is where most of the useful feedback happens.", de: "Arbeitest du an einem RFC? Postet den Entwurf früh hier — hier kommt das meiste nützliche Feedback." },
+      aboutImage: "https://picsum.photos/seed/data-center-2/700/360",
       created: { en: "December 2021", de: "Dezember 2021" },
-      howItWorks: { en: ["RFCs are posted for open comment before any major architecture decision.", "The weekly guild talk covers a different topic each time, recordings go up for anyone who misses it.", "Tooling and best-practice discussions happen right in the feed, searchable for later.", "Cross-team by design — this isn't scoped to one codebase or stack."], de: ["RFCs werden vor größeren Architekturentscheidungen zur offenen Kommentierung gepostet.", "Der wöchentliche Guild-Talk behandelt jedes Mal ein anderes Thema, Aufzeichnungen gibt's für alle, die nicht live dabei sein können.", "Diskussionen zu Tools und Best Practices laufen direkt im Feed und bleiben durchsuchbar.", "Bewusst teamübergreifend – nicht auf eine Codebase oder einen Stack beschränkt."] }, quickFacts: { en: ["Guild talk: weekly, 3:00pm, tech hub & Teams", "RFCs: open comment period before decisions", "Recordings: archived for every session", "Scope: all teams, all stacks"], de: ["Guild-Talk: wöchentlich, 15:00 Uhr, Tech-Hub & Teams", "RFCs: offene Kommentierungsphase vor Entscheidungen", "Aufzeichnungen: für jede Session archiviert", "Umfang: alle Teams, alle Stacks"] }, faq: [ { q: { en: "Can I comment on an RFC even if it's not my team's area?", de: "Darf ich einen RFC kommentieren, auch wenn es nicht mein Team betrifft?" }, a: { en: "Yes, cross-team perspective is exactly what makes RFCs here stronger.", de: "Ja, die teamübergreifende Perspektive macht die RFCs hier gerade stärker." } }, { q: { en: "Where do I find past guild talk recordings?", de: "Wo finde ich Aufzeichnungen vergangener Guild-Talks?" }, a: { en: "They're linked in the feed under each talk's original post.", de: "Sie sind im Feed beim jeweiligen ursprünglichen Post verlinkt." } }, { q: { en: "How long does an RFC stay open for comments?", de: "Wie lange bleibt ein RFC offen für Kommentare?" }, a: { en: "Typically until the Friday noted in the post, then a decision is posted.", de: "In der Regel bis zu dem im Post genannten Freitag, danach wird die Entscheidung gepostet." } } ],
-      managers: [ { name: "Kim Park", initials: "KP", color: "teal", pronouns: { en: "she/her", de: "sie/ihr" }, role: { en: "Staff Engineer", de: "Staff Engineer" } }, { name: "Ivan Rossi", initials: "IR", color: "cyan", pronouns: { en: "he/him", de: "er/ihm" }, role: { en: "Principal Engineer", de: "Principal Engineer" } } ],
+      managers: [ { name: "Kim Park", initials: "KP", color: "teal", pronouns: { en: "she/her", de: "sie/ihr" }, role: { en: "Staff Engineer", de: "Staff Engineer" } } ],
       events: [ { day: "10", month: { en: "Oct", de: "Okt" }, title: { en: "Guild Talk: Scalable Event Pipelines", de: "Guild-Talk: Skalierbare Event-Pipelines" }, time: { en: "3:00pm", de: "15:00 Uhr" }, location: { en: "Tech hub & Teams", de: "Tech-Hub & Teams" }, going: 22 } ],
       posts: [
         { author: "Kim Park", initials: "KP", color: "teal", time: { en: "5 hours ago", de: "vor 5 Std." }, text: { en: "The RFC for the new service mesh architecture is open for comments until Friday.", de: "RFC zur neuen Service-Mesh-Architektur ist offen für Kommentare bis Freitag." }, reactions: 18, liked: false, comments: [ { author: "Sofia Reyes", initials: "SR", color: "pink", time: { en: "4 hours ago", de: "vor 4 Std." }, text: { en: "Left a few comments on the RFC, exciting direction!", de: "Habe ein paar Kommentare im RFC hinterlassen, spannende Richtung!" }, liked: false, replies: [] } ] },
@@ -1078,48 +1169,72 @@
     {
       id: "berlin-folks", home: "discover", joined: false, recommended: true,
       iconBg: "#bfdbfe", iconFg: "#1d4ed8", glyph: "pin",
-      bannerSeed: "berlin-folks-banner", aboutImages: ["film-camera","workspace","berlin-folks-about-3"], members: 234, order: 9,
+      bannerSeed: "berlin-folks-banner", members: 234, order: 9,
       avatars: [["FM","cyan"],["HL","pink"],["DG","purple"]],
       name: "Berlin folks",
       desc: { en: "Meetups, restaurant tips and everything else about life in and around Berlin.", de: "Meetups, Restauranttipps und alles rund ums Leben in und um Berlin." },
-      about: { en: ["For everyone living in or curious about Berlin — meetups, restaurant tips, and everything about life in the city.", "Whether you're new to the city or a long-time local, this is the place for tips, meetups, and recommendations."], de: ["Für alle, die in Berlin leben oder sich dafür interessieren — Meetups, Restauranttipps und alles rund ums Leben in der Stadt.", "Ob neu in der Stadt oder schon lange hier – hier gibt's Tipps, Meetups und Empfehlungen."] },
+      about: {
+        en: ["For everyone living in or curious about Berlin — meetups, restaurant tips, and everything about life in the city. With over 200 members it's one of the biggest communities here, spanning every district and every reason someone ended up in Berlin.", "Expect restaurant and bar recommendations, flat-share leads, market and event meetups, and the occasional debate about which Späti has the best selection."],
+        de: ["Für alle, die in Berlin leben oder sich dafür interessieren — Meetups, Restauranttipps und alles rund ums Leben in der Stadt. Mit über 200 Mitgliedern eine der größten Communities hier, quer durch alle Bezirke und Gründe, warum jemand in Berlin gelandet ist.", "Erwartet Restaurant- und Bar-Empfehlungen, WG-Zimmer-Hinweise, Markt- und Event-Meetups und die gelegentliche Debatte, welcher Späti das beste Sortiment hat."]
+      },
+      highlights: {
+        en: ["Regular meetups: markets, street food, neighborhood walks", "Restaurant and bar recommendations thread", "Flat-share and moving tips for the city", "Biggest community here — 200+ members across every district"],
+        de: ["Regelmäßige Meetups: Märkte, Streetfood, Kiez-Spaziergänge", "Thread mit Restaurant- und Bar-Empfehlungen", "Tipps zu WG-Zimmern und Umzug in der Stadt", "Größte Community hier — 200+ Mitglieder aus allen Bezirken"]
+      },
+      infoTip: { en: "New to Berlin? Ask here first — with 200+ members someone's already solved whatever you're stuck on.", de: "Neu in Berlin? Fragt hier zuerst — bei 200+ Mitgliedern hat wahrscheinlich schon jemand euer Problem gelöst." },
+      aboutImage: "https://picsum.photos/seed/sunny-afternoon-3/700/360",
       created: { en: "July 2022", de: "Juli 2022" },
-      howItWorks: { en: ["Meetups get posted whenever someone has an idea, no fixed schedule.", "New to the city? Ask here first, this community answers fast.", "Restaurant and event tips are shared as they come up, no need to wait for a round-up.", "Flat-share and neighborhood questions are always welcome."], de: ["Meetups werden gepostet, sobald jemand eine Idee hat, ohne festen Rhythmus.", "Neu in der Stadt? Frag hier zuerst, die Community antwortet schnell.", "Restaurant- und Veranstaltungstipps werden geteilt, sobald sie aufkommen, keine feste Zusammenfassung nötig.", "Fragen zu WGs und Kiezen sind immer willkommen."] }, quickFacts: { en: ["Meetups: posted as they're planned", "Topics: restaurants, events, neighborhoods, flat-shares", "Newcomers: always welcome, ask anything", "Reach: 234 members across the company"], de: ["Meetups: werden gepostet, sobald geplant", "Themen: Restaurants, Events, Kieze, WGs", "Neuankömmlinge: immer willkommen, fragt einfach", "Reichweite: 234 Mitglieder im ganzen Unternehmen"] }, faq: [ { q: { en: "I just moved to Berlin, where do I start?", de: "Ich bin gerade nach Berlin gezogen, wo fange ich an?" }, a: { en: "Post an intro in the feed — you'll usually get recommendations within the hour.", de: "Poste eine kurze Vorstellung im Feed – meistens bekommst du innerhalb einer Stunde Empfehlungen." } }, { q: { en: "Is this only for people who live in Berlin?", de: "Ist das nur für Leute, die in Berlin wohnen?" }, a: { en: "Mostly, but anyone curious about the city or visiting is welcome too.", de: "Größtenteils, aber auch alle, die neugierig sind oder zu Besuch kommen, sind willkommen." } }, { q: { en: "How do I find a flat-share recommendation?", de: "Wie finde ich eine WG-Empfehlung?" }, a: { en: "Post what you're looking for, members often know of openings before they're listed publicly.", de: "Poste, wonach du suchst, Mitglieder wissen oft von freien Zimmern, bevor sie öffentlich inseriert werden." } } ],
-      managers: [ { name: "Finn Meyer", initials: "FM", color: "cyan", pronouns: { en: "he/him", de: "er/ihm" }, role: { en: "Office Experience Lead", de: "Office Experience Lead" } }, { name: "Hana Lindgren", initials: "HL", color: "pink", pronouns: { en: "she/her", de: "sie/ihr" }, role: { en: "Talent Acquisition", de: "Talent Acquisition" } } ],
+      managers: [ { name: "Finn Meyer", initials: "FM", color: "cyan", pronouns: { en: "he/him", de: "er/ihm" }, role: { en: "Office Experience Lead", de: "Office Experience Lead" } } ],
       events: [ { day: "12", month: { en: "Oct", de: "Okt" }, title: { en: "Kreuzberg Street Food Market", de: "Streetfood-Markt Kreuzberg" }, time: { en: "12:00pm", de: "12:00 Uhr" }, location: { en: "Meet at the main entrance", de: "Treffpunkt Haupteingang" }, going: 18 } ],
       posts: [
-        { author: "Finn Meyer", initials: "FM", color: "cyan", time: { en: "4 hours ago", de: "vor 4 Std." }, text: { en: "New street food market this weekend in Kreuzberg — who's in?", de: "Neuer Streetfood-Markt am Wochenende in Kreuzberg – wer kommt mit?" }, image: "https://picsum.photos/seed/farmers-market/640/360", reactions: 19, liked: false, comments: [ { author: "Lukas Vogt", initials: "LV", color: "teal", time: { en: "3 hours ago", de: "vor 3 Std." }, text: { en: "I'm in, see you at the entrance!", de: "Bin dabei, bis am Eingang!" }, liked: false, replies: [] } ] },
+        { author: "Finn Meyer", initials: "FM", color: "cyan", time: { en: "4 hours ago", de: "vor 4 Std." }, text: { en: "New street food market this weekend in Kreuzberg — who's in?", de: "Neuer Streetfood-Markt am Wochenende in Kreuzberg – wer kommt mit?" }, image: "https://picsum.photos/seed/berlin-folks-post/640/360", reactions: 19, liked: false, comments: [ { author: "Lukas Vogt", initials: "LV", color: "teal", time: { en: "3 hours ago", de: "vor 3 Std." }, text: { en: "I'm in, see you at the entrance!", de: "Bin dabei, bis am Eingang!" }, liked: false, replies: [] } ] },
         { author: "Hana Lindgren", initials: "HL", color: "pink", time: { en: "1 day ago", de: "vor 1 Tag" }, text: { en: "Anyone looking for a flat-share recommendation in Berlin? Ask here, the community's got you.", de: "Sucht jemand eine WG-Empfehlung in Berlin? Gerne hier fragen, die Community hilft." }, reactions: 10, liked: false, comments: [ { author: "Mia Sørensen", initials: "MS", color: "purple", time: { en: "20 hours ago", de: "vor 20 Std." }, text: { en: "I might have a room opening up next month, will DM you.", de: "Bei mir wird nächsten Monat evtl. ein Zimmer frei, schreib dir eine Nachricht." }, liked: false, replies: [] } ] }
       ]
     },
     {
       id: "photography", home: "discover", joined: false, recommended: false,
       iconBg: "#fef08a", iconFg: "#a16207", glyph: "camera",
-      bannerSeed: "photography-banner", aboutImages: ["camera-lens","photography-about-2","photography-about-3"], members: 68, order: 3,
+      bannerSeed: "photography-banner", members: 68, order: 3,
       avatars: [["EW","teal"],["JD","cyan"],["RS","pink"]],
       name: "Photography",
       desc: { en: "Share your shots, swap gear advice and join monthly photo challenges.", de: "Zeig deine Fotos, tausche Ausrüstungstipps aus und mach bei monatlichen Foto-Challenges mit." },
-      about: { en: ["For anyone who loves a good photo — share your shots, swap gear advice, and join the monthly challenge.", "Every month brings a new challenge theme, plus feedback threads where all skill levels are welcome."], de: ["Für alle, die gute Fotos lieben — teilt eure Bilder, tauscht Ausrüstungstipps aus und macht bei der monatlichen Challenge mit.", "Jeden Monat gibt es ein neues Challenge-Thema, plus Feedback-Threads für alle Erfahrungsstufen."] },
+      about: {
+        en: ["For anyone who loves a good photo — share your shots, swap gear advice, and join the monthly challenge. Phone photography counts just as much as a full kit; the theme is what matters, not the camera.", "Each month has a loose theme to riff on, past entries stay pinned for inspiration, and the occasional photo walk gets organized when the weather cooperates."],
+        de: ["Für alle, die gute Fotos lieben — teilt eure Bilder, tauscht Ausrüstungstipps aus und macht bei der monatlichen Challenge mit. Handyfotografie zählt genauso wie die volle Ausrüstung; das Thema ist wichtig, nicht die Kamera.", "Jeden Monat gibt es ein loses Thema zum Umsetzen, frühere Beiträge bleiben zur Inspiration angepinnt, und ab und zu wird ein Foto-Walk organisiert, wenn das Wetter mitspielt."]
+      },
+      highlights: {
+        en: ["Monthly photo challenge with a rotating theme", "Gear advice and lens recommendations thread", "Occasional photo walks around the city", "Phone photography welcome — no gear snobbery"],
+        de: ["Monatliche Foto-Challenge mit wechselndem Thema", "Thread mit Ausrüstungstipps und Objektiv-Empfehlungen", "Gelegentliche Foto-Walks durch die Stadt", "Handyfotos willkommen — kein Ausrüstungs-Snobismus"]
+      },
+      infoTip: { en: "This month's challenge entries are due end of week — post yours in the challenge thread, not the general feed.", de: "Die Beiträge zur Challenge diesen Monat sind bis Ende der Woche fällig — bitte im Challenge-Thread posten, nicht im allgemeinen Feed." },
+      aboutImage: "https://picsum.photos/seed/camera-gear-1/700/360",
       created: { en: "February 2023", de: "Februar 2023" },
-      howItWorks: { en: ["A new challenge theme drops on the first of the month — submit anytime before the deadline.", "Feedback threads are for everyone, first-timers get just as much attention as regulars.", "Gear questions are welcome, from phone cameras to full manual setups.", "Monthly favorites get featured in the Media tab."], de: ["Am Monatsersten gibt's ein neues Challenge-Thema – einreichen kannst du jederzeit bis zur Deadline.", "Die Feedback-Threads sind für alle da, Neulinge bekommen genauso viel Aufmerksamkeit wie Stammmitglieder.", "Fragen zur Ausrüstung sind willkommen, vom Handy bis zum vollmanuellen Setup.", "Die Favoriten des Monats werden im Media-Tab vorgestellt."] }, quickFacts: { en: ["New challenge: first of the month", "Submission deadline: end of the month", "Skill level: all welcome, phone cameras included", "Highlights: featured in the Media tab"], de: ["Neue Challenge: Monatsanfang", "Einreichfrist: Monatsende", "Niveau: alle willkommen, auch mit dem Handy", "Highlights: im Media-Tab vorgestellt"] }, faq: [ { q: { en: "Do I need a professional camera to participate?", de: "Brauche ich eine professionelle Kamera, um mitzumachen?" }, a: { en: "Not at all, plenty of great entries come from phone cameras.", de: "Überhaupt nicht, viele tolle Beiträge entstehen mit dem Handy." } }, { q: { en: "Can I submit more than one photo per challenge?", de: "Darf ich mehr als ein Foto pro Challenge einreichen?" }, a: { en: "Yes, submit as many as you like, just tag them with the challenge theme.", de: "Ja, reich so viele ein wie du willst, markiere sie einfach mit dem Challenge-Thema." } }, { q: { en: "How are monthly favorites chosen?", de: "Wie werden die Favoriten des Monats ausgewählt?" }, a: { en: "Informally, based on reactions and comments — no formal judging panel.", de: "Informell, anhand von Reaktionen und Kommentaren – es gibt keine offizielle Jury." } } ],
-      managers: [ { name: "Elena Wagner", initials: "EW", color: "teal", pronouns: { en: "she/her", de: "sie/ihr" }, role: { en: "Brand Designer", de: "Brand Designer" } }, { name: "Jamie Diaz", initials: "JD", color: "cyan", pronouns: { en: "he/him", de: "er/ihm" }, role: { en: "Content Creator", de: "Content Creator" } } ],
+      managers: [ { name: "Elena Wagner", initials: "EW", color: "teal", pronouns: { en: "she/her", de: "sie/ihr" }, role: { en: "Brand Designer", de: "Brand Designer" } } ],
       events: [ { day: "9", month: { en: "Oct", de: "Okt" }, title: { en: "Photo Walk Downtown", de: "Foto-Walk Innenstadt" }, time: { en: "6:00pm", de: "18:00 Uhr" }, location: { en: "Meet at the main lobby", de: "Treffpunkt Empfangshalle" }, going: 9 } ],
       posts: [
-        { author: "Elena Wagner", initials: "EW", color: "teal", time: { en: "6 hours ago", de: "vor 6 Std." }, text: { en: "This month's photo challenge: ‘Urban Geometry’. Please upload your entries by end of week.", de: "Foto-Challenge diesen Monat: „Urban Geometry“. Eure Beiträge bitte bis Ende der Woche hochladen." }, image: "https://picsum.photos/seed/photo-shoot/640/360", reactions: 21, liked: false, comments: [ { author: "Noah Klein", initials: "NK", color: "orange", time: { en: "5 hours ago", de: "vor 5 Std." }, text: { en: "Love this theme, already scouting locations.", de: "Tolles Thema, bin schon auf der Suche nach Locations." }, liked: false, replies: [] } ] },
+        { author: "Elena Wagner", initials: "EW", color: "teal", time: { en: "6 hours ago", de: "vor 6 Std." }, text: { en: "This month's photo challenge: ‘Urban Geometry’. Please upload your entries by end of week.", de: "Foto-Challenge diesen Monat: „Urban Geometry“. Eure Beiträge bitte bis Ende der Woche hochladen." }, image: "https://picsum.photos/seed/photography-post-1/640/360", reactions: 21, liked: false, comments: [ { author: "Noah Klein", initials: "NK", color: "orange", time: { en: "5 hours ago", de: "vor 5 Std." }, text: { en: "Love this theme, already scouting locations.", de: "Tolles Thema, bin schon auf der Suche nach Locations." }, liked: false, replies: [] } ] },
         { author: "Jamie Diaz", initials: "JD", color: "cyan", time: { en: "3 days ago", de: "vor 3 Tagen" }, text: { en: "Anyone have tips for street photography in low light?", de: "Kann jemand Tipps zur Streetfotografie bei schlechtem Licht geben?" }, reactions: 7, liked: false, comments: [ { author: "Ana Costa", initials: "AC", color: "pink", time: { en: "2 days ago", de: "vor 2 Tagen" }, text: { en: "Try a slower shutter speed and a small flashlight to fill in shadows.", de: "Probier eine längere Verschlusszeit und eine kleine Taschenlampe für die Schatten." }, liked: false, replies: [] } ] }
       ]
     },
     {
       id: "trivia-night", home: "discover", joined: false, recommended: false,
       iconBg: "#bbf7d0", iconFg: "#15803d", glyph: "bulb",
-      bannerSeed: "pub-night", aboutImages: ["bar-lights","cozy-bar","quiz"], members: 41, order: 5,
+      bannerSeed: "trivia-night-banner", members: 41, order: 5,
       avatars: [["BH","teal"],["NP","cyan"],["SF","pink"]],
       name: "Trivia Night",
       desc: { en: "Weekly trivia questions, team challenges and bragging rights for the office's most useless knowledge.", de: "Wöchentliche Quizfragen, Team-Challenges und Ruhm für die Kolleg:innen mit dem nutzlosesten Wissen." },
-      about: { en: ["Weekly trivia, team challenges, and bragging rights for the office's most useless knowledge.", "Teams of up to four, new categories every week, and bragging rights on the line."], de: ["Wöchentliche Quizfragen, Team-Challenges und Ruhm für die Kolleg:innen mit dem nutzlosesten Wissen.", "Teams mit bis zu vier Personen, jede Woche neue Kategorien, und das Prestige steht auf dem Spiel."] },
+      about: {
+        en: ["Weekly trivia, team challenges, and bragging rights for the office's most useless knowledge. Teams form on the spot in the break room — no need to sign up in advance or come with a squad.", "Themes rotate weekly (90s movies, geography, music, a bit of everything), and the scoreboard resets every quarter so new teams always have a shot at the title."],
+        de: ["Wöchentliche Quizfragen, Team-Challenges und Ruhm für die Kolleg:innen mit dem nutzlosesten Wissen. Teams bilden sich spontan im Pausenraum — keine Anmeldung nötig, auch ohne eigene Truppe.", "Die Themen wechseln wöchentlich (Filme der 90er, Geografie, Musik, ein bisschen von allem), und die Bestenliste wird jedes Quartal zurückgesetzt, damit neue Teams eine faire Chance auf den Titel haben."]
+      },
+      highlights: {
+        en: ["Weekly trivia in the break room, new theme every time", "Teams form on the spot — no sign-up needed", "Scoreboard resets every quarter for a fresh shot at the title", "Snacks provided, bragging rights not guaranteed"],
+        de: ["Wöchentliches Quiz im Pausenraum mit neuem Thema", "Teams bilden sich spontan — keine Anmeldung nötig", "Bestenliste wird jedes Quartal zurückgesetzt", "Snacks inklusive, Ruhm nicht garantiert"]
+      },
+      infoTip: { en: "Come solo — teams get shuffled at the door, so you don't need a squad to join in.", de: "Kommt auch allein vorbei — Teams werden an der Tür gemischt, eine eigene Truppe ist nicht nötig." },
+      aboutImage: "https://picsum.photos/seed/warm-bar-light-3/700/360",
       created: { en: "November 2023", de: "November 2023" },
-      howItWorks: { en: ["Teams of up to four, form your own or join one on the spot.", "A new category drops every week, nobody knows the topic in advance.", "Scores get posted in the feed afterward, bragging rights included.", "No prep needed — that's kind of the point."], de: ["Teams mit bis zu vier Personen, entweder selbst zusammenstellen oder spontan dazustoßen.", "Jede Woche gibt es eine neue Kategorie, das Thema ist vorher nicht bekannt.", "Die Ergebnisse werden danach im Feed gepostet, samt Angeberrechten.", "Vorbereitung ist nicht nötig – das ist eigentlich der Sinn der Sache."] }, quickFacts: { en: ["When: weekly, 5:00pm, break room", "Teams: up to 4 people, form on the spot", "Categories: new and secret every week", "Reigning champs: Quizteama Aguilera"], de: ["Wann: wöchentlich, 17:00 Uhr, Pausenraum", "Teams: bis zu 4 Personen, spontan bildbar", "Kategorien: jede Woche neu und geheim", "Amtierende Champions: Quizteama Aguilera"] }, faq: [ { q: { en: "Do I need a team before showing up?", de: "Brauche ich schon ein Team, bevor ich komme?" }, a: { en: "No, solo players get grouped into a team on arrival.", de: "Nein, Einzelspieler:innen werden vor Ort einem Team zugeteilt." } }, { q: { en: "What if I have to leave early?", de: "Was, wenn ich früher gehen muss?" }, a: { en: "Totally fine, teams can play short-handed, nobody minds.", de: "Völlig okay, Teams können auch in kleinerer Besetzung spielen, das stört niemanden." } }, { q: { en: "Is there a prize for winning?", de: "Gibt es einen Preis fürs Gewinnen?" }, a: { en: "Just bragging rights — and a very competitive scoreboard in the feed.", de: "Nur Angeberrechte – und eine sehr kompetitive Punktetabelle im Feed." } } ],
-      managers: [ { name: "Ben Hoffmann", initials: "BH", color: "teal", pronouns: { en: "he/him", de: "er/ihm" }, role: { en: "Workplace Experience", de: "Workplace Experience" } }, { name: "Nora Price", initials: "NP", color: "cyan", pronouns: { en: "she/her", de: "sie/ihr" }, role: { en: "Event Coordinator", de: "Event Coordinator" } } ],
+      managers: [ { name: "Ben Hoffmann", initials: "BH", color: "teal", pronouns: { en: "he/him", de: "er/ihm" }, role: { en: "Workplace Experience", de: "Workplace Experience" } } ],
       events: [ { day: "10", month: { en: "Oct", de: "Okt" }, title: { en: "90s Movie Quiz", de: "Filmquiz der 90er" }, time: { en: "5:00pm", de: "17:00 Uhr" }, location: { en: "Break room", de: "Pausenraum" }, going: 16 } ],
       posts: [
         { author: "Ben Hoffmann", initials: "BH", color: "teal", time: { en: "6 hours ago", de: "vor 6 Std." }, text: { en: "Today's theme: 90s movie quiz! Starts 5pm in the break room.", de: "Heutiges Thema: Filmquiz der 90er! Start 17 Uhr im Pausenraum." }, reactions: 12, liked: false, comments: [ { author: "Ella Fischer", initials: "EF", color: "purple", time: { en: "5 hours ago", de: "vor 5 Std." }, text: { en: "See you all at 5!", de: "Bis um 17 Uhr!" }, liked: false, replies: [] } ] },
@@ -1129,17 +1244,25 @@
     {
       id: "movie-night-club", home: "discover", joined: false, recommended: false,
       iconBg: "#bfdbfe", iconFg: "#1d4ed8", glyph: "film",
-      bannerSeed: "movie-night", aboutImages: ["cinema-seats","movie-night-club-about-2","movie-night-club-about-3"], members: 34, order: 6,
+      bannerSeed: "movie-night-banner", members: 34, order: 6,
       avatars: [["CE","pink"],["ZS","teal"],["MD","purple"]],
       name: "Movie Night Club",
       desc: { en: "Weekly picks, spoiler-free discussions and recommendations for movie nights in and out of the office.", de: "Wöchentliche Filmtipps, spoilerfreie Diskussionen und Empfehlungen für Kinoabende drinnen und draußen." },
-      about: { en: ["Weekly picks, spoiler-free discussions, and recommendations for movie nights in and out of the office.", "Picks rotate genres each week and there's always a vegan popcorn option."], de: ["Wöchentliche Filmtipps, spoilerfreie Diskussionen und Empfehlungen für Kinoabende drinnen und draußen.", "Die Auswahl wechselt wöchentlich das Genre, und es gibt immer eine vegane Popcorn-Option."] },
+      about: {
+        en: ["Weekly picks, spoiler-free discussions, and recommendations for movie nights in and out of the office. The Friday screening in the town hall is the main event, but plenty of the conversation happens for movies watched at home too.", "Picks rotate between genres on purpose, spoiler tags are enforced strictly in threads, and suggestions for next week's film are always open in the comments."],
+        de: ["Wöchentliche Filmtipps, spoilerfreie Diskussionen und Empfehlungen für Kinoabende drinnen und draußen. Die Freitagsvorführung in der Town Hall ist das Hauptevent, aber auch für zuhause geschaute Filme gibt's hier viel Austausch.", "Die Auswahl wechselt bewusst zwischen Genres, Spoiler-Tags werden in den Threads konsequent durchgesetzt, und Vorschläge für den nächsten Film sind jederzeit in den Kommentaren willkommen."]
+      },
+      highlights: {
+        en: ["Friday screening in the town hall, popcorn included", "Spoiler-tagged discussion threads, strictly enforced", "Genre rotates weekly — suggestions always welcome", "Casual — drop in for one screening or every week"],
+        de: ["Freitagsvorführung in der Town Hall, Popcorn inklusive", "Diskussions-Threads mit konsequenten Spoiler-Tags", "Wöchentlich wechselndes Genre — Vorschläge immer willkommen", "Locker — ob nur einmal oder jede Woche dabei"]
+      },
+      infoTip: { en: "Got a pick for next week? Drop it in the comments — the group votes on Mondays.", de: "Habt ihr einen Vorschlag für nächste Woche? Ab in die Kommentare — abgestimmt wird montags." },
+      aboutImage: "https://picsum.photos/seed/dark-screen-glow-4/700/360",
       created: { en: "August 2023", de: "August 2023" },
-      howItWorks: { en: ["One pick per week, announced a few days ahead so you can clear your calendar.", "Genres rotate on purpose, so nobody's stuck with only one type of film.", "Discussions stay spoiler-free until everyone's had a chance to watch.", "Suggestions are always open, drop yours in the feed any time."], de: ["Eine Auswahl pro Woche, ein paar Tage vorher angekündigt, damit du dir Zeit freihalten kannst.", "Die Genres wechseln bewusst, damit niemand auf einen einzigen Filmtyp festgelegt ist.", "Diskussionen bleiben spoilerfrei, bis alle die Chance hatten, den Film zu sehen.", "Vorschläge sind immer offen, poste deinen jederzeit im Feed."] }, quickFacts: { en: ["Showtime: weekly, 7:00pm, town hall / big screen", "Genres: rotate every week", "Spoilers: held back until everyone's watched", "Snacks: vegan popcorn always available"], de: ["Termin: wöchentlich, 19:00 Uhr, Town Hall / Leinwand", "Genres: wechseln jede Woche", "Spoiler: erst, wenn alle geschaut haben", "Snacks: veganes Popcorn immer verfügbar"] }, faq: [ { q: { en: "Can I suggest a movie?", de: "Kann ich einen Film vorschlagen?" }, a: { en: "Yes, drop it in the feed any time, picks are chosen from community suggestions.", de: "Ja, poste ihn jederzeit im Feed, die Auswahl kommt aus den Vorschlägen der Community." } }, { q: { en: "What if I haven't seen the movie yet when we discuss it?", de: "Was, wenn ich den Film noch nicht gesehen habe, wenn er besprochen wird?" }, a: { en: "Discussions stay spoiler-free for the first few days, so you're safe to catch up.", de: "Die Diskussion bleibt die ersten Tage spoilerfrei, du kannst also in Ruhe nachholen." } }, { q: { en: "Is there always vegan popcorn?", de: "Gibt es immer veganes Popcorn?" }, a: { en: "Yes, it's a standing request from the group and always stocked.", de: "Ja, das ist ein Dauerwunsch der Gruppe und immer vorrätig." } } ],
-      managers: [ { name: "Chloe Evans", initials: "CE", color: "pink", pronouns: { en: "she/her", de: "sie/ihr" }, role: { en: "Employee Experience", de: "Employee Experience" } }, { name: "Zack Sullivan", initials: "ZS", color: "teal", pronouns: { en: "he/him", de: "er/ihm" }, role: { en: "IT Support", de: "IT Support" } } ],
+      managers: [ { name: "Chloe Evans", initials: "CE", color: "pink", pronouns: { en: "she/her", de: "sie/ihr" }, role: { en: "Employee Experience", de: "Employee Experience" } } ],
       events: [ { day: "11", month: { en: "Oct", de: "Okt" }, title: { en: "Office Movie Night", de: "Kinoabend im Büro" }, time: { en: "7:00pm", de: "19:00 Uhr" }, location: { en: "Town hall / big screen", de: "Town Hall / Leinwand" }, going: 20 } ],
       posts: [
-        { author: "Chloe Evans", initials: "CE", color: "pink", time: { en: "2 days ago", de: "vor 2 Tagen" }, text: { en: "Friday we're watching ‘Everything Everywhere All at Once’ — popcorn's sorted!", de: "Freitag schauen wir „Everything Everywhere All at Once“ – Popcorn ist organisiert!" }, image: "https://picsum.photos/seed/cinema-seats/640/360", reactions: 16, liked: false, comments: [ { author: "Jonas Klein", initials: "JK", color: "cyan", time: { en: "1 day ago", de: "vor 1 Tag" }, text: { en: "So excited, been wanting to see this one!", de: "So gespannt, wollte den schon lange sehen!" }, liked: false, replies: [] } ] },
+        { author: "Chloe Evans", initials: "CE", color: "pink", time: { en: "2 days ago", de: "vor 2 Tagen" }, text: { en: "Friday we're watching ‘Everything Everywhere All at Once’ — popcorn's sorted!", de: "Freitag schauen wir „Everything Everywhere All at Once“ – Popcorn ist organisiert!" }, image: "https://picsum.photos/seed/movie-night-post/640/360", reactions: 16, liked: false, comments: [ { author: "Jonas Klein", initials: "JK", color: "cyan", time: { en: "1 day ago", de: "vor 1 Tag" }, text: { en: "So excited, been wanting to see this one!", de: "So gespannt, wollte den schon lange sehen!" }, liked: false, replies: [] } ] },
         { author: "Zack Sullivan", initials: "ZS", color: "teal", time: { en: "5 days ago", de: "vor 5 Tagen" }, text: { en: "What should we watch next week? Drop your suggestions in the comments.", de: "Welchen Film sollen wir nächste Woche schauen? Vorschläge gerne in den Kommentaren." }, reactions: 7, liked: false, comments: [ { author: "Ivy Chen", initials: "IC", color: "orange", time: { en: "4 days ago", de: "vor 4 Tagen" }, text: { en: "Let's do a horror night next!", de: "Lass uns als Nächstes einen Horror-Abend machen!" }, liked: false, replies: [] } ] }
       ]
     }
@@ -1150,48 +1273,214 @@
   var notifOn = {};
   var attending = {};
   var openComments = {};
-  var openFaqItems = {};
   var openComposerId = null;
   var editingPostId = null;
   var replyingCommentId = null;
+  var openPostMenuId = null;
+  var reportingPostId = null;
+  var composerDraftText = "";
+  var composerImages = [];
+  var composerDocs = [];
   var postIdCounter = 0;
   var commentIdCounter = 0;
-  var attachIdCounter = 0;
-  var pendingAttachments = { composer: [] };
-  var fileInputTargetKey = null;
   communities.forEach(function (c) {
     notifOn[c.id] = true;
-    c.media = c.media || [];
     c.events.forEach(function (e, i) { attending[c.id + "-" + i] = false; });
     c.posts.forEach(function (p) {
       p.id = "post-" + (postIdCounter++);
-      p.attachments = p.attachments || [];
-      p.reported = false;
-      (p.comments || []).forEach(function (cm) {
-        cm.id = "comment-" + (commentIdCounter++);
-        cm.replies = cm.replies || [];
-        cm.attachments = cm.attachments || [];
-        cm.replies.forEach(function (r) { r.attachments = r.attachments || []; });
-      });
+      (p.comments || []).forEach(function (cm) { cm.id = "comment-" + (commentIdCounter++); cm.replies = cm.replies || []; });
     });
   });
 
   function nextPostId() { return "post-" + (postIdCounter++); }
   function nextCommentId() { return "comment-" + (commentIdCounter++); }
 
-  function formatBytes(n) {
-    if (n < 1024) return n + " B";
-    if (n < 1024 * 1024) return Math.round(n / 1024) + " KB";
-    return (n / 1024 / 1024).toFixed(1) + " MB";
+  /* ---- Real communities, merged alongside the hardcoded examples above using the
+     exact same data shape / card component.
+
+     GET /api/communities itself returns no entries on this instance — each community
+     is actually a "communities"-plugin installation living inside a space, so they
+     have to be discovered as: all spaces -> each space's installations -> keep the
+     ones with pluginID "communities" -> fetch each one's detail + its member group. ---- */
+
+  var AVATAR_COLORS = ["cyan", "pink", "purple", "teal", "orange"];
+  var MAX_GROUP_PAGES = 5; // 5 * 200 = 1000 members per community, a generous ceiling
+
+  function apiGet(path) {
+    return fetch(path, { credentials: "same-origin", headers: { Accept: "application/json" } })
+      .then(function (res) {
+        if (!res.ok) throw new Error(path + " responded with " + res.status);
+        return res.json();
+      });
   }
 
-  function fileToAttachment(file, cb) {
-    var isImage = file.type.indexOf("image/") === 0;
-    var reader = new FileReader();
-    reader.onload = function () {
-      cb({ id: "att-" + (attachIdCounter++), name: file.name, isImage: isImage, url: reader.result, sizeLabel: formatBytes(file.size) });
+  function apiLocalizedPair(entry, field) {
+    var loc = (entry && entry.config && entry.config.localization) || {};
+    var en = (loc.en_US && loc.en_US[field]) || "";
+    var de = (loc.de_DE && loc.de_DE[field]) || "";
+    return { en: en || de, de: de || en };
+  }
+
+  function formatCreatedDate(iso) {
+    var d = iso ? new Date(iso) : null;
+    if (!d || isNaN(d.getTime())) return { en: "", de: "" };
+    try {
+      return {
+        en: new Intl.DateTimeFormat("en-US", { month: "long", year: "numeric" }).format(d),
+        de: new Intl.DateTimeFormat("de-DE", { month: "long", year: "numeric" }).format(d)
+      };
+    } catch (e) {
+      return { en: "", de: "" };
+    }
+  }
+
+  function userDisplayName(u) {
+    return [u.firstName, u.lastName].filter(Boolean).join(" ") || (LANG === "de" ? "Unbekannt" : "Unknown");
+  }
+
+  function userInitials(u) {
+    return (((u.firstName || "")[0] || "") + ((u.lastName || "")[0] || "")).toUpperCase() || "?";
+  }
+
+  function fetchAllGroupMembers(groupId) {
+    if (!groupId) return Promise.resolve([]);
+    function page(offset, acc, pageCount) {
+      if (pageCount >= MAX_GROUP_PAGES) return acc;
+      return apiGet("/api/groups/" + groupId + "/users?limit=200&offset=" + offset).then(function (data) {
+        var batch = (data && data.data) || [];
+        var combined = acc.concat(batch);
+        if (batch.length > 0 && combined.length < (data.total || 0)) {
+          return page(offset + 200, combined, pageCount + 1);
+        }
+        return combined;
+      });
+    }
+    return page(0, [], 0).catch(function () { return []; });
+  }
+
+  function discoverCommunityInstallationIds() {
+    return apiGet("/api/spaces?limit=200")
+      .then(function (data) {
+        var spaces = (data && data.data) || [];
+        return Promise.all(spaces.map(function (s) {
+          return apiGet("/api/spaces/" + s.id + "/installations?limit=200")
+            .then(function (d) { return (d && d.data) || []; })
+            .catch(function () { return []; });
+        }));
+      })
+      .then(function (perSpace) {
+        var ids = [];
+        perSpace.forEach(function (installations) {
+          installations.forEach(function (inst) {
+            if (inst.pluginID === "communities") ids.push(inst.id);
+          });
+        });
+        return ids;
+      });
+  }
+
+  function normalizeRealCommunity(detail, members) {
+    if (!detail || !detail.id) return null;
+    var title = apiLocalizedPair(detail, "title");
+    var description = apiLocalizedPair(detail, "description");
+    var name = title[LANG] || title.en || title.de || (LANG === "de" ? "Unbenannte Community" : "Untitled community");
+
+    var membersById = {};
+    members.forEach(function (u) { membersById[u.id] = u; });
+
+    var adminIds = ((detail.admins && detail.admins.users && detail.admins.users.data) || []).map(function (a) { return a.id; });
+    if (!adminIds.length && detail.owner && detail.owner.id) adminIds = [detail.owner.id];
+    var managers = adminIds.map(function (id, i) {
+      var u = membersById[id] || ((detail.owner && detail.owner.id === id) ? detail.owner : null);
+      if (!u) return null;
+      return {
+        name: userDisplayName(u),
+        initials: userInitials(u),
+        color: AVATAR_COLORS[i % AVATAR_COLORS.length],
+        pronouns: { en: "", de: "" },
+        role: { en: u.position || "", de: u.position || "" }
+      };
+    }).filter(Boolean);
+
+    var avatars = members.slice(0, 5).map(function (u, i) {
+      return [userInitials(u), AVATAR_COLORS[i % AVATAR_COLORS.length]];
+    });
+
+    var iconUrl = detail.icon && ((detail.icon.thumb && detail.icon.thumb.url) || (detail.icon.original && detail.icon.original.url));
+    var bannerUrl = (detail.bannerImage && detail.bannerImage.imageUrl) || null;
+
+    return {
+      id: "api-" + detail.id,
+      apiId: detail.id,
+      isApi: true,
+      joined: false,
+      recommended: false,
+      iconBg: "#e2e8f0", iconFg: "#334155", glyph: "grid",
+      bannerSeed: null,
+      image: iconUrl || bannerUrl || null,
+      detailBanner: bannerUrl,
+      members: typeof detail.memberCount === "number" ? detail.memberCount : members.length,
+      order: -(Date.parse(detail.created) || 0),
+      avatars: avatars,
+      name: name,
+      desc: description,
+      about: { en: description.en ? [description.en] : [], de: description.de ? [description.de] : [] },
+      created: formatCreatedDate(detail.created),
+      managers: managers,
+      events: [],
+      posts: []
     };
-    reader.readAsDataURL(file);
+  }
+
+  function showDiscoverLoading(isLoading) {
+    var el = root.querySelector("[data-api-loading]");
+    if (isLoading) {
+      if (!el) {
+        el = document.createElement("p");
+        el.setAttribute("data-api-loading", "");
+        el.style.cssText = "font-size:12px;color:var(--ce-text-weak);margin:0 0 8px;";
+        el.textContent = LANG === "de" ? "Communities werden geladen…" : "Loading communities…";
+        grid.parentNode.insertBefore(el, grid);
+      }
+    } else if (el) {
+      el.remove();
+    }
+  }
+
+  function fetchRealCommunities() {
+    showDiscoverLoading(true);
+    return discoverCommunityInstallationIds()
+      .then(function (ids) {
+        return Promise.all(ids.map(function (id) {
+          return apiGet("/api/communities/" + id)
+            .then(function (detail) {
+              var groupId = detail.typedContributorIds && detail.typedContributorIds.groupIds && detail.typedContributorIds.groupIds[0];
+              return fetchAllGroupMembers(groupId).then(function (members) {
+                return normalizeRealCommunity(detail, members);
+              });
+            })
+            .catch(function () { return null; });
+        }));
+      })
+      .then(function (normalizedList) {
+        var existingIds = {};
+        communities.forEach(function (c) { existingIds[c.id] = true; });
+        normalizedList.filter(Boolean).forEach(function (c) {
+          if (!existingIds[c.id]) {
+            communities.push(c);
+            notifOn[c.id] = true;
+            existingIds[c.id] = true;
+          }
+        });
+      })
+      .catch(function (err) {
+        // Network/parse failure: fall back to just the hardcoded examples.
+        console.warn("Communities widget: failed to load real communities, showing examples only.", err);
+      })
+      .then(function () {
+        showDiscoverLoading(false);
+        renderList();
+      });
   }
 
   function showToast(msg) {
@@ -1219,7 +1508,6 @@
   var detailView = root.querySelector("[data-detail-view]");
   var detailContent = root.querySelector("[data-detail-content]");
   var detailBanner = root.querySelector("[data-detail-banner]");
-  var hiddenFileInput = root.querySelector("[data-hidden-file-input]");
   var mineGrid = root.querySelector("[data-mine-grid]");
   var grid = root.querySelector("[data-discover-grid]");
   var emptyMsg = root.querySelector("[data-empty-msg]");
@@ -1235,7 +1523,8 @@
   }
 
   function applyStaticText() {
-    root.querySelectorAll("[data-t]").forEach(function (el) { el.textContent = t(el.getAttribute("data-t")); });
+    document.querySelectorAll("[data-t]").forEach(function (el) { el.textContent = t(el.getAttribute("data-t")); });
+    document.querySelectorAll("[data-t-placeholder]").forEach(function (el) { el.placeholder = t(el.getAttribute("data-t-placeholder")); });
     searchInput.placeholder = LANG === "de" ? "Communities suchen" : "Search communities";
   }
 
@@ -1246,6 +1535,9 @@
   }
 
   function tileHtml(c, extraClass) {
+    if (c.image) {
+      return '<div class="ce-tile' + (extraClass ? " " + extraClass : "") + '" style="overflow:hidden;padding:0;"><img src="' + c.image + '" alt="" style="width:100%;height:100%;object-fit:cover;"></div>';
+    }
     return '<div class="ce-tile' + (extraClass ? " " + extraClass : "") + '" style="background:' + c.iconBg + ';color:' + c.iconFg + ';">' + (ICONS[c.glyph] || "") + '</div>';
   }
 
@@ -1340,18 +1632,26 @@
   function tabContentHtml(c) {
     if (activeDetailTab === "about") {
       var paras = c.about[LANG].map(function (p) { return '<p class="ce-about-text">' + p + '</p>'; }).join("");
-      var howItWorksHtml = (c.howItWorks[LANG] || []).map(function (li) { return '<li>' + li + '</li>'; }).join("");
-      var galleryHtml = c.aboutImages.map(function (seed) {
-        return '<img src="https://picsum.photos/seed/' + seed + '/300/220" alt="">';
-      }).join("");
-      var quickFactsHtml = (c.quickFacts[LANG] || []).map(function (li) { return '<li>' + li + '</li>'; }).join("");
+      var highlightsHtml = c.highlights
+        ? ('<ul class="ce-about-list">' + c.highlights[LANG].map(function (h) { return '<li>' + h + '</li>'; }).join("") + '</ul>')
+        : "";
+      var aboutPhotoHtml = c.aboutImage
+        ? ('<div class="ce-about-photo"><img src="' + c.aboutImage + '" alt=""></div>')
+        : "";
+      var infoTipHtml = c.infoTip
+        ? ('<div class="ce-info-box" style="background:' + c.iconBg + ';color:' + c.iconFg + ';">' + INFO_ICON + '<p>' + c.infoTip[LANG] + '</p></div>')
+        : "";
       var managersHtml = c.managers.map(function (m) {
         return (
-          '<div class="ce-manager-tile">' +
-            '<span class="ce-avatar c-' + m.color + '" style="position:static;margin:0;width:44px;height:44px;font-size:14px;">' + m.initials + '</span>' +
-            '<div class="ce-manager-tile-name">' + m.name + ' <span>(' + m.pronouns[LANG] + ')</span></div>' +
-            '<div class="ce-manager-tile-role">' + m.role[LANG] + '</div>' +
-            '<div class="ce-manager-tile-actions">' +
+          '<div class="ce-manager-row">' +
+            '<div class="ce-manager-info">' +
+              '<span class="ce-avatar c-' + m.color + '" style="position:static;margin:0;width:32px;height:32px;font-size:11px;">' + m.initials + '</span>' +
+              '<div>' +
+                '<div class="ce-manager-name">' + m.name + (m.pronouns[LANG] ? ' <span>(' + m.pronouns[LANG] + ')</span>' : '') + '</div>' +
+                '<div class="ce-manager-role">' + m.role[LANG] + '</div>' +
+              '</div>' +
+            '</div>' +
+            '<div class="ce-manager-actions">' +
               '<span class="ce-icon-btn">' + COMMENT_ICON + '</span>' +
               '<span class="ce-icon-btn">' + MAIL_ICON + '</span>' +
               '<span class="ce-icon-btn">' + PHONE_ICON + '</span>' +
@@ -1359,43 +1659,13 @@
           '</div>'
         );
       }).join("");
-      var faqHtml = (c.faq || []).map(function (item, i) {
-        var itemId = c.id + "-faq-" + i;
-        var isOpen = openFaqItems[itemId];
-        return (
-          '<div class="ce-accordion-item' + (isOpen ? " is-open" : "") + '">' +
-            '<button type="button" class="ce-accordion-trigger" data-faq-toggle data-id="' + itemId + '">' +
-              '<span>' + item.q[LANG] + '</span>' + CHEVRON_ICON +
-            '</button>' +
-            '<div class="ce-accordion-panel">' + item.a[LANG] + '</div>' +
-          '</div>'
-        );
-      }).join("");
       return (
-        '<div class="ce-panel-box" style="margin-bottom:16px;">' + paras + '</div>' +
-        '<div class="ce-panel-box" style="margin-bottom:16px;">' +
-          '<p class="ce-about-h3">' + t("howItWorksTitle") + '</p>' +
-          '<ul class="ce-about-list">' + howItWorksHtml + '</ul>' +
-        '</div>' +
-        '<div class="ce-about-gallery">' + galleryHtml + '</div>' +
-        '<div class="ce-about-video">' +
-          '<video controls preload="none" poster="https://picsum.photos/seed/' + c.bannerSeed + '/800/450" src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4"></video>' +
-          '<p class="ce-about-video-caption">' + t("videoCaption") + ' ' + c.name + '</p>' +
-        '</div>' +
-        '<div class="ce-info-box" style="background:' + c.iconBg + ';color:' + c.iconFg + ';">' +
-          '<div class="ce-info-box-icon" style="color:' + c.iconFg + ';">' + INFO_ICON + '</div>' +
-          '<div class="ce-info-box-body">' +
-            '<p class="ce-info-box-title">' + t("quickFactsTitle") + '</p>' +
-            '<ul class="ce-info-box-list">' + quickFactsHtml + '</ul>' +
-          '</div>' +
-        '</div>' +
+        '<div class="ce-panel-box" style="margin-bottom:16px;">' + paras + highlightsHtml + '</div>' +
+        aboutPhotoHtml +
+        infoTipHtml +
         '<div class="ce-panel-box" style="margin-bottom:16px;">' +
           '<p class="ce-managers-title">' + USERS_ICON + t("communityManagers") + '</p>' +
-          '<div class="ce-manager-grid">' + managersHtml + '</div>' +
-        '</div>' +
-        '<div class="ce-panel-box" style="margin-bottom:16px;">' +
-          '<p class="ce-about-h3">' + t("faqTitle") + '</p>' +
-          '<div class="ce-accordion">' + faqHtml + '</div>' +
+          managersHtml +
         '</div>' +
         '<div class="ce-panel-box">' +
           '<div class="ce-meta-grid">' +
@@ -1425,30 +1695,33 @@
       }).join("");
     }
     if (activeDetailTab === "media") {
-      var legacyImages = c.posts.filter(function (p) { return p.image; }).map(function (p) { return { isImage: true, url: p.image, removable: false }; });
-      var uploaded = c.media.map(function (m, idx) { return { isImage: m.isImage, url: m.url, name: m.name, removable: true, index: idx }; });
-      var filled = legacyImages.concat(uploaded);
-      var tiles = filled.map(function (item) {
-        if (item.isImage) {
-          return (
-            '<div class="ce-media-tile has-image">' +
-              '<img src="' + item.url + '" alt="">' +
-              (item.removable ? '<button type="button" class="ce-media-remove" data-remove-media data-index="' + item.index + '">&times;</button>' : "") +
-            '</div>'
-          );
-        }
-        return (
-          '<a class="ce-media-tile has-doc" href="' + item.url + '" download="' + escapeHtml(item.name) + '">' +
-            DOC_ICON +
-            '<span class="ce-media-doc-name">' + escapeHtml(item.name) + '</span>' +
-            (item.removable ? '<button type="button" class="ce-media-remove" data-remove-media data-index="' + item.index + '">&times;</button>' : "") +
-          '</a>'
-        );
+      var images = [];
+      var docs = [];
+      c.posts.forEach(function (p) {
+        if (p.image) images.push(p.image);
+        (p.images || []).forEach(function (src) { images.push(src); });
+        (p.docs || []).forEach(function (d) { docs.push(d); });
+      });
+      var tiles = images.map(function (src) {
+        return '<div class="ce-media-tile has-image"><img src="' + src + '" alt=""></div>';
       }).join("");
-      tiles += '<button type="button" class="ce-media-tile" data-media-upload>' + IMAGE_ICON + '<span>' + t("dropPhoto") + '<br><u>' + t("browseFiles") + '</u></span></button>';
+      tiles += '<div class="ce-media-tile">' + IMAGE_ICON + '<span>' + t("dropMedia") + '<br><u>' + t("browseFiles") + '</u></span></div>';
+      var docsHtml = docs.length
+        ? ('<h3 class="ce-media-section-title">' + t("mediaDocumentsTitle") + '</h3>' +
+            '<div class="ce-media-doc-list">' + docs.map(function (d) {
+              return (
+                '<div class="ce-post-doc-chip">' + DOC_ICON +
+                  '<span class="ce-post-doc-name">' + escapeHtml(d.name) + '</span>' +
+                  '<span class="ce-post-doc-size">' + formatFileSize(d.size) + '</span>' +
+                  '<a href="' + d.url + '" download="' + escapeHtml(d.name) + '">' + DOWNLOAD_ICON + '</a>' +
+                '</div>'
+              );
+            }).join("") + '</div>')
+        : "";
       return (
         '<div class="ce-media-hint"><h3>' + t("mediaTitle") + '</h3><span>' + t("mediaHint") + '</span></div>' +
-        '<div class="ce-media-grid">' + tiles + '</div>'
+        '<div class="ce-media-grid">' + tiles + '</div>' +
+        docsHtml
       );
     }
     /* feed (default) */
@@ -1457,13 +1730,15 @@
         '<div class="ce-composer">' +
           '<div class="ce-composer-avatar" style="background:#db2777;">' + CURRENT_USER.initials + '</div>' +
           '<div class="ce-composer-body">' +
-            '<textarea class="ce-composer-textarea" data-composer-input placeholder="' + t("composerPlaceholder") + ' ' + c.name + '&hellip;"></textarea>' +
-            '<div class="ce-attach-preview" data-attach-preview-for="composer">' + attachmentChipsHtml(pendingAttachments.composer, "composer") + '</div>' +
+            '<textarea class="ce-composer-textarea" data-composer-input placeholder="' + t("composerPlaceholder") + ' ' + c.name + '&hellip;">' + escapeHtml(composerDraftText) + '</textarea>' +
+            composerAttachmentsHtml() +
             '<div class="ce-composer-actions">' +
-              '<button type="button" class="ce-attach-btn" data-attach-btn data-key="composer" title="' + t("attachFile") + '">' + PAPERCLIP_ICON + '</button>' +
-              '<span class="ce-composer-actions-spacer"></span>' +
+              '<div class="ce-composer-attach-group">' +
+                '<button type="button" class="ce-composer-attach-btn" data-composer-add-photo title="' + t("addPhoto") + '" aria-label="' + t("addPhoto") + '">' + IMAGE_ICON + '</button>' +
+                '<button type="button" class="ce-composer-attach-btn" data-composer-add-doc title="' + t("addDocument") + '" aria-label="' + t("addDocument") + '">' + DOC_ICON + '</button>' +
+              '</div>' +
               '<button type="button" class="ce-composer-cancel" data-composer-cancel>' + t("cancel") + '</button>' +
-              '<button type="button" class="ce-btn ce-btn--primary" data-composer-submit disabled>' + t("postBtn") + '</button>' +
+              '<button type="button" class="ce-btn ce-btn--primary" data-composer-submit' + (composerCanSubmit() ? "" : " disabled") + '>' + t("postBtn") + '</button>' +
             '</div>' +
           '</div>' +
         '</div>'
@@ -1482,47 +1757,36 @@
     return String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
   }
 
-  function attachmentChipsHtml(list, key) {
-    if (!list || !list.length) return "";
-    return '<div class="ce-attach-chips">' + list.map(function (a, i) {
+  function formatFileSize(bytes) {
+    if (bytes < 1024) return bytes + " B";
+    if (bytes < 1024 * 1024) return Math.round(bytes / 1024) + " KB";
+    return (bytes / (1024 * 1024)).toFixed(1) + " MB";
+  }
+
+  function composerCanSubmit() {
+    return composerDraftText.trim().length > 0 || composerImages.length > 0 || composerDocs.length > 0;
+  }
+
+  function composerAttachmentsHtml() {
+    if (!composerImages.length && !composerDocs.length) return "";
+    var imgChips = composerImages.map(function (img, i) {
       return (
-        '<div class="ce-attach-chip">' +
-          (a.isImage ? '<img src="' + a.url + '" alt="">' : '<span class="ce-attach-chip-icon">' + DOC_ICON + '</span>') +
-          '<span class="ce-attach-chip-name">' + escapeHtml(a.name) + '</span>' +
-          '<button type="button" class="ce-attach-chip-remove" data-remove-attach data-key="' + key + '" data-index="' + i + '">&times;</button>' +
+        '<div class="ce-composer-chip is-image">' +
+          '<img src="' + img.url + '" alt="">' +
+          '<button type="button" class="ce-composer-chip-remove" data-remove-image data-index="' + i + '" aria-label="' + t("removeAttachment") + '">' + X_ICON + '</button>' +
         '</div>'
       );
-    }).join("") + '</div>';
-  }
-
-  function attachmentsBlockHtml(list) {
-    if (!list || !list.length) return "";
-    return '<div class="ce-attachments">' + list.map(function (a) {
-      if (a.isImage) return '<img class="ce-post-image" src="' + a.url + '" alt="">';
+    }).join("");
+    var docChips = composerDocs.map(function (doc, i) {
       return (
-        '<a class="ce-doc-attachment" href="' + a.url + '" download="' + escapeHtml(a.name) + '">' +
+        '<div class="ce-composer-chip is-doc">' +
           DOC_ICON +
-          '<span class="ce-doc-attachment-info"><span class="ce-doc-attachment-name">' + escapeHtml(a.name) + '</span><span class="ce-doc-attachment-size">' + a.sizeLabel + '</span></span>' +
-        '</a>'
+          '<span class="ce-composer-chip-name">' + escapeHtml(doc.name) + '</span>' +
+          '<button type="button" class="ce-composer-chip-remove" data-remove-doc data-index="' + i + '" aria-label="' + t("removeAttachment") + '">' + X_ICON + '</button>' +
+        '</div>'
       );
-    }).join("") + '</div>';
-  }
-
-  function renderAttachPreview(key) {
-    var el = detailContent.querySelector('[data-attach-preview-for="' + key + '"]');
-    if (el) el.innerHTML = attachmentChipsHtml(pendingAttachments[key], key);
-  }
-
-  function refreshSubmitState(key) {
-    if (key === "composer") {
-      var submitBtn = detailContent.querySelector("[data-composer-submit]");
-      var ta = detailContent.querySelector("[data-composer-input]");
-      if (submitBtn) submitBtn.disabled = !((ta && ta.value.trim()) || (pendingAttachments.composer || []).length);
-    } else {
-      var sendBtn = detailContent.querySelector('[data-comment-send][data-post-id="' + key + '"], [data-reply-send][data-comment-id="' + key + '"]');
-      var inputEl = detailContent.querySelector('[data-comment-input][data-post-id="' + key + '"], [data-reply-input][data-comment-id="' + key + '"]');
-      if (sendBtn) sendBtn.classList.toggle("is-ready", !!((inputEl && inputEl.value.trim()) || (pendingAttachments[key] || []).length));
-    }
+    }).join("");
+    return '<div class="ce-composer-attachments">' + imgChips + docChips + '</div>';
   }
 
   function commentActionsHtml(cm) {
@@ -1536,11 +1800,9 @@
 
   function replyInputHtml(p, cm) {
     return (
-      '<div class="ce-attach-preview" data-attach-preview-for="' + cm.id + '"></div>' +
       '<div class="ce-comment-input-row ce-reply-input-row">' +
         '<div class="ce-comment-avatar" style="background:#db2777;">' + CURRENT_USER.initials + '</div>' +
         '<input type="text" class="ce-comment-input" placeholder="' + t("writeReply") + '&hellip;" data-reply-input data-comment-id="' + cm.id + '" data-post-id="' + p.id + '">' +
-        '<button type="button" class="ce-comment-attach-btn" data-attach-btn data-key="' + cm.id + '" title="' + t("attachFile") + '">' + PAPERCLIP_ICON + '</button>' +
         '<button type="button" class="ce-comment-send" data-reply-send data-comment-id="' + cm.id + '" data-post-id="' + p.id + '">' + SEND_ICON + '</button>' +
       '</div>'
     );
@@ -1554,7 +1816,6 @@
           '<div class="ce-comment-bubble">' +
             '<div class="ce-comment-head"><span class="ce-comment-author">' + r.author + '</span><span class="ce-comment-time">' + r.time[LANG] + '</span></div>' +
             '<p class="ce-comment-text">' + r.text[LANG] + '</p>' +
-            attachmentsBlockHtml(r.attachments) +
           '</div>' +
           commentActionsHtml(r) +
         '</div>' +
@@ -1571,7 +1832,6 @@
           '<div class="ce-comment-bubble">' +
             '<div class="ce-comment-head"><span class="ce-comment-author">' + cm.author + '</span><span class="ce-comment-time">' + cm.time[LANG] + '</span></div>' +
             '<p class="ce-comment-text">' + cm.text[LANG] + '</p>' +
-            attachmentsBlockHtml(cm.attachments) +
           '</div>' +
           commentActionsHtml(cm) +
           (replyingCommentId === cm.id ? replyInputHtml(p, cm) : "") +
@@ -1583,11 +1843,9 @@
 
   function commentInputRowHtml(p) {
     return (
-      '<div class="ce-attach-preview" data-attach-preview-for="' + p.id + '"></div>' +
       '<div class="ce-comment-input-row">' +
         '<div class="ce-comment-avatar" style="background:#db2777;">' + CURRENT_USER.initials + '</div>' +
         '<input type="text" class="ce-comment-input" placeholder="' + t("writeComment") + '&hellip;" data-comment-input data-post-id="' + p.id + '">' +
-        '<button type="button" class="ce-comment-attach-btn" data-attach-btn data-key="' + p.id + '" title="' + t("attachFile") + '">' + PAPERCLIP_ICON + '</button>' +
         '<button type="button" class="ce-comment-send" data-comment-send data-post-id="' + p.id + '">' + SEND_ICON + '</button>' +
       '</div>'
     );
@@ -1595,14 +1853,24 @@
 
   function postHtml(c, p) {
     var isOwn = p.author === CURRENT_USER.name;
-    var toolsHtml = isOwn
-      ? ('<div class="ce-post-tools">' +
+    var toolsHtml = "";
+    if (isOwn) {
+      toolsHtml = (
+        '<div class="ce-post-tools">' +
           '<button type="button" data-edit-post data-id="' + p.id + '">' + EDIT_ICON + '</button>' +
           '<button type="button" data-delete-post data-id="' + p.id + '">' + TRASH_ICON + '</button>' +
-        '</div>')
-      : ('<div class="ce-post-tools">' +
-          '<button type="button" class="' + (p.reported ? "is-reported" : "") + '" data-report-post data-id="' + p.id + '" title="' + (p.reported ? t("reported") : t("report")) + '">' + FLAG_ICON + '</button>' +
-        '</div>');
+        '</div>'
+      );
+    } else if (!p.reported) {
+      toolsHtml = (
+        '<div class="ce-post-menu' + (openPostMenuId === p.id ? " is-open" : "") + '" data-post-menu data-id="' + p.id + '">' +
+          '<button type="button" class="ce-post-menu-btn" data-post-menu-toggle data-id="' + p.id + '" aria-label="' + t("reportPost") + '">' + KEBAB_ICON + '</button>' +
+          '<div class="ce-post-menu-dropdown">' +
+            '<button type="button" data-post-report-open data-id="' + p.id + '">' + FLAG_ICON + t("reportPost") + '</button>' +
+          '</div>' +
+        '</div>'
+      );
+    }
     var reactorAvatars = c.avatars.slice(0, 3);
     var displayReactions = p.reactions + (p.liked ? 1 : 0);
     var commentsOpen = !!openComments[p.id];
@@ -1620,11 +1888,25 @@
       );
     } else {
       var titleHtml = p.title ? '<p class="ce-post-title">' + p.title[LANG] + '</p>' : "";
+      var galleryHtml = (p.images && p.images.length)
+        ? ('<div class="ce-post-gallery">' + p.images.map(function (src) { return '<img src="' + src + '" alt="">'; }).join("") + '</div>')
+        : "";
+      var docsHtml = (p.docs && p.docs.length)
+        ? ('<div class="ce-post-docs">' + p.docs.map(function (d) {
+            return (
+              '<div class="ce-post-doc-chip">' + DOC_ICON +
+                '<span class="ce-post-doc-name">' + escapeHtml(d.name) + '</span>' +
+                '<span class="ce-post-doc-size">' + formatFileSize(d.size) + '</span>' +
+                '<a href="' + d.url + '" download="' + escapeHtml(d.name) + '">' + DOWNLOAD_ICON + '</a>' +
+              '</div>'
+            );
+          }).join("") + '</div>')
+        : "";
       bodyMainHtml = (
         titleHtml +
         '<p class="ce-post-text">' + p.text[LANG] + '</p>' +
         (p.image ? '<img class="ce-post-image" src="' + p.image + '" alt="">' : "") +
-        attachmentsBlockHtml(p.attachments)
+        galleryHtml + docsHtml
       );
     }
 
@@ -1633,6 +1915,10 @@
           p.comments.map(function (cm) { return commentHtml(p, cm); }).join("") +
           commentInputRowHtml(p) +
         '</div>')
+      : "";
+
+    var reportedHtml = (!isOwn && p.reported)
+      ? ('<div class="ce-post-reported-notice">' + FLAG_ICON + t("reportedNotice") + '</div>')
       : "";
 
     return (
@@ -1650,6 +1936,7 @@
             '<button type="button" class="ce-post-action-btn' + (p.liked ? " is-active" : "") + '" data-post-like data-id="' + p.id + '">' + LIKE_ICON + t("like") + '</button>' +
             '<button type="button" class="ce-post-action-btn' + (commentsOpen ? " is-active" : "") + '" data-post-comment-toggle data-id="' + p.id + '">' + COMMENT_ICON + t("comment") + '</button>' +
           '</div>' +
+          reportedHtml +
           commentsHtml +
         '</div>' +
       '</div>'
@@ -1718,7 +2005,8 @@
   function renderDetail() {
     var c = byId(currentDetailId);
     if (!c) return;
-    detailBanner.innerHTML = '<img src="https://picsum.photos/seed/' + c.bannerSeed + '/900/300" alt="">';
+    var bannerSrc = c.detailBanner || ('https://picsum.photos/seed/' + c.bannerSeed + '/900/300');
+    detailBanner.innerHTML = '<img src="' + bannerSrc + '" alt="">';
     detailContent.innerHTML = detailHtml(c);
   }
 
@@ -1828,12 +2116,18 @@
 
   function currentCommunity() { return byId(currentDetailId); }
 
+  function resetComposerDraft() {
+    composerDraftText = "";
+    composerImages = [];
+    composerDocs = [];
+  }
+
   function handleComposerOpen(e) {
     var el = e.target.closest("[data-composer-open]");
     if (!el) return;
     e.stopPropagation();
     openComposerId = currentDetailId;
-    pendingAttachments.composer = [];
+    resetComposerDraft();
     renderDetail();
     var ta = detailContent.querySelector("[data-composer-input]");
     if (ta) ta.focus();
@@ -1844,7 +2138,7 @@
     if (!el) return;
     e.stopPropagation();
     openComposerId = null;
-    pendingAttachments.composer = [];
+    resetComposerDraft();
     renderDetail();
   }
 
@@ -1854,30 +2148,69 @@
     e.stopPropagation();
     var ta = detailContent.querySelector("[data-composer-input]");
     var val = ta ? ta.value.trim() : "";
-    var atts = pendingAttachments.composer || [];
-    if (!val && !atts.length) return;
+    if (!val && !composerImages.length && !composerDocs.length) return;
     var c = currentCommunity();
     c.posts.unshift({
       id: nextPostId(), author: CURRENT_USER.name, initials: CURRENT_USER.initials, color: CURRENT_USER.color,
       time: { en: t("justNow"), de: t("justNow") }, text: { en: val, de: val },
-      image: null, attachments: atts, reactions: 0, liked: false, reported: false, comments: []
+      image: null,
+      images: composerImages.map(function (img) { return img.url; }),
+      docs: composerDocs.map(function (d) { return { name: d.name, size: d.size, url: d.url }; }),
+      reactions: 0, liked: false, comments: []
     });
-    pendingAttachments.composer = [];
     openComposerId = null;
+    resetComposerDraft();
     renderDetail();
     showToast(t("postedTo") + " " + c.name);
   }
 
-  function handleReportPost(e) {
-    var btn = e.target.closest("[data-report-post]");
+  function handleComposerAddPhoto(e) {
+    var el = e.target.closest("[data-composer-add-photo]");
+    if (!el) return;
+    e.stopPropagation();
+    document.getElementById("composerPhotoInput").click();
+  }
+
+  function handleComposerAddDoc(e) {
+    var el = e.target.closest("[data-composer-add-doc]");
+    if (!el) return;
+    e.stopPropagation();
+    document.getElementById("composerDocInput").click();
+  }
+
+  function handleRemoveImage(e) {
+    var btn = e.target.closest("[data-remove-image]");
     if (!btn) return;
     e.stopPropagation();
-    var p = findPostById(currentCommunity(), btn.getAttribute("data-id"));
-    if (!p) return;
-    var wasReported = p.reported;
-    p.reported = !p.reported;
+    composerImages.splice(Number(btn.getAttribute("data-index")), 1);
     renderDetail();
-    if (!wasReported) showToast(t("postReportedToast"));
+  }
+
+  function handleRemoveDoc(e) {
+    var btn = e.target.closest("[data-remove-doc]");
+    if (!btn) return;
+    e.stopPropagation();
+    composerDocs.splice(Number(btn.getAttribute("data-index")), 1);
+    renderDetail();
+  }
+
+  function handlePostMenuToggle(e) {
+    var btn = e.target.closest("[data-post-menu-toggle]");
+    if (!btn) return;
+    e.stopPropagation();
+    var id = btn.getAttribute("data-id");
+    openPostMenuId = openPostMenuId === id ? null : id;
+    renderDetail();
+  }
+
+  function handleReportOpen(e) {
+    var btn = e.target.closest("[data-post-report-open]");
+    if (!btn) return;
+    e.stopPropagation();
+    reportingPostId = btn.getAttribute("data-id");
+    openPostMenuId = null;
+    renderDetail();
+    openReportModal();
   }
 
   function handlePostLike(e) {
@@ -1962,77 +2295,24 @@
     e.stopPropagation();
     var id = btn.getAttribute("data-id");
     replyingCommentId = replyingCommentId === id ? null : id;
-    pendingAttachments[id] = [];
-    renderDetail();
-  }
-
-  function handleFaqToggle(e) {
-    var btn = e.target.closest("[data-faq-toggle]");
-    if (!btn) return;
-    e.stopPropagation();
-    var id = btn.getAttribute("data-id");
-    openFaqItems[id] = !openFaqItems[id];
-    var item = btn.closest(".ce-accordion-item");
-    if (item) item.classList.toggle("is-open", !!openFaqItems[id]);
-  }
-
-  function handleAttachClick(e) {
-    var btn = e.target.closest("[data-attach-btn]");
-    if (!btn) return;
-    e.stopPropagation();
-    fileInputTargetKey = btn.getAttribute("data-key");
-    hiddenFileInput.value = "";
-    hiddenFileInput.click();
-  }
-
-  function handleRemovePendingAttach(e) {
-    var btn = e.target.closest("[data-remove-attach]");
-    if (!btn) return;
-    e.stopPropagation();
-    var key = btn.getAttribute("data-key");
-    var idx = parseInt(btn.getAttribute("data-index"), 10);
-    if (pendingAttachments[key]) pendingAttachments[key].splice(idx, 1);
-    renderAttachPreview(key);
-    refreshSubmitState(key);
-  }
-
-  function handleMediaUploadClick(e) {
-    var btn = e.target.closest("[data-media-upload]");
-    if (!btn) return;
-    e.stopPropagation();
-    fileInputTargetKey = "media";
-    hiddenFileInput.value = "";
-    hiddenFileInput.click();
-  }
-
-  function handleRemoveMedia(e) {
-    var btn = e.target.closest("[data-remove-media]");
-    if (!btn) return;
-    e.stopPropagation();
-    e.preventDefault();
-    var idx = parseInt(btn.getAttribute("data-index"), 10);
-    currentCommunity().media.splice(idx, 1);
     renderDetail();
   }
 
   function submitComment(postId, inputEl) {
     var val = inputEl ? inputEl.value.trim() : "";
-    var atts = pendingAttachments[postId] || [];
-    if (!val && !atts.length) return;
+    if (!val) return;
     var p = findPostById(currentCommunity(), postId);
     if (!p) return;
     p.comments.push({
       id: nextCommentId(), author: CURRENT_USER.name, initials: CURRENT_USER.initials, color: CURRENT_USER.color,
-      time: { en: t("justNow"), de: t("justNow") }, text: { en: val, de: val }, liked: false, replies: [], attachments: atts
+      time: { en: t("justNow"), de: t("justNow") }, text: { en: val, de: val }, liked: false, replies: []
     });
-    pendingAttachments[postId] = [];
     renderDetail();
   }
 
   function submitReply(commentId, postId, inputEl) {
     var val = inputEl ? inputEl.value.trim() : "";
-    var atts = pendingAttachments[commentId] || [];
-    if (!val && !atts.length) return;
+    if (!val) return;
     var p = findPostById(currentCommunity(), postId);
     if (!p) return;
     var cm = findCommentEntry(p, commentId);
@@ -2040,9 +2320,8 @@
     cm.replies = cm.replies || [];
     cm.replies.push({
       id: nextCommentId(), author: CURRENT_USER.name, initials: CURRENT_USER.initials, color: CURRENT_USER.color,
-      time: { en: t("justNow"), de: t("justNow") }, text: { en: val, de: val }, liked: false, attachments: atts
+      time: { en: t("justNow"), de: t("justNow") }, text: { en: val, de: val }, liked: false
     });
-    pendingAttachments[commentId] = [];
     replyingCommentId = null;
     renderDetail();
   }
@@ -2079,7 +2358,15 @@
     handleCardOpen(e);
   });
 
+  function handleClosePostMenuOnOutsideClick(e) {
+    if (!openPostMenuId) return;
+    if (e.target.closest('.ce-post-menu[data-id="' + openPostMenuId + '"]')) return;
+    openPostMenuId = null;
+    renderDetail();
+  }
+
   detailContent.addEventListener("click", function (e) {
+    handleClosePostMenuOnOutsideClick(e);
     handleJoinClick(e);
     handleLeaveClick(e);
     handleNotifClick(e);
@@ -2088,8 +2375,14 @@
     handleComposerOpen(e);
     handleComposerCancel(e);
     handleComposerSubmit(e);
+    handleComposerAddPhoto(e);
+    handleComposerAddDoc(e);
+    handleRemoveImage(e);
+    handleRemoveDoc(e);
     handlePostLike(e);
     handlePostCommentToggle(e);
+    handlePostMenuToggle(e);
+    handleReportOpen(e);
     handleEditPostOpen(e);
     handleEditCancel(e);
     handleEditSave(e);
@@ -2098,46 +2391,20 @@
     handleCommentReplyToggle(e);
     handleCommentSend(e);
     handleReplySend(e);
-    handleReportPost(e);
-    handleFaqToggle(e);
-    handleAttachClick(e);
-    handleRemovePendingAttach(e);
-    handleMediaUploadClick(e);
-    handleRemoveMedia(e);
   });
 
   detailContent.addEventListener("input", function (e) {
     if (e.target.matches("[data-composer-input]")) {
+      composerDraftText = e.target.value;
       var submitBtn = e.target.closest(".ce-composer").querySelector("[data-composer-submit]");
-      if (submitBtn) submitBtn.disabled = !(e.target.value.trim().length > 0 || (pendingAttachments.composer || []).length > 0);
+      if (submitBtn) submitBtn.disabled = !composerCanSubmit();
     } else if (e.target.matches("[data-comment-input]")) {
       var sendBtn = e.target.closest(".ce-comment-input-row").querySelector("[data-comment-send]");
-      var key1 = e.target.getAttribute("data-post-id");
-      if (sendBtn) sendBtn.classList.toggle("is-ready", e.target.value.trim().length > 0 || (pendingAttachments[key1] || []).length > 0);
+      if (sendBtn) sendBtn.classList.toggle("is-ready", e.target.value.trim().length > 0);
     } else if (e.target.matches("[data-reply-input]")) {
       var replyBtn = e.target.closest(".ce-comment-input-row").querySelector("[data-reply-send]");
-      var key2 = e.target.getAttribute("data-comment-id");
-      if (replyBtn) replyBtn.classList.toggle("is-ready", e.target.value.trim().length > 0 || (pendingAttachments[key2] || []).length > 0);
+      if (replyBtn) replyBtn.classList.toggle("is-ready", e.target.value.trim().length > 0);
     }
-  });
-
-  hiddenFileInput.addEventListener("change", function () {
-    var files = Array.prototype.slice.call(hiddenFileInput.files || []);
-    var key = fileInputTargetKey;
-    if (!files.length || !key) return;
-    files.forEach(function (file) {
-      fileToAttachment(file, function (att) {
-        if (key === "media") {
-          currentCommunity().media.push(att);
-          renderDetail();
-        } else {
-          pendingAttachments[key] = pendingAttachments[key] || [];
-          pendingAttachments[key].push(att);
-          renderAttachPreview(key);
-          refreshSubmitState(key);
-        }
-      });
-    });
   });
 
   detailContent.addEventListener("keydown", function (e) {
@@ -2153,9 +2420,68 @@
 
   root.querySelector("[data-back-btn]").addEventListener("click", closeDetail);
 
+  document.getElementById("composerPhotoInput").addEventListener("change", function (e) {
+    Array.prototype.forEach.call(e.target.files, function (file) {
+      composerImages.push({ url: URL.createObjectURL(file), name: file.name, size: file.size });
+    });
+    e.target.value = "";
+    if (openComposerId) renderDetail();
+  });
+
+  document.getElementById("composerDocInput").addEventListener("change", function (e) {
+    Array.prototype.forEach.call(e.target.files, function (file) {
+      composerDocs.push({ url: URL.createObjectURL(file), name: file.name, size: file.size });
+    });
+    e.target.value = "";
+    if (openComposerId) renderDetail();
+  });
+
+  function openReportModal() {
+    var overlay = document.getElementById("reportOverlay");
+    var details = document.getElementById("reportDetailsInput");
+    var radios = overlay.querySelectorAll('input[name="reportReason"]');
+    radios[0].checked = true;
+    if (details) details.value = "";
+    overlay.classList.add("active");
+  }
+
+  function closeReportModal() {
+    document.getElementById("reportOverlay").classList.remove("active");
+    reportingPostId = null;
+  }
+
+  (function initReportModal() {
+    var overlay = document.getElementById("reportOverlay");
+    var closeBtn = overlay.querySelector("[data-report-close]");
+    var cancelBtn = overlay.querySelector("[data-report-cancel]");
+    var submitBtn = document.getElementById("reportSubmitBtn");
+
+    closeBtn.addEventListener("click", closeReportModal);
+    cancelBtn.addEventListener("click", closeReportModal);
+    overlay.addEventListener("click", function (e) { if (e.target === overlay) closeReportModal(); });
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape" && overlay.classList.contains("active")) closeReportModal();
+    });
+    submitBtn.addEventListener("click", function () {
+      var c = currentCommunity();
+      var p = c ? findPostById(c, reportingPostId) : null;
+      if (p) p.reported = true;
+      closeReportModal();
+      renderDetail();
+      showToast(t("postReported"));
+    });
+  })();
+
   applyStaticText();
   document.documentElement.lang = LANG;
   renderList();
+  fetchRealCommunities();
+
+  // Safari/Firefox can restore this page from bfcache on an iframe "reload" without
+  // re-running the script, which would otherwise leave real communities stale.
+  window.addEventListener("pageshow", function (e) {
+    if (e.persisted) fetchRealCommunities();
+  });
 })();
 </script>
 
