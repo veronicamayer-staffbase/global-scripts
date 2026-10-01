@@ -4,7 +4,7 @@
 // @version      2026-09-24
 // @description  Listens for the AI Digest widget's postMessage handoff and renders its expanded digest as a true full-page overlay, instead of the modal being clipped to the widget's own iframe box.
 // @author       You
-// @match        https://hiltipoc.staffbase.rocks/*
+// @match        https://*.staffbase.rocks/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=staffbase.rocks
 // @grant        none
 // ==/UserScript==
