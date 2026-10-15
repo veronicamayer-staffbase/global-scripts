@@ -1,11 +1,13 @@
 // ==UserScript==
 // @name         Staffbase Demo — Fake SMS (OTP) Login
 // @namespace    staffbase-demo
-// @version      1.0
-// @description  DEMO ONLY: adds a mock "Sign in with SMS code" step to the Staffbase sign-in screen. The OTP is generated in the browser and shown in a fake SMS banner — no messages are sent anywhere.
+// @version      1.3
+// @description  DEMO ONLY: adds a mock "Sign in with SMS code" step to the Staffbase sign-in screen. The OTP is generated in the browser and shown in a fake SMS banner — no messages are sent anywhere. Only numbers on the script's own allowlist can sign in. Labels in English and German.
 // @match        https://migrosdemo.staffbase.rocks/*
 // @run-at       document-idle
-// @grant        none
+// @grant        GM_getValue
+// @grant        GM_setValue
+// @grant        GM_registerMenuCommand
 // ==/UserScript==
 
 (function () {
@@ -15,7 +17,10 @@
    *  CONFIG — the only part you normally touch
    * ------------------------------------------------------------------ */
   const CONFIG = {
-    buttonLabel:    'Sign in with SMS code',
+    // 'auto' follows the app / browser language, or force 'en' | 'de'.
+    // 'both' shows every label in both languages, e.g. "Send code / Code senden".
+    language:       'auto',
+
     senderName:     'Migros',          // sender shown in the fake SMS banner
     countryPrefix:  '+49 ',            // pre-filled in the phone field
     codeLength:     6,
@@ -25,18 +30,176 @@
     entryPosition:  'top',             // 'top' | 'bottom' of the sign-in options
     autofillOnTap:  true,              // tapping the SMS banner fills the code
 
-    // What happens once the code is accepted:
-    //   'credentials' → fills + submits the REAL sign-in form (needs demoAccount below)
-    //   'sso'         → clicks the native "Sign in with Migros SSO" button
-    //   'none'        → stops at the success screen (pure UI demo)
-    onSuccess: 'none',
+    // Top spacing for the fake SMS banner, so it clears the status bar and the
+    // Dynamic Island / camera cutout. 'auto' measures the page's real safe-area
+    // inset and, on a home-screen (standalone) iPhone where that inset isn't
+    // exposed, falls back to the Dynamic Island height. Set a number to pin it
+    // yourself, e.g. toastTopOffset: 72.
+    toastTopOffset: 'auto',
 
-    // Throwaway demo account ONLY — this sits in plain text in the browser.
-    demoAccount: {
-      email:    'REPLACE_ME@example.com',
-      password: 'REPLACE_ME'
+    // ---- Who is allowed in ------------------------------------------------
+    // The sign-in screen is unauthenticated, so the tenant's real user directory
+    // cannot be queried from here. This is the script's OWN allowlist: a number
+    // that isn't on it never receives a code and cannot sign in.
+    //
+    // Each entry takes either a readable `phone` or a `hash` — SHA-256 of the
+    // normalised number — so the file doesn't reveal which numbers are valid.
+    // Generate one in the console:  await sbsmsDemo.hashPhone('+41 79 123 45 67')
+    //
+    // `email` is the account that number signs in as, so different numbers can
+    // land in the app as different demo personas. Falls back to credentials.email.
+    // An EMPTY list means no gate at all: every number is accepted.
+    directory: [
+      // { phone: '+41 79 123 45 67', email: 'anna.mueller@example.com' },
+      // { hash:  'c1fe0a…',          email: 'marc.keller@example.com'  }
+    ],
+
+    // Numbers typed without a country code are assumed to be from here ('41' = CH)
+    defaultCountryCode: '41',
+
+    // true  → says straight away that the number is unknown (clearer on stage)
+    // false → behaves like a real system: the code screen opens, but no SMS ever arrives
+    revealUnknownNumbers: true,
+
+    // What happens once the code is accepted:
+    //   'credentials' → fills + submits the REAL sign-in form
+    //   'sso'         → clicks the native SSO button
+    //   'none'        → stops at the success screen (pure UI demo)
+    onSuccess: 'credentials',
+
+    credentials: {
+      // Most secure option: don't let this script touch the password at all.
+      // It opens the real sign-in form and waits for your browser / OS password
+      // manager to fill it, then submits. Nothing is stored by the script.
+      useAutofill: false,
+
+      // The demo account's email. Not a secret — fine to leave in the file.
+      email: 'test@test.de',
+
+      // Leave EMPTY (recommended). The script asks for it once and keeps it out
+      // of this file. Anything typed here is readable by anyone who sees the file.
+      password: 'NDEMB35W',
+
+      // Where the password lives once you have typed it:
+      //   'auto'    → Tampermonkey's own storage: survives reloads, is not in this
+      //               file, and the page's own JavaScript cannot read it.
+      //               Falls back to sessionStorage when pasted into the console.
+      //   'session' → this browser session only; gone when you close the tab.
+      //   'none'    → never written down; asked again after every page load.
+      store: 'auto'
     }
   };
+
+  /* ------------------------------------------------------------------ *
+   *  Labels
+   * ------------------------------------------------------------------ */
+  const STRINGS = {
+    en: {
+      entry:            'Sign in with SMS code',
+      phoneTitle:       'Sign In With SMS',
+      phoneIntro:       'Enter your mobile number and we’ll text you a one-time code.',
+      phoneLabel:       'Mobile number',
+      send:             'Send code',
+      sending:          'Sending…',
+      otherMethod:      'Sign in using a different method?',
+      invalidNumber:    'Please enter a valid mobile number.',
+      unknownNumber:    'We couldn’t find an account with that mobile number.',
+      codeTitle:        'Enter your code',
+      codeIntro:        n => `We sent a ${n}-digit code to`,
+      verify:           'Verify & sign in',
+      resend:           'Resend code',
+      resendIn:         s => `Resend code in ${s}s`,
+      differentNumber:  'Use a different number',
+      wrongCode:        'That code isn’t right. Please try again.',
+      digit:            i => `Digit ${i}`,
+      smsBody:          code => `Your verification code is <b>${code}</b>. It expires in 5 minutes.`,
+      smsHint:          'Tap to fill automatically',
+      now:              'now',
+      signingIn:        'Signing you in…',
+      verifying:        phone => `Verifying ${phone}`,
+      verified:         'Number verified',
+      confirmed:        phone => `${phone} is confirmed.`,
+      backToSignIn:     'Back to sign in',
+      setupTitle:       'One-time setup',
+      setupStored:      'Stored in this browser only — never written into the script.',
+      setupNotStored:   'Used for this sign-in only — never stored.',
+      setupPasswordFor: email => `Password for <strong>${email}</strong>.`,
+      setupLabel:       'Demo account password',
+      continueLabel:    'Continue',
+      cancel:           'Cancel',
+      failTitle:        'Couldn’t complete sign-in',
+      reenter:          'Re-enter the demo password',
+      errNoAccount:     'No account configured for this number — set an email on the directory entry, or CONFIG.credentials.email.',
+      errNoPassword:    'No demo account password available.',
+      errNoAutofill:    'Your password manager didn’t fill this account. Save the demo login for this site first, or turn useAutofill off.',
+      errNoSso:         'SSO button not found on this screen.',
+      errNoCredentials: 'Credentials sign-in is not available on this screen.',
+      errNoForm:        'Sign-in form not found.'
+    },
+    de: {
+      entry:            'Mit SMS-Code anmelden',
+      phoneTitle:       'Anmeldung per SMS',
+      phoneIntro:       'Geben Sie Ihre Mobilnummer ein. Wir senden Ihnen einen Einmalcode per SMS.',
+      phoneLabel:       'Mobilnummer',
+      send:             'Code senden',
+      sending:          'Wird gesendet…',
+      otherMethod:      'Mit einer anderen Methode anmelden?',
+      invalidNumber:    'Bitte geben Sie eine gültige Mobilnummer ein.',
+      unknownNumber:    'Zu dieser Mobilnummer wurde kein Konto gefunden.',
+      codeTitle:        'Code eingeben',
+      codeIntro:        n => `Wir haben einen ${n}-stelligen Code gesendet an`,
+      verify:           'Bestätigen & anmelden',
+      resend:           'Code erneut senden',
+      resendIn:         s => `Code erneut senden in ${s}s`,
+      differentNumber:  'Andere Nummer verwenden',
+      wrongCode:        'Dieser Code ist nicht korrekt. Bitte versuchen Sie es erneut.',
+      digit:            i => `Ziffer ${i}`,
+      smsBody:          code => `Ihr Bestätigungscode lautet <b>${code}</b>. Er ist 5 Minuten gültig.`,
+      smsHint:          'Tippen zum automatischen Ausfüllen',
+      now:              'jetzt',
+      signingIn:        'Sie werden angemeldet…',
+      verifying:        phone => `${phone} wird überprüft`,
+      verified:         'Nummer bestätigt',
+      confirmed:        phone => `${phone} ist bestätigt.`,
+      backToSignIn:     'Zurück zur Anmeldung',
+      setupTitle:       'Einmalige Einrichtung',
+      setupStored:      'Nur in diesem Browser gespeichert — niemals im Skript.',
+      setupNotStored:   'Nur für diese Anmeldung verwendet — nicht gespeichert.',
+      setupPasswordFor: email => `Passwort für <strong>${email}</strong>.`,
+      setupLabel:       'Passwort des Demo-Kontos',
+      continueLabel:    'Weiter',
+      cancel:           'Abbrechen',
+      failTitle:        'Anmeldung fehlgeschlagen',
+      reenter:          'Demo-Passwort erneut eingeben',
+      errNoAccount:     'Für diese Nummer ist kein Konto hinterlegt — E-Mail im Verzeichnis-Eintrag oder CONFIG.credentials.email setzen.',
+      errNoPassword:    'Kein Passwort für das Demo-Konto vorhanden.',
+      errNoAutofill:    'Ihr Passwort-Manager hat dieses Konto nicht ausgefüllt. Speichern Sie die Demo-Anmeldung zuerst für diese Seite, oder deaktivieren Sie useAutofill.',
+      errNoSso:         'SSO-Schaltfläche auf diesem Bildschirm nicht gefunden.',
+      errNoCredentials: 'Anmeldung mit Zugangsdaten ist auf diesem Bildschirm nicht verfügbar.',
+      errNoForm:        'Anmeldeformular nicht gefunden.'
+    }
+  };
+
+  function resolveLang() {
+    const cfg = CONFIG.language;
+    if (cfg && cfg !== 'auto') return cfg;
+    const tag = (document.documentElement.lang || navigator.language || 'en').toLowerCase();
+    return tag.startsWith('de') ? 'de' : 'en';
+  }
+
+  const value = (v, args) => (typeof v === 'function' ? v.apply(null, args) : v);
+
+  // t('send') → "Code senden"; with language:'both' → "Send code / Code senden"
+  function t(key) {
+    const args = [].slice.call(arguments, 1);
+    const lang = resolveLang();
+    if (lang === 'both') {
+      const en = value(STRINGS.en[key], args);
+      const de = value(STRINGS.de[key], args);
+      return en === de ? en : en + ' / ' + de;
+    }
+    return value((STRINGS[lang] || STRINGS.en)[key], args);
+  }
 
   /* ------------------------------------------------------------------ *
    *  Helpers
@@ -57,10 +220,21 @@
     });
   }
 
+  function waitUntil(fn, timeout) {
+    return new Promise(resolve => {
+      const started = Date.now();
+      (function poll() {
+        if (fn()) return resolve(true);
+        if (Date.now() - started > timeout) return resolve(false);
+        setTimeout(poll, 100);
+      })();
+    });
+  }
+
   // React-safe value assignment
-  function setNativeValue(el, value) {
+  function setNativeValue(el, val) {
     const desc = Object.getOwnPropertyDescriptor(Object.getPrototypeOf(el), 'value');
-    if (desc && desc.set) desc.set.call(el, value); else el.value = value;
+    if (desc && desc.set) desc.set.call(el, val); else el.value = val;
     el.dispatchEvent(new Event('input',  { bubbles: true }));
     el.dispatchEvent(new Event('change', { bubbles: true }));
   }
@@ -81,7 +255,106 @@
     return c;
   }
 
-  const state = { code: null, phone: null, resendTimer: null };
+  const state = { code: null, phone: null, resendTimer: null, account: null, secrets: {} };
+
+  /* ------------------------------------------------------------------ *
+   *  Phone-number allowlist
+   * ------------------------------------------------------------------ */
+  // '079 123 45 67', '+41 79 123 45 67' and '0041791234567' all normalise alike
+  function normalisePhone(raw) {
+    let d = String(raw || '').replace(/\D/g, '');
+    const cc = String(CONFIG.defaultCountryCode || '').replace(/\D/g, '');
+    if (d.startsWith('00')) d = d.slice(2);
+    if (!cc) return d;
+    if (d.startsWith(cc)) return d;
+    if (d.startsWith('0'))  return cc + d.slice(1);
+    if (d.length <= 10)     return cc + d;
+    return d;
+  }
+
+  async function sha256Hex(text) {
+    const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
+    return [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, '0')).join('');
+  }
+
+  // → the matching directory entry, or null when the number is not on the list
+  async function lookupNumber(raw) {
+    const list = CONFIG.directory || [];
+    if (!list.length) return { email: CONFIG.credentials.email };   // no allowlist configured
+    const n = normalisePhone(raw);
+    const hash = await sha256Hex(n);
+    return list.find(e =>
+      (e.hash  && String(e.hash).toLowerCase() === hash) ||
+      (e.phone && normalisePhone(e.phone) === n)
+    ) || null;
+  }
+
+  const currentEmail = () => (state.account && state.account.email) || CONFIG.credentials.email;
+
+  /* ------------------------------------------------------------------ *
+   *  Password handling — keeps the secret out of this file
+   * ------------------------------------------------------------------ */
+  const SECRET_KEY = 'sbsms.demo.secret';
+  const hasGM = typeof GM_getValue === 'function' && typeof GM_setValue === 'function';
+  const W = (typeof unsafeWindow !== 'undefined') ? unsafeWindow : window;
+
+  // base64 is NOT encryption — it only stops the password being readable at a glance
+  const pack   = v => btoa(unescape(encodeURIComponent(v)));
+  const unpack = v => decodeURIComponent(escape(atob(v)));
+
+  // each persona keeps its own password, so a directory of demo users works
+  const keyFor = email => SECRET_KEY + ':' + (email || '');
+
+  function readSecret(email) {
+    const em = email || currentEmail();
+    if (state.secrets[em]) return state.secrets[em];
+    if (CONFIG.credentials.password) return CONFIG.credentials.password;
+    if (hasGM) {
+      const v = GM_getValue(keyFor(em), '');
+      if (v) { try { return unpack(v); } catch (e) { /* ignore */ } }
+    }
+    try {
+      const v = sessionStorage.getItem(keyFor(em));
+      if (v) return unpack(v);
+    } catch (e) { /* storage blocked */ }
+    return '';
+  }
+
+  function writeSecret(val, email) {
+    if (!val) return;
+    const em = email || currentEmail();
+    state.secrets[em] = val;                    // usable for the rest of this page load
+    const mode = CONFIG.credentials.store;
+    if (mode === 'none') return;
+    if (mode === 'auto' && hasGM) { GM_setValue(keyFor(em), pack(val)); return; }
+    try { sessionStorage.setItem(keyFor(em), pack(val)); } catch (e) { /* storage blocked */ }
+  }
+
+  function clearSecret(email) {
+    const em = email || currentEmail();
+    delete state.secrets[em];
+    if (hasGM) GM_setValue(keyFor(em), '');
+    try { sessionStorage.removeItem(keyFor(em)); } catch (e) { /* storage blocked */ }
+  }
+
+  const needsSecret = () => CONFIG.onSuccess === 'credentials' && !CONFIG.credentials.useAutofill;
+
+  if (typeof GM_registerMenuCommand === 'function') {
+    GM_registerMenuCommand('SMS demo: set password', () => {
+      if ($('.signin-view-container')) { injectStyles(); applyBrandVars(); renderSecretSetup(closePanel); }
+      else { writeSecret(prompt('Demo account password (stored by Tampermonkey, not in the script):')); }
+    });
+    GM_registerMenuCommand('SMS demo: forget password', () => { clearSecret(); alert('Demo password cleared.'); });
+  }
+
+  // console helpers — e.g. await sbsmsDemo.hashPhone('+41 79 123 45 67')
+  W.sbsmsDemo = {
+    setPassword: writeSecret,
+    clearPassword: clearSecret,
+    hasPassword: email => !!readSecret(email),
+    hashPhone: raw => sha256Hex(normalisePhone(raw)),
+    normalisePhone
+  };
 
   /* ------------------------------------------------------------------ *
    *  Styles
@@ -89,6 +362,8 @@
   function injectStyles() {
     if ($('#sbsms-styles')) return;
     const css = `
+      /* our block carries a copy of the sign-in headline — hide the original below it */
+      #sbsms-entry ~ .signin-view > .view-headline { display:none !important; }
       .sbsms-hidden { position:absolute !important; height:0 !important; overflow:hidden !important; opacity:0 !important; }
       .sbsms-panel { width:90%; margin:0 auto; text-align:center; animation:sbsms-fade .25s ease; }
       @keyframes sbsms-fade { from { opacity:0; transform:translateY(6px);} to { opacity:1; transform:none;} }
@@ -129,7 +404,7 @@
       .sbsms-toast .sbsms-icon { flex:0 0 38px; height:38px; border-radius:9px; background:var(--sbsms-brand);
         display:flex; align-items:center; justify-content:center; }
       .sbsms-toast .sbsms-icon svg { width:21px; height:21px; fill:#fff; }
-      .sbsms-toast .sbsms-head { display:flex; justify-content:space-between; font-size:.74rem; font-weight:700;
+      .sbsms-toast .sbsms-head { display:flex; justify-content:space-between; gap:8px; font-size:.74rem; font-weight:700;
         text-transform:uppercase; letter-spacing:.03em; opacity:.6; margin-bottom:2px; }
       .sbsms-toast .sbsms-body { font-size:.86rem; line-height:1.35; }
       .sbsms-toast .sbsms-body b { font-size:1rem; letter-spacing:.09em; }
@@ -154,7 +429,7 @@
   }
 
   /* ------------------------------------------------------------------ *
-   *  Entry button in the native sign-in options
+   *  Entry button — only ever on the method-selection screen
    * ------------------------------------------------------------------ */
   // the "or" label lives in a <span> inside the <hr> — invisible in innerHTML,
   // because <hr> is a void element and its children never serialise
@@ -166,6 +441,12 @@
     if (!existing) span.textContent = 'or';
     rule.appendChild(span);
     return rule;
+  }
+
+  // the container lists every method only on the first screen; once one is
+  // picked it holds that single view and its form instead
+  function isSelectionScreen(container) {
+    return container.querySelectorAll('button.type-uncollapse[data-view-link]').length > 0;
   }
 
   function injectEntry() {
@@ -182,7 +463,7 @@
     btn.className = 'type-uncollapse clickable';
     btn.type = 'button';
     btn.setAttribute('role', 'button');
-    btn.textContent = CONFIG.buttonLabel;
+    btn.textContent = t('entry');
     btn.addEventListener('click', openSms);
 
     const rule = makeRule();
@@ -192,12 +473,29 @@
       container.appendChild(rule);
       container.appendChild(view);
     } else {
-      // the "Sign In" headline travels with us so it stays on top and stays centred
+      // a COPY of the headline, so React's own node is never moved
+      // (the original is hidden by CSS for as long as our block is present)
       const headline = container.querySelector('.view-headline');
-      if (headline) view.appendChild(headline);
+      if (headline) view.appendChild(headline.cloneNode(true));
       view.appendChild(btn);
       container.insertBefore(rule, container.firstChild);
       container.insertBefore(view, container.firstChild);
+    }
+  }
+
+  function removeEntry() {
+    const view = $('#sbsms-entry');
+    if (!view) return;
+    view.remove();
+    // React recycles the <hr> nodes, so don't try to identify "ours" — just make
+    // sure no separator is left dangling at either end of the list
+    const container = $('.signin-view-container');
+    if (!container) return;
+    while (container.firstElementChild && container.firstElementChild.tagName === 'HR') {
+      container.firstElementChild.remove();
+    }
+    while (container.lastElementChild && container.lastElementChild.tagName === 'HR') {
+      container.lastElementChild.remove();
     }
   }
 
@@ -225,28 +523,26 @@
     if (container) container.classList.remove('sbsms-hidden');
     dismissToast();
     clearInterval(state.resendTimer);
+    state.account = null;
+    state.code = null;
   }
 
-  function openSms() {
-    injectStyles();
-    applyBrandVars();
-    renderPhoneStep();
-  }
+  function openSms() { injectStyles(); applyBrandVars(); renderPhoneStep(); }
 
   function renderPhoneStep(prefill, error) {
     const p = panel();
     if (!p) return;
     p.innerHTML = `
-      <h3>Sign In With SMS</h3>
-      <p class="sbsms-sub">Enter your mobile number and we'll text you a one-time code.</p>
+      <h3>${t('phoneTitle')}</h3>
+      <p class="sbsms-sub">${t('phoneIntro')}</p>
       ${error ? `<p class="sbsms-error">${error}</p>` : ''}
       <div class="sbsms-field">
-        <label for="sbsms-phone">Mobile number</label>
+        <label for="sbsms-phone">${t('phoneLabel')}</label>
         <input id="sbsms-phone" type="tel" inputmode="tel" autocomplete="tel"
                placeholder="${CONFIG.countryPrefix}79 123 45 67" value="${prefill || CONFIG.countryPrefix}">
       </div>
-      <button class="sbsms-btn" id="sbsms-send">Send code</button>
-      <a class="sbsms-link" id="sbsms-back" role="button" tabindex="0">Sign in using a different method?</a>
+      <button class="sbsms-btn" id="sbsms-send">${t('send')}</button>
+      <a class="sbsms-link" id="sbsms-back" role="button" tabindex="0">${t('otherMethod')}</a>
     `;
 
     const input = $('#sbsms-phone', p);
@@ -255,18 +551,25 @@
     input.setSelectionRange(input.value.length, input.value.length);
     input.addEventListener('keydown', e => { if (e.key === 'Enter') send.click(); });
 
-    send.addEventListener('click', () => {
+    send.addEventListener('click', async () => {
       const raw = input.value.trim();
       if (raw.replace(/\D/g, '').length < 7) {
-        return renderPhoneStep(raw, 'Please enter a valid mobile number.');
+        return renderPhoneStep(raw, t('invalidNumber'));
       }
-      state.phone = raw;
-      state.code  = makeCode();
       send.disabled = true;
-      send.textContent = 'Sending…';
+      send.textContent = t('sending');
+
+      const account = await lookupNumber(raw);
+      if (!account && CONFIG.revealUnknownNumbers) {
+        return renderPhoneStep(raw, t('unknownNumber'));
+      }
+
+      state.phone   = raw;
+      state.account = account;                 // null → unknown number: no code is ever issued
+      state.code    = account ? makeCode() : null;
       setTimeout(() => {
         renderCodeStep();
-        showToast(state.code);
+        if (state.code) showToast(state.code);
       }, CONFIG.sendDelayMs);
     });
 
@@ -277,30 +580,30 @@
     const p = panel();
     if (!p) return;
     const boxes = Array.from({ length: CONFIG.codeLength })
-      .map((_, i) => `<input type="text" inputmode="numeric" maxlength="1" data-i="${i}" aria-label="Digit ${i + 1}">`)
+      .map((_, i) => `<input type="text" inputmode="numeric" maxlength="1" data-i="${i}" aria-label="${t('digit', i + 1)}">`)
       .join('');
     p.innerHTML = `
-      <h3>Enter your code</h3>
-      <p class="sbsms-sub">We sent a ${CONFIG.codeLength}-digit code to<br><strong>${state.phone}</strong></p>
+      <h3>${t('codeTitle')}</h3>
+      <p class="sbsms-sub">${t('codeIntro', CONFIG.codeLength)}<br><strong>${state.phone}</strong></p>
       ${error ? `<p class="sbsms-error">${error}</p>` : ''}
       <div class="sbsms-otp" id="sbsms-otp">${boxes}</div>
-      <button class="sbsms-btn" id="sbsms-verify" disabled>Verify &amp; sign in</button>
-      <a class="sbsms-link" id="sbsms-resend" role="button" tabindex="0" aria-disabled="true">Resend code</a><br>
-      <a class="sbsms-link" id="sbsms-back" role="button" tabindex="0">Use a different number</a>
+      <button class="sbsms-btn" id="sbsms-verify" disabled>${t('verify')}</button>
+      <a class="sbsms-link" id="sbsms-resend" role="button" tabindex="0" aria-disabled="true">${t('resend')}</a><br>
+      <a class="sbsms-link" id="sbsms-back" role="button" tabindex="0">${t('differentNumber')}</a>
     `;
 
     const wrap   = $('#sbsms-otp', p);
     const inputs = Array.from(wrap.querySelectorAll('input'));
     const verify = $('#sbsms-verify', p);
-    const value  = () => inputs.map(i => i.value).join('');
-    const sync   = () => { verify.disabled = value().length !== CONFIG.codeLength; };
+    const val    = () => inputs.map(i => i.value).join('');
+    const sync   = () => { verify.disabled = val().length !== CONFIG.codeLength; };
 
     inputs.forEach((input, i) => {
       input.addEventListener('input', () => {
         input.value = input.value.replace(/\D/g, '').slice(0, 1);
         if (input.value && inputs[i + 1]) inputs[i + 1].focus();
         sync();
-        if (value().length === CONFIG.codeLength) verify.click();
+        if (val().length === CONFIG.codeLength) verify.click();
       });
       input.addEventListener('keydown', e => {
         if (e.key === 'Backspace' && !input.value && inputs[i - 1]) inputs[i - 1].focus();
@@ -317,9 +620,9 @@
     inputs[0].focus();
 
     verify.addEventListener('click', () => {
-      if (value() !== state.code) {
+      if (!state.code || val() !== state.code) {
         wrap.classList.add('sbsms-shake');
-        setTimeout(() => renderCodeStep('That code isn’t right. Please try again.'), 450);
+        setTimeout(() => renderCodeStep(t('wrongCode')), 450);
         return;
       }
       dismissToast();
@@ -330,12 +633,13 @@
     const resend = $('#sbsms-resend', p);
     let left = CONFIG.resendSeconds;
     const tick = () => {
-      if (left > 0) { resend.textContent = `Resend code in ${left}s`; left--; }
+      if (left > 0) { resend.textContent = t('resendIn', left); left--; }
       else {
         clearInterval(state.resendTimer);
-        resend.textContent = 'Resend code';
+        resend.textContent = t('resend');
         resend.setAttribute('aria-disabled', 'false');
         resend.addEventListener('click', () => {
+          if (!state.account) return renderCodeStep();     // unknown number: still no code
           state.code = makeCode();
           renderCodeStep();
           showToast(state.code);
@@ -361,24 +665,55 @@
     }
   }
 
+  // One-time setup: the password is typed here, never written into this file
+  function renderSecretSetup(done) {
+    const p = panel();
+    if (!p) return;
+    const where = CONFIG.credentials.store === 'none' ? t('setupNotStored') : t('setupStored');
+    p.innerHTML = `
+      <h3>${t('setupTitle')}</h3>
+      <p class="sbsms-sub">${t('setupPasswordFor', currentEmail())}<br>${where}</p>
+      <div class="sbsms-field">
+        <label for="sbsms-secret">${t('setupLabel')}</label>
+        <input id="sbsms-secret" type="password" autocomplete="current-password">
+      </div>
+      <button class="sbsms-btn" id="sbsms-secret-save">${t('continueLabel')}</button>
+      <a class="sbsms-link" id="sbsms-back" role="button" tabindex="0">${t('cancel')}</a>
+    `;
+    const input = $('#sbsms-secret', p);
+    const save  = $('#sbsms-secret-save', p);
+    input.focus();
+    input.addEventListener('keydown', e => { if (e.key === 'Enter') save.click(); });
+    save.addEventListener('click', () => {
+      if (!input.value) return input.focus();
+      writeSecret(input.value);
+      done();
+    });
+    $('#sbsms-back', p).addEventListener('click', closePanel);
+  }
+
   function renderSuccess() {
     const p = panel();
     if (!p) return;
     if (CONFIG.onSuccess === 'none') {
-      p.innerHTML = `<div class="sbsms-check">&#10003;</div><h3>Number verified</h3>
-        <p class="sbsms-sub">${state.phone} is confirmed.</p>
-        <a class="sbsms-link" id="sbsms-back" role="button" tabindex="0">Back to sign in</a>`;
+      p.innerHTML = `<div class="sbsms-check">&#10003;</div><h3>${t('verified')}</h3>
+        <p class="sbsms-sub">${t('confirmed', state.phone)}</p>
+        <a class="sbsms-link" id="sbsms-back" role="button" tabindex="0">${t('backToSignIn')}</a>`;
       $('#sbsms-back', p).addEventListener('click', closePanel);
       return;
     }
-    p.innerHTML = `<div class="sbsms-spinner"></div><h3>Signing you in…</h3>
-      <p class="sbsms-sub">Verifying ${state.phone}</p>`;
+    if (needsSecret() && !readSecret()) return renderSecretSetup(renderSuccess);
+    p.innerHTML = `<div class="sbsms-spinner"></div><h3>${t('signingIn')}</h3>
+      <p class="sbsms-sub">${t('verifying', state.phone)}</p>`;
     setTimeout(() => {
       finishLogin().catch(err => {
-        p.innerHTML = `<h3>Couldn’t complete sign-in</h3>
+        p.innerHTML = `<h3>${t('failTitle')}</h3>
           <p class="sbsms-error">${err.message}</p>
-          <a class="sbsms-link" id="sbsms-back" role="button" tabindex="0">Back to sign in</a>`;
+          <a class="sbsms-link" id="sbsms-back" role="button" tabindex="0">${t('backToSignIn')}</a>
+          ${needsSecret() ? `<br><a class="sbsms-link" id="sbsms-forget" role="button" tabindex="0">${t('reenter')}</a>` : ''}`;
         $('#sbsms-back', p).addEventListener('click', closePanel);
+        const forget = $('#sbsms-forget', p);
+        if (forget) forget.addEventListener('click', () => { clearSecret(); renderSecretSetup(renderSuccess); });
       });
     }, 700);
   }
@@ -386,64 +721,103 @@
   async function finishLogin() {
     if (CONFIG.onSuccess === 'sso') {
       const sso = $('[data-view-link="sso"]');
-      if (!sso) throw new Error('SSO button not found on this screen.');
+      if (!sso) throw new Error(t('errNoSso'));
       sso.click();
       return;
     }
 
-    const { email, password } = CONFIG.demoAccount;
-    if (!email || !password || /REPLACE_ME/.test(email) || /REPLACE_ME/.test(password)) {
-      throw new Error('No demo account configured — set CONFIG.demoAccount in the script.');
-    }
+    const email = currentEmail();
 
     // Drive the app's own sign-in form so the hidden fields stay correct
     let identifier = $('#identifier');
     if (!identifier) {
       const trigger = $('[data-view-link="signin"]');
-      if (!trigger) throw new Error('Credentials sign-in is not available on this screen.');
+      if (!trigger) throw new Error(t('errNoCredentials'));
       trigger.click();
       identifier = await waitFor('#identifier', 5000);
     }
     const secret = await waitFor('#secret', 5000);
     const form   = $('form.signin-form');
 
-    setNativeValue(identifier, email);
-    setNativeValue(secret, password);
+    if (CONFIG.credentials.useAutofill) {
+      // hand over to the browser / OS password manager and wait for it to fill in
+      const filled = await waitUntil(() => secret.value.length > 0, 4000);
+      if (!filled) throw new Error(t('errNoAutofill'));
+      if (!identifier.value && email && !/REPLACE_ME/.test(email)) setNativeValue(identifier, email);
+    } else {
+      if (!email || /REPLACE_ME/.test(email)) throw new Error(t('errNoAccount'));
+      const password = readSecret();
+      if (!password) throw new Error(t('errNoPassword'));
+      setNativeValue(identifier, email);
+      setNativeValue(secret, password);
+    }
+
     await sleep(250);
 
     const submit = form && form.querySelector('button[type="submit"]');
     if (submit) submit.click();
     else if (form && form.requestSubmit) form.requestSubmit();
-    else throw new Error('Sign-in form not found.');
+    else throw new Error(t('errNoForm'));
   }
 
   /* ------------------------------------------------------------------ *
    *  Fake SMS banner
    * ------------------------------------------------------------------ */
+  // How far down the banner should start on this device
+  function safeAreaTop() {
+    const probe = document.createElement('div');
+    probe.style.cssText = 'position:fixed;top:0;left:0;width:0;visibility:hidden;' +
+                          'height:env(safe-area-inset-top,0px);';
+    document.body.appendChild(probe);
+    const h = probe.offsetHeight;
+    probe.remove();
+    return h;
+  }
+
+  function toastTop() {
+    if (typeof CONFIG.toastTopOffset === 'number') return CONFIG.toastTopOffset;
+
+    // viewport-fit=cover pages expose the real inset — 59px on a Dynamic Island iPhone
+    const inset = safeAreaTop();
+    if (inset > 0) return inset + 12;
+
+    // Added to the home screen, the web view goes edge to edge but the page may
+    // not opt into safe-area insets, so the island would sit on top of the banner
+    const standalone = window.navigator.standalone === true ||
+      (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches);
+    const iOS = /iPhone|iPad|iPod/.test(navigator.userAgent) ||
+      (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    if (iOS && standalone) return 59 + 12;
+
+    // In Safari the browser chrome already pushes content below the island
+    return 16;
+  }
+
   function dismissToast() {
-    const t = $('#sbsms-toast');
-    if (!t) return;
-    t.classList.add('sbsms-out');
-    setTimeout(() => t.remove(), 300);
+    const el = $('#sbsms-toast');
+    if (!el) return;
+    el.classList.add('sbsms-out');
+    setTimeout(() => el.remove(), 300);
   }
 
   function showToast(code) {
     dismissToast();
-    const t = document.createElement('div');
-    t.id = 'sbsms-toast';
-    t.className = 'sbsms-toast';
-    t.setAttribute('role', 'status');
-    t.innerHTML = `
+    const el = document.createElement('div');
+    el.id = 'sbsms-toast';
+    el.className = 'sbsms-toast';
+    el.setAttribute('role', 'status');
+    el.innerHTML = `
       <div class="sbsms-icon">
         <svg viewBox="0 0 24 24"><path d="M20 2H4a2 2 0 0 0-2 2v18l4-4h14a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2z"/></svg>
       </div>
       <div style="flex:1">
-        <div class="sbsms-head"><span>${CONFIG.senderName}</span><span>now</span></div>
-        <div class="sbsms-body">Your verification code is <b>${code}</b>. It expires in 5 minutes.</div>
-        ${CONFIG.autofillOnTap ? '<div class="sbsms-hint">Tap to fill automatically</div>' : ''}
+        <div class="sbsms-head"><span>${CONFIG.senderName}</span><span>${t('now')}</span></div>
+        <div class="sbsms-body">${t('smsBody', code)}</div>
+        ${CONFIG.autofillOnTap ? `<div class="sbsms-hint">${t('smsHint')}</div>` : ''}
       </div>`;
-    if (CONFIG.autofillOnTap) t.addEventListener('click', () => { fillCode(code); dismissToast(); });
-    document.body.appendChild(t);
+    if (CONFIG.autofillOnTap) el.addEventListener('click', () => { fillCode(code); dismissToast(); });
+    el.style.top = toastTop() + 'px';   // measured per demo, so rotating the phone is fine
+    document.body.appendChild(el);
     setTimeout(dismissToast, 25000);
   }
 
@@ -452,7 +826,10 @@
    * ------------------------------------------------------------------ */
   function boot() {
     injectStyles();
-    injectEntry();
+    const container = $('.signin-view-container');
+    if (!container || $('#sbsms-panel')) return;      // our own flow owns the screen
+    if (isSelectionScreen(container)) injectEntry();
+    else removeEntry();                                // a method was picked — stand down
   }
 
   boot();
@@ -460,6 +837,12 @@
   new MutationObserver(() => {
     if (queued) return;
     queued = true;
-    requestAnimationFrame(() => { queued = false; if (!$('#sbsms-panel')) boot(); });
+    // setTimeout, not requestAnimationFrame: rAF never fires while the tab is
+    // hidden (phone locked, app switched), which would leave this flag stuck
+    // at true and the script permanently dead
+    setTimeout(() => {
+      queued = false;
+      try { boot(); } catch (e) { /* keep watching regardless */ }
+    }, 50);
   }).observe(document.body, { childList: true, subtree: true });
 })();
