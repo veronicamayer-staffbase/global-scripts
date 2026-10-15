@@ -21,6 +21,12 @@
     // 'both' shows every label in both languages, e.g. "Send code / Code senden".
     language:       'auto',
 
+    // Colours come from the tenant's own --color-client-primary token, falling
+    // back to the native sign-in button. Pin them only if a device ever renders
+    // the wrong colour, e.g. brandColor: '#FF7F00'.
+    brandColor:     null,
+    brandTextColor: null,
+
     senderName:     'Migros',          // sender shown in the fake SMS banner
     countryPrefix:  '+49 ',            // pre-filled in the phone field
     codeLength:     6,
@@ -29,6 +35,8 @@
     resendSeconds:  30,
     entryPosition:  'top',             // 'top' | 'bottom' of the sign-in options
     autofillOnTap:  true,              // tapping the SMS banner fills the code
+    smsIcon:        'messages',        // 'messages' = the green iOS Messages icon, 'brand' = brand colour
+    showTapHint:    true,              // false = no "tap to fill" line, for a 1:1 iOS look
 
     // Top spacing for the fake SMS banner, so it clears the status bar and the
     // Dynamic Island / camera cutout. 'auto' measures the page's real safe-area
@@ -239,13 +247,58 @@
     el.dispatchEvent(new Event('change', { bubbles: true }));
   }
 
+  /* ------------------------------------------------------------------ *
+   *  Brand colour
+   * ------------------------------------------------------------------ */
+  // The tenant's design token is the source of truth. On mobile the sign-in
+  // screen can render before the tenant stylesheet lands, and a button's
+  // computed colour sampled at that moment is Staffbase's default blue — which
+  // then stuck, because the colour used to be read only once.
+  const BRAND_TOKENS   = ['--color-client-primary', '--color-brand-primary', '--primary-color'];
+  const TEXT_TOKENS    = ['--color-client-text', '--color-brand-text'];
+  const FALLBACK_BRAND = '#FF7F00';
+  const FALLBACK_TEXT  = '#000000';
+
+  const usableColor = c => {
+    const v = String(c || '').trim().toLowerCase();
+    return !!v && v !== 'transparent' && v !== 'rgba(0, 0, 0, 0)' &&
+           v !== 'initial' && v !== 'inherit' && v !== 'none' && v !== 'unset';
+  };
+
+  function cssVar(names) {
+    const rs = getComputedStyle(document.documentElement);
+    for (const name of names) {
+      const v = (rs.getPropertyValue(name) || '').trim();
+      if (usableColor(v)) return v;
+    }
+    return '';
+  }
+
+  const nativeButton = () =>
+    $('.signin-view-container .type-uncollapse') || $('.signin-form .type-submit');
+
   function brandColor() {
-    const btn = $('.signin-view-container .type-uncollapse');
+    if (CONFIG.brandColor) return CONFIG.brandColor;
+    const token = cssVar(BRAND_TOKENS);
+    if (token) return token;
+    const btn = nativeButton();
     if (btn) {
       const bg = getComputedStyle(btn).backgroundColor;
-      if (bg && bg !== 'rgba(0, 0, 0, 0)' && bg !== 'transparent') return bg;
+      if (usableColor(bg)) return bg;
     }
-    return '#F27022';
+    return FALLBACK_BRAND;
+  }
+
+  function brandTextColor() {
+    if (CONFIG.brandTextColor) return CONFIG.brandTextColor;
+    const token = cssVar(TEXT_TOKENS);
+    if (token) return token;
+    const btn = nativeButton();
+    if (btn) {
+      const c = getComputedStyle(btn).color;
+      if (usableColor(c)) return c;
+    }
+    return FALLBACK_TEXT;
   }
 
   function makeCode() {
@@ -394,22 +447,43 @@
       .sbsms-check { width:46px; height:46px; margin:6px auto 14px; border-radius:50%; background:var(--sbsms-brand);
         display:flex; align-items:center; justify-content:center; color:#fff; font-size:1.5rem; }
 
-      .sbsms-toast { position:fixed; top:16px; right:16px; width:350px; max-width:calc(100vw - 24px); z-index:2147483000;
-        background:rgba(250,250,250,.92); backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
-        border:1px solid rgba(0,0,0,.08); border-radius:16px; box-shadow:0 12px 34px rgba(0,0,0,.22);
-        padding:12px 14px; display:flex; gap:11px; color:#111; text-align:left; cursor:pointer;
-        font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; animation:sbsms-drop .35s cubic-bezier(.2,.9,.3,1.3); }
-      @keyframes sbsms-drop { from { opacity:0; transform:translateY(-24px) scale(.96);} to { opacity:1; transform:none;} }
-      .sbsms-toast.sbsms-out { opacity:0; transform:translateY(-16px); transition:all .3s ease; }
-      .sbsms-toast .sbsms-icon { flex:0 0 38px; height:38px; border-radius:9px; background:var(--sbsms-brand);
-        display:flex; align-items:center; justify-content:center; }
-      .sbsms-toast .sbsms-icon svg { width:21px; height:21px; fill:#fff; }
-      .sbsms-toast .sbsms-head { display:flex; justify-content:space-between; gap:8px; font-size:.74rem; font-weight:700;
-        text-transform:uppercase; letter-spacing:.03em; opacity:.6; margin-bottom:2px; }
-      .sbsms-toast .sbsms-body { font-size:.86rem; line-height:1.35; }
-      .sbsms-toast .sbsms-body b { font-size:1rem; letter-spacing:.09em; }
-      .sbsms-toast .sbsms-hint { margin-top:5px; font-size:.7rem; opacity:.5; }
-      @media (max-width:520px) { .sbsms-toast { left:12px; right:12px; width:auto; } }
+      /* --- iOS notification banner ------------------------------------- */
+      .sbsms-toast { position:fixed; top:16px; left:10px; right:10px; margin:0 auto;
+        max-width:420px; z-index:2147483000; box-sizing:border-box;
+        display:flex; gap:10px; align-items:flex-start; padding:13px 15px;
+        border-radius:22px; cursor:pointer; text-align:left;
+        background:rgba(245,245,245,.76);
+        backdrop-filter:blur(28px) saturate(180%); -webkit-backdrop-filter:blur(28px) saturate(180%);
+        box-shadow:0 8px 26px rgba(0,0,0,.18), 0 1px 2px rgba(0,0,0,.08);
+        color:#000; -webkit-font-smoothing:antialiased;
+        font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",sans-serif;
+        animation:sbsms-drop .45s cubic-bezier(.22,1.1,.36,1); }
+      @keyframes sbsms-drop { from { opacity:0; transform:translateY(-130%);} to { opacity:1; transform:none;} }
+      .sbsms-toast.sbsms-out { opacity:0; transform:translateY(-130%);
+        transition:transform .34s cubic-bezier(.4,0,.7,1), opacity .28s ease; }
+
+      .sbsms-toast .sbsms-icon { flex:0 0 38px; width:38px; height:38px; border-radius:10px;
+        display:flex; align-items:center; justify-content:center; overflow:hidden; }
+      .sbsms-toast .sbsms-icon-messages { background:linear-gradient(180deg,#5BF675 0%,#1FB83B 100%); }
+      .sbsms-toast .sbsms-icon-brand { background:var(--sbsms-brand); }
+      .sbsms-toast .sbsms-icon svg { width:26px; height:26px; fill:#fff; display:block; }
+
+      .sbsms-toast .sbsms-text { flex:1; min-width:0; }
+      .sbsms-toast .sbsms-head { display:flex; align-items:baseline; justify-content:space-between;
+        gap:10px; margin-bottom:1px; }
+      .sbsms-toast .sbsms-sender { font-size:15px; font-weight:600; letter-spacing:-.01em;
+        white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+      .sbsms-toast .sbsms-time { flex:none; font-size:13px; font-weight:400; color:rgba(60,60,67,.6); }
+      .sbsms-toast .sbsms-body { font-size:15px; font-weight:400; line-height:1.27; letter-spacing:-.01em;
+        display:-webkit-box; -webkit-line-clamp:4; -webkit-box-orient:vertical; overflow:hidden; }
+      .sbsms-toast .sbsms-body b { font-weight:600; letter-spacing:.04em; }
+      .sbsms-toast .sbsms-hint { margin-top:3px; font-size:13px; color:rgba(60,60,67,.6); }
+
+      @media (prefers-color-scheme: dark) {
+        .sbsms-toast { background:rgba(40,40,42,.72); color:#fff;
+          box-shadow:0 8px 26px rgba(0,0,0,.45), 0 1px 2px rgba(0,0,0,.3); }
+        .sbsms-toast .sbsms-time, .sbsms-toast .sbsms-hint { color:rgba(235,235,245,.6); }
+      }
     `;
     const tag = document.createElement('style');
     tag.id = 'sbsms-styles';
@@ -417,15 +491,17 @@
     document.head.appendChild(tag);
   }
 
+  // re-run on every boot and every render, so a late-arriving tenant stylesheet
+  // corrects a colour that was sampled too early
   function applyBrandVars() {
-    const brand = brandColor();
-    const btn = $('.signin-view-container .type-uncollapse');
-    document.documentElement.style.setProperty('--sbsms-brand', brand);
-    if (btn) {
-      const cs = getComputedStyle(btn);
-      document.documentElement.style.setProperty('--sbsms-brand-text', cs.color);
-      document.documentElement.style.setProperty('--sbsms-radius', cs.borderRadius);
-    }
+    const root = document.documentElement;
+    const set = (name, val) => {
+      if (val && root.style.getPropertyValue(name) !== val) root.style.setProperty(name, val);
+    };
+    set('--sbsms-brand', brandColor());
+    set('--sbsms-brand-text', brandTextColor());
+    const btn = nativeButton();
+    if (btn) set('--sbsms-radius', getComputedStyle(btn).borderRadius);
   }
 
   /* ------------------------------------------------------------------ *
@@ -503,6 +579,7 @@
    *  Panel
    * ------------------------------------------------------------------ */
   function panel() {
+    applyBrandVars();                       // re-check the brand colour on each step
     let p = $('#sbsms-panel');
     if (!p) {
       const container = $('.signin-view-container');
@@ -806,14 +883,17 @@
     el.id = 'sbsms-toast';
     el.className = 'sbsms-toast';
     el.setAttribute('role', 'status');
+    // the iOS Messages glyph: a speech bubble with a tail on the lower left
+    const bubble = '<svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 5C8.8 5 3 9.7 3 15.5c0 3.3 1.9 6.2 4.8 8.1-.2 1.6-1 3.6-2.5 5.2-.2.2 0 .5.3.4 3-.6 5.5-2 7-3.2 1.1.3 2.2.4 3.4.4 7.2 0 13-4.7 13-10.9S23.2 5 16 5z"/></svg>';
     el.innerHTML = `
-      <div class="sbsms-icon">
-        <svg viewBox="0 0 24 24"><path d="M20 2H4a2 2 0 0 0-2 2v18l4-4h14a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2z"/></svg>
-      </div>
-      <div style="flex:1">
-        <div class="sbsms-head"><span>${CONFIG.senderName}</span><span>${t('now')}</span></div>
+      <div class="sbsms-icon sbsms-icon-${CONFIG.smsIcon === 'brand' ? 'brand' : 'messages'}">${bubble}</div>
+      <div class="sbsms-text">
+        <div class="sbsms-head">
+          <span class="sbsms-sender">${CONFIG.senderName}</span>
+          <span class="sbsms-time">${t('now')}</span>
+        </div>
         <div class="sbsms-body">${t('smsBody', code)}</div>
-        ${CONFIG.autofillOnTap ? `<div class="sbsms-hint">${t('smsHint')}</div>` : ''}
+        ${CONFIG.autofillOnTap && CONFIG.showTapHint ? `<div class="sbsms-hint">${t('smsHint')}</div>` : ''}
       </div>`;
     if (CONFIG.autofillOnTap) el.addEventListener('click', () => { fillCode(code); dismissToast(); });
     el.style.top = toastTop() + 'px';   // measured per demo, so rotating the phone is fine
@@ -826,6 +906,7 @@
    * ------------------------------------------------------------------ */
   function boot() {
     injectStyles();
+    applyBrandVars();
     const container = $('.signin-view-container');
     if (!container || $('#sbsms-panel')) return;      // our own flow owns the screen
     if (isSelectionScreen(container)) injectEntry();
