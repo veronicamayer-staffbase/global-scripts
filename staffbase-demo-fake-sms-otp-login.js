@@ -82,11 +82,11 @@
       useAutofill: false,
 
       // The demo account's email. Not a secret — fine to leave in the file.
-      email: 'test@test.de',
+      email: 'admin+migrosdemo@staffbase.com',
 
       // Leave EMPTY (recommended). The script asks for it once and keeps it out
       // of this file. Anything typed here is readable by anyone who sees the file.
-      password: 'NDEMB35W',
+      password: 'bG1N,.FvFGpO1QS',
 
       // Where the password lives once you have typed it:
       //   'auto'    → Tampermonkey's own storage: survives reloads, is not in this
