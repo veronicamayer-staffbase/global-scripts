@@ -15,7 +15,7 @@
   // Must match the origin the ai-digest widget iframe is actually served from
   // (inspect the widget's iframe `src` on this page to confirm — defaults to the
   // shared solutions-monorepo gallery's GitHub Pages origin).
-  const WIDGET_ORIGIN = 'https://staffbase.github.io';
+  const WIDGET_ORIGIN = 'https://veronicamayer-staffbase.github.io';
 
   const OVERLAY_ID = 'aiDigestFullPageOverlay';
   const STYLE_ID = 'aiDigestFullPageOverlayStyles';
@@ -54,6 +54,7 @@
       line-height: 1;
       cursor: pointer;
       padding: 4px;
+      width: auto;
     }
     #${OVERLAY_ID} .dg-badge {
       display: inline-flex;
