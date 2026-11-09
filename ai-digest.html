@@ -305,6 +305,18 @@
         gap: 8px;
         font-size: 13px;
     }
+    .cw-lang-select {
+        position: absolute;
+        top: 14px;
+        right: 48px;
+        font-size: 13px;
+        padding: 4px 8px;
+        border: 1px solid var(--border, #d0d0d0);
+        border-radius: 6px;
+        background: transparent;
+        color: var(--text);
+        cursor: pointer;
+    }
     .digest-sources-label {
         color: var(--text-light);
         font-weight: 700;
@@ -319,15 +331,15 @@
     <div class="digest-clip">
         <div class="digest-stack">
             <span class="cw-badge"><span class="cw-badge-icon-slot"></span><span data-i18n="badge">Your AI Digest</span></span>
-            <p class="digest-headline" data-i18n="headline">PPE training due, a Factory 56 milestone, and an e-bike for sale this week</p>
+            <p class="digest-headline" data-i18n="headline">Safety training due, a production milestone, and a bike for sale this week</p>
 
             <div class="digest-section">
                 <span class="cw-pill cw-pill-action" data-i18n="actionRequired">Action Required</span>
                 <div class="digest-markdown">
-                    <strong data-i18n="actionHeading">PPE refresher training</strong>
+                    <strong data-i18n="actionHeading">Safety refresher training</strong>
                     <ul>
                         <li id="cardActionBullet"></li>
-                        <li><a href="#" class="digest-link cw-demo-link"><span aria-hidden="true">👉</span> <span data-i18n="actionLink">PPE Refresher – Enroll Now</span></a></li>
+                        <li><a href="#" class="digest-link cw-demo-link"><span aria-hidden="true">👉</span> <span data-i18n="actionLink">Safety Refresher – Enroll Now</span></a></li>
                     </ul>
                 </div>
             </div>
@@ -335,9 +347,9 @@
             <div class="digest-section">
                 <span class="cw-pill cw-pill-neutral" data-i18n="stayInformed">Stay Informed</span>
                 <div class="digest-markdown">
-                    <strong data-i18n="infoHeading1">Factory 56 production update</strong>
+                    <strong data-i18n="infoHeading1">Production update</strong>
                     <ul><li id="cardInfoBullet1"></li></ul>
-                    <strong data-i18n="infoHeading2">For sale: e-bike &amp; winter tires</strong>
+                    <strong data-i18n="infoHeading2">For sale: bike &amp; winter tires</strong>
                     <ul><li id="cardInfoBullet2"></li></ul>
                 </div>
             </div>
@@ -352,9 +364,17 @@
 <div class="cw-modal-overlay" id="digestOverlay">
     <div class="cw-modal" role="dialog" aria-modal="true" aria-labelledby="digestModalTitle">
         <button class="cw-close-btn" id="closeDigestBtn" data-i18n-aria-label="closeLabel" aria-label="Close">&times;</button>
+        <select class="cw-lang-select" id="langSelect" aria-label="Language">
+            <option value="en-US">English (US)</option>
+            <option value="en-GB">English (UK)</option>
+            <option value="de">Deutsch</option>
+            <option value="fr">Français</option>
+            <option value="es">Español</option>
+            <option value="ja">日本語</option>
+        </select>
 
         <span class="cw-badge"><span class="cw-badge-icon-slot"></span><span data-i18n="badge">Your AI Digest</span></span>
-        <h2 class="digest-headline" id="digestModalTitle" data-i18n="headline">PPE training due, a Factory 56 milestone, and an e-bike for sale this week</h2>
+        <h2 class="digest-headline" id="digestModalTitle" data-i18n="headline">Safety training due, a production milestone, and a bike for sale this week</h2>
 
         <hr class="cw-divider">
 
@@ -362,19 +382,19 @@
             <div class="digest-column">
                 <span class="cw-pill cw-pill-action" data-i18n="actionRequired">Action Required</span>
                 <div class="digest-markdown">
-                    <strong><span data-i18n="actionHeading">PPE refresher training</span><sup>2</sup></strong>
+                    <strong><span data-i18n="actionHeading">Safety refresher training</span><sup>2</sup></strong>
                     <ul>
                         <li id="modalActionBullet"></li>
-                        <li><a href="#" class="digest-link cw-demo-link"><span aria-hidden="true">👉</span> <span data-i18n="actionLink">PPE Refresher – Enroll Now</span></a></li>
+                        <li><a href="#" class="digest-link cw-demo-link"><span aria-hidden="true">👉</span> <span data-i18n="actionLink">Safety Refresher – Enroll Now</span></a></li>
                     </ul>
                 </div>
             </div>
             <div class="digest-column">
                 <span class="cw-pill cw-pill-neutral" data-i18n="stayInformed">Stay Informed</span>
                 <div class="digest-markdown">
-                    <strong><span data-i18n="infoHeading1">Factory 56 production update</span><sup>1</sup></strong>
+                    <strong><span data-i18n="infoHeading1">Production update</span><sup>1</sup></strong>
                     <ul><li id="modalInfoBullet1"></li></ul>
-                    <strong><span data-i18n="infoHeading2">For sale: e-bike &amp; winter tires</span><sup>3</sup></strong>
+                    <strong><span data-i18n="infoHeading2">For sale: bike &amp; winter tires</span><sup>3</sup></strong>
                     <ul><li id="modalInfoBullet2"></li></ul>
                 </div>
             </div>
@@ -394,16 +414,23 @@
 
         <div class="digest-sources">
             <span class="digest-sources-label" data-i18n="sourcesLabel">Sources:</span>
-            <span class="cw-source-chip"><sup>1</sup><span data-i18n="source1">Factory 56 Production Update</span></span>
-            <span class="cw-source-chip"><sup>2</sup><span data-i18n="source2">PPE Refresher Training</span></span>
-            <span class="cw-source-chip"><sup>3</sup><span data-i18n="source3">For Sale: E-Bike &amp; Winter Tires</span></span>
+            <span class="cw-source-chip"><sup>1</sup><span data-i18n="source1">Production Update</span></span>
+            <span class="cw-source-chip"><sup>2</sup><span data-i18n="source2">Safety Refresher Training</span></span>
+            <span class="cw-source-chip"><sup>3</sup><span data-i18n="source3">For Sale: Bike &amp; Winter Tires</span></span>
         </div>
     </div>
 </div>
 
 <script>
-    // --- Language detection (per widgets/MULTILANGUAGE.md) ---
-    const LANG = (() => {
+    // --- Language: ?lang= param > saved choice > browser language (see widgets/MULTILANGUAGE.md) ---
+    const SUPPORTED_LANGS = ['en-US', 'en-GB', 'de', 'fr', 'es', 'ja'];
+    function detectLang() {
+        const fromUrl = new URLSearchParams(location.search).get('lang');
+        if (SUPPORTED_LANGS.includes(fromUrl)) return fromUrl;
+        try {
+            const saved = localStorage.getItem('digestLang');
+            if (SUPPORTED_LANGS.includes(saved)) return saved;
+        } catch (e) { /* storage blocked, ignore */ }
         const l = navigator.language || '';
         if (l.startsWith('de')) return 'de';
         if (l.startsWith('fr')) return 'fr';
@@ -411,168 +438,170 @@
         if (l.startsWith('ja')) return 'ja';
         if (l === 'en-GB')      return 'en-GB';
         return 'en-US';
-    })();
+    }
+    let LANG = detectLang();
     document.documentElement.lang = LANG;
 
-    const LOCALE = {
+    const LOCALES = {
         'de': 'de-DE', 'fr': 'fr-FR', 'es': 'es-ES',
         'ja': 'ja-JP', 'en-GB': 'en-GB', 'en-US': 'en-US'
-    }[LANG];
+    };
+    let LOCALE = LOCALES[LANG];
 
-    // --- Translations ---
+    // --- Translations (generic demo copy: no customer, brand or site names) ---
     const T = {
         de: {
             badge: "Dein KI-Digest",
-            headline: "PSA-Schulung fällig, Meilenstein in Factory 56 und ein E-Bike zu verkaufen – diese Woche",
+            headline: "Sicherheitsschulung fällig, ein Produktionsmeilenstein und ein Artikel zum Verkauf – diese Woche",
             actionRequired: "Handlungsbedarf",
             stayInformed: "Gut zu wissen",
             openDigest: "Digest öffnen",
             closeLabel: "Schließen",
-            actionHeading: "PSA-Auffrischungsschulung",
+            actionHeading: "Sicherheits-Auffrischungsschulung",
             actionBulletLead: "Fällig am ${date}",
-            actionBulletRest: "— schließe das 15-minütige E-Learning-Modul zur neuen Richtlinie für schnittfeste Handschuhe vor deiner nächsten Schicht im Karosseriebau ab. 🧤",
-            actionLink: "PSA-Auffrischung – Jetzt anmelden",
-            infoHeading1: "Produktionsupdate aus Factory 56",
-            infoBullet1Lead: "Die Produktion von EQS und S-Klasse ist diesen Monat um 4 % gestiegen",
-            infoBullet1Rest: "— Factory 56 hat gerade die Marke von 250.000 gefertigten Fahrzeugen erreicht. 🏭",
-            infoHeading2: "Zu verkaufen: E-Bike & Winterreifen",
-            infoBullet2Lead: "Eine Kollegin aus dem Lackierwerk verkauft ein Bosch-E-Bike (${price1}) und einen Satz mit 4 Winterreifen (${price2})",
+            actionBulletRest: "— schließe das 15-minütige E-Learning-Modul zur aktualisierten Sicherheitsrichtlinie vor deiner nächsten Schicht ab. 🦺",
+            actionLink: "Sicherheits-Auffrischung – Jetzt anmelden",
+            infoHeading1: "Produktionsupdate",
+            infoBullet1Lead: "Die Produktion ist diesen Monat um 4 % gestiegen",
+            infoBullet1Rest: "— das Werk hat gerade die Marke von 250.000 gefertigten Einheiten erreicht. 🏭",
+            infoHeading2: "Zu verkaufen: Fahrrad & Winterreifen",
+            infoBullet2Lead: "Eine Kollegin verkauft ein Fahrrad (${price1}) und einen Satz mit 4 Winterreifen (${price2})",
             infoBullet2Rest: "— Details am Marktplatz-Board.",
             feedbackQuestion: "War dieses Digest für dich relevant?",
             thumbUpLabel: "Relevant",
             thumbDownLabel: "Nicht relevant",
             sourcesLabel: "Quellen:",
-            source1: "Produktionsupdate Factory 56",
-            source2: "PSA-Auffrischungsschulung",
-            source3: "Zu verkaufen: E-Bike & Winterreifen",
+            source1: "Produktionsupdate",
+            source2: "Sicherheits-Auffrischungsschulung",
+            source3: "Zu verkaufen: Fahrrad & Winterreifen",
         },
         fr: {
             badge: "Votre digest IA",
-            headline: "Formation EPI à faire, une étape franchie chez Factory 56 et un vélo électrique à vendre cette semaine",
+            headline: "Formation sécurité à faire, une étape de production franchie et un article à vendre cette semaine",
             actionRequired: "Action requise",
             stayInformed: "À savoir",
             openDigest: "Ouvrir le digest",
             closeLabel: "Fermer",
-            actionHeading: "Formation de recyclage EPI",
+            actionHeading: "Formation de recyclage sécurité",
             actionBulletLead: "À faire avant le ${date}",
-            actionBulletRest: "— terminez le module e-learning de 15 minutes sur la nouvelle politique de gants anticoupure avant votre prochaine équipe à l'atelier de carrosserie. 🧤",
-            actionLink: "Recyclage EPI – Inscrivez-vous",
-            infoHeading1: "Mise à jour de production – Factory 56",
-            infoBullet1Lead: "La production des EQS et Classe S a augmenté de 4 % ce mois-ci",
-            infoBullet1Rest: "— Factory 56 vient de franchir le cap des 250 000 véhicules produits. 🏭",
-            infoHeading2: "À vendre : vélo électrique et pneus hiver",
-            infoBullet2Lead: "Une collègue de l'atelier de peinture vend un vélo électrique Bosch (${price1}) et un jeu de 4 pneus hiver (${price2})",
-            infoBullet2Rest: "— détails sur le tableau de la bourse d'échange.",
+            actionBulletRest: "— terminez le module e-learning de 15 minutes sur la politique de sécurité mise à jour avant votre prochain poste. 🦺",
+            actionLink: "Recyclage sécurité – Inscrivez-vous",
+            infoHeading1: "Mise à jour de production",
+            infoBullet1Lead: "La production a augmenté de 4 % ce mois-ci",
+            infoBullet1Rest: "— le site vient de franchir le cap des 250 000 unités produites. 🏭",
+            infoHeading2: "À vendre : vélo et pneus hiver",
+            infoBullet2Lead: "Une collègue vend un vélo (${price1}) et un jeu de 4 pneus hiver (${price2})",
+            infoBullet2Rest: "— détails sur le tableau de la bourse d'échange interne.",
             feedbackQuestion: "Ce résumé vous a-t-il été utile ?",
             thumbUpLabel: "Pertinent",
             thumbDownLabel: "Non pertinent",
             sourcesLabel: "Sources :",
-            source1: "Mise à jour production Factory 56",
-            source2: "Formation de recyclage EPI",
-            source3: "À vendre : vélo électrique et pneus",
+            source1: "Mise à jour de production",
+            source2: "Formation de recyclage sécurité",
+            source3: "À vendre : vélo et pneus hiver",
         },
         es: {
             badge: "Tu resumen con IA",
-            headline: "Formación de EPP pendiente, un hito en Factory 56 y una bicicleta eléctrica en venta esta semana",
+            headline: "Formación de seguridad pendiente, un hito de producción y un artículo en venta esta semana",
             actionRequired: "Acción requerida",
             stayInformed: "Para tu información",
             openDigest: "Abrir resumen",
             closeLabel: "Cerrar",
-            actionHeading: "Formación de repaso de EPP",
+            actionHeading: "Repaso de seguridad",
             actionBulletLead: "Antes del ${date}",
-            actionBulletRest: "— completa el módulo de e-learning de 15 minutos sobre la nueva política de guantes anticorte antes de tu próximo turno en el taller de carrocería. 🧤",
-            actionLink: "Repaso de EPP – Inscríbete ahora",
-            infoHeading1: "Actualización de producción – Factory 56",
-            infoBullet1Lead: "La producción de los EQS y Clase S ha aumentado un 4 % este mes",
-            infoBullet1Rest: "— Factory 56 acaba de superar el hito de 250.000 vehículos producidos. 🏭",
-            infoHeading2: "En venta: bicicleta eléctrica y neumáticos de invierno",
-            infoBullet2Lead: "Una compañera del taller de pintura vende una bicicleta eléctrica Bosch (${price1}) y un juego de 4 neumáticos de invierno (${price2})",
+            actionBulletRest: "— completa el módulo de e-learning de 15 minutos sobre la política de seguridad actualizada antes de tu próximo turno. 🦺",
+            actionLink: "Repaso de seguridad – Inscríbete ahora",
+            infoHeading1: "Actualización de producción",
+            infoBullet1Lead: "La producción ha aumentado un 4 % este mes",
+            infoBullet1Rest: "— la planta acaba de superar el hito de 250.000 unidades producidas. 🏭",
+            infoHeading2: "En venta: bicicleta y neumáticos de invierno",
+            infoBullet2Lead: "Una compañera vende una bicicleta (${price1}) y un juego de 4 neumáticos de invierno (${price2})",
             infoBullet2Rest: "— detalles en el tablón del mercadillo interno.",
             feedbackQuestion: "¿Te ha resultado útil este resumen?",
             thumbUpLabel: "Relevante",
             thumbDownLabel: "No relevante",
             sourcesLabel: "Fuentes:",
-            source1: "Actualización de producción Factory 56",
-            source2: "Formación de repaso de EPP",
-            source3: "En venta: bicicleta eléctrica y neumáticos",
+            source1: "Actualización de producción",
+            source2: "Repaso de seguridad",
+            source3: "En venta: bicicleta y neumáticos",
         },
         ja: {
             badge: "あなたのAIダイジェスト",
-            headline: "PPEトレーニングの期限、Factory 56のマイルストーン、そして今週販売中の電動アシスト自転車",
+            headline: "安全研修の期限、生産の節目、そして今週販売中の自転車",
             actionRequired: "対応が必要",
             stayInformed: "お知らせ",
             openDigest: "ダイジェストを開く",
             closeLabel: "閉じる",
-            actionHeading: "PPE（保護具）再教育研修",
+            actionHeading: "安全研修の再受講",
             actionBulletLead: "${date}までに",
-            actionBulletRest: "— ボディショップでの次のシフトまでに、新しい耐切創手袋ポリシーに関する15分のeラーニングモジュールを完了してください。🧤",
-            actionLink: "PPE再教育 – 今すぐ登録",
-            infoHeading1: "Factory 56 生産アップデート",
-            infoBullet1Lead: "今月はEQSとSクラスの生産台数が4%増加",
-            infoBullet1Rest: "— Factory 56は生産台数25万台の節目を達成しました。🏭",
-            infoHeading2: "販売中：電動アシスト自転車とスタッドレスタイヤ",
-            infoBullet2Lead: "ペイントショップの同僚がBosch製の電動アシスト自転車（${price1}）とスタッドレスタイヤ4本セット（${price2}）を販売中",
+            actionBulletRest: "— 次のシフトまでに、改定された安全ポリシーに関する15分のeラーニングモジュールを完了してください。🦺",
+            actionLink: "安全研修の再受講 – 今すぐ登録",
+            infoHeading1: "生産アップデート",
+            infoBullet1Lead: "今月の生産量は4%増加",
+            infoBullet1Rest: "— 工場が生産台数25万台の節目を達成しました。🏭",
+            infoHeading2: "販売中：自転車とスタッドレスタイヤ",
+            infoBullet2Lead: "同僚が自転車（${price1}）とスタッドレスタイヤ4本セット（${price2}）を販売中",
             infoBullet2Rest: "— 詳細は社内マーケットプレイスの掲示板をご確認ください。",
             feedbackQuestion: "このダイジェストは役に立ちましたか？",
             thumbUpLabel: "役に立った",
             thumbDownLabel: "役に立たなかった",
             sourcesLabel: "出典：",
-            source1: "Factory 56 生産アップデート",
-            source2: "PPE再教育研修",
-            source3: "販売中：電動自転車とタイヤ",
+            source1: "生産アップデート",
+            source2: "安全研修の再受講",
+            source3: "販売中：自転車とタイヤ",
         },
         'en-GB': {
             badge: "Your AI Digest",
-            headline: "PPE training due, a Factory 56 milestone, and an e-bike for sale this week",
+            headline: "Safety training due, a production milestone, and a bike for sale this week",
             actionRequired: "Action Required",
             stayInformed: "Stay Informed",
             openDigest: "Open Digest",
             closeLabel: "Close",
-            actionHeading: "PPE refresher training",
+            actionHeading: "Safety refresher training",
             actionBulletLead: "Due ${date}",
-            actionBulletRest: "— complete the 15-minute e-learning module for the new cut-resistant glove policy before your next shift in the Body Shop. 🧤",
-            actionLink: "PPE Refresher – Enrol Now",
-            infoHeading1: "Factory 56 production update",
-            infoBullet1Lead: "EQS and S-Class output is up 4% this month",
-            infoBullet1Rest: "— Factory 56 just passed the 250,000-vehicle milestone. 🏭",
-            infoHeading2: "For sale: e-bike & winter tyres",
-            infoBullet2Lead: "A colleague from the Paint Shop is selling a Bosch e-bike (${price1}) and a set of 4 winter tyres (${price2})",
-            infoBullet2Rest: "— details on the marketplace board.",
+            actionBulletRest: "— complete the 15-minute e-learning module on the updated safety policy before your next shift. 🦺",
+            actionLink: "Safety Refresher – Enrol Now",
+            infoHeading1: "Production update",
+            infoBullet1Lead: "Output is up 4% this month",
+            infoBullet1Rest: "— the plant has just passed the 250,000-unit milestone. 🏭",
+            infoHeading2: "For sale: bike & winter tyres",
+            infoBullet2Lead: "A colleague is selling a bike (${price1}) and a set of 4 winter tyres (${price2})",
+            infoBullet2Rest: "— details on the internal marketplace board.",
             feedbackQuestion: "Was this digest relevant to you?",
             thumbUpLabel: "Relevant",
             thumbDownLabel: "Not relevant",
             sourcesLabel: "Sources:",
-            source1: "Factory 56 Production Update",
-            source2: "PPE Refresher Training",
-            source3: "For Sale: E-Bike & Winter Tyres",
+            source1: "Production Update",
+            source2: "Safety Refresher Training",
+            source3: "For Sale: Bike & Winter Tyres",
         },
         'en-US': {
             badge: "Your AI Digest",
-            headline: "PPE training due, a Factory 56 milestone, and an e-bike for sale this week",
+            headline: "Safety training due, a production milestone, and a bike for sale this week",
             actionRequired: "Action Required",
             stayInformed: "Stay Informed",
             openDigest: "Open Digest",
             closeLabel: "Close",
-            actionHeading: "PPE refresher training",
+            actionHeading: "Safety refresher training",
             actionBulletLead: "Due ${date}",
-            actionBulletRest: "— complete the 15-minute e-learning module for the new cut-resistant glove policy before your next shift in the Body Shop. 🧤",
-            actionLink: "PPE Refresher – Enroll Now",
-            infoHeading1: "Factory 56 production update",
-            infoBullet1Lead: "EQS and S-Class output is up 4% this month",
-            infoBullet1Rest: "— Factory 56 just passed the 250,000-vehicle milestone. 🏭",
-            infoHeading2: "For sale: e-bike & winter tires",
-            infoBullet2Lead: "A colleague from the Paint Shop is selling a Bosch e-bike (${price1}) and a set of 4 winter tires (${price2})",
-            infoBullet2Rest: "— details on the marketplace board.",
+            actionBulletRest: "— complete the 15-minute e-learning module on the updated safety policy before your next shift. 🦺",
+            actionLink: "Safety Refresher – Enroll Now",
+            infoHeading1: "Production update",
+            infoBullet1Lead: "Output is up 4% this month",
+            infoBullet1Rest: "— the plant has just passed the 250,000-unit milestone. 🏭",
+            infoHeading2: "For sale: bike & winter tires",
+            infoBullet2Lead: "A colleague is selling a bike (${price1}) and a set of 4 winter tires (${price2})",
+            infoBullet2Rest: "— details on the internal marketplace board.",
             feedbackQuestion: "Was this digest relevant to you?",
             thumbUpLabel: "Relevant",
             thumbDownLabel: "Not relevant",
             sourcesLabel: "Sources:",
-            source1: "Factory 56 Production Update",
-            source2: "PPE Refresher Training",
-            source3: "For Sale: E-Bike & Winter Tires",
+            source1: "Production Update",
+            source2: "Safety Refresher Training",
+            source3: "For Sale: Bike & Winter Tires",
         },
     };
-    const t = T[LANG] ?? T['en-US'];
+    let t = T[LANG] ?? T['en-US'];
 
     // --- Interpolation helper (see widgets/MULTILANGUAGE.md §4) ---
     function tr(key, vars = {}) {
@@ -616,12 +645,29 @@
         const day = now.getDay(); // 0 = Sun … 6 = Sat, Friday = 5
         return daysFromNow((5 - day + 7) % 7);
     }
-    const dateFormatter = new Intl.DateTimeFormat(LOCALE, { weekday: 'long', month: 'long', day: 'numeric' });
-    // Marketplace item is priced by the seller in EUR regardless of the viewer's browser locale.
-    const priceFormatter = new Intl.NumberFormat(LOCALE, { style: 'currency', currency: 'EUR' });
-    const digestDate = dateFormatter.format(nextFriday());
-    const digestPrice1 = priceFormatter.format(450);
-    const digestPrice2 = priceFormatter.format(120);
+    // Formatters follow the active language, so they are rebuilt on every switch.
+    let digestDate, digestPrice1, digestPrice2;
+    function computeFormats() {
+        const dateFormatter = new Intl.DateTimeFormat(LOCALE, { weekday: 'long', month: 'long', day: 'numeric' });
+        // Marketplace item is priced by the seller in EUR regardless of the viewer's browser locale.
+        const priceFormatter = new Intl.NumberFormat(LOCALE, { style: 'currency', currency: 'EUR' });
+        digestDate = dateFormatter.format(nextFriday());
+        digestPrice1 = priceFormatter.format(450);
+        digestPrice2 = priceFormatter.format(120);
+    }
+
+    function setLanguage(code) {
+        if (!SUPPORTED_LANGS.includes(code)) code = 'en-US';
+        LANG = code;
+        LOCALE = LOCALES[code];
+        t = T[code];
+        document.documentElement.lang = code;
+        computeFormats();
+        applyTranslations();
+        renderContent();
+        const sel = document.getElementById('langSelect');
+        if (sel) sel.value = code;
+    }
 
     function renderContent() {
         const actionHtml = `<strong>${tr('actionBulletLead', { date: digestDate })}</strong> ${t.actionBulletRest}`;
@@ -647,7 +693,7 @@
     }
 
     // 1) Explicit opt-in via URL param (value should be a full origin, e.g.
-    //    ?overlayHost=https://mercedesdemo.staffbase.rocks)
+    //    ?overlayHost=https://yourdemo.staffbase.rocks)
     const raw = new URLSearchParams(location.search).get('overlayHost');
     const fromParam = raw ? originOf(raw) : null;
     if (fromParam && ALLOWED.test(fromParam)) return fromParam;
@@ -748,10 +794,13 @@
 
     document.addEventListener('DOMContentLoaded', () => {
         applySBBrand();
-        applyTranslations();
-        renderContent();
+        setLanguage(LANG);
         renderBadgeIcons();
         initModal();
+        document.getElementById('langSelect').addEventListener('change', e => {
+            setLanguage(e.target.value);
+            try { localStorage.setItem('digestLang', LANG); } catch (err) { /* ignore */ }
+        });
     });
 </script>
 
