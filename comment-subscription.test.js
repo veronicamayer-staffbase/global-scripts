@@ -151,10 +151,13 @@
       const postId = postIdFor(bar);
       if (!postId) continue;
 
-      // Clone the comment or bookmark button, not the like button: like uses a
-      // different emotion variant that renders in the active blue.
-      const template =
-        bar.querySelector('.action-comment, .action-bookmark') || bar.querySelector('.social-button');
+      // Clone the comment or bookmark button, never the like button: like uses
+      // a different emotion variant. The bar fills in progressively, so if the
+      // one we want is not there yet, leave the bar for the next observer pass
+      // rather than cloning whatever happens to exist.
+      const template = bar.querySelector('.action-comment, .action-bookmark');
+      if (!template) continue;
+
       const bell = makeBell(template);
       bell.dataset.postId = postId;
       bar.appendChild(bell);
