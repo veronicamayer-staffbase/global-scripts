@@ -114,9 +114,11 @@
   function attach() {
     if (!userId()) return;
 
-    const bars = document.querySelectorAll(
-      '.news-feed-post-social-actions, .news-feed-post-social-footer',
-    );
+    // The footer wraps the actions bar, so matching both would give every post
+    // two bells. Prefer the inner bar and only fall back when it is absent.
+    let bars = document.querySelectorAll('.news-feed-post-social-actions');
+    if (bars.length === 0) bars = document.querySelectorAll('.news-feed-post-social-footer');
+
     for (const bar of bars) {
       if (bar.querySelector('.sb-subscribe')) continue;
       const postId = postIdFor(bar);
