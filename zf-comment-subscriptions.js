@@ -150,8 +150,10 @@
         if (!target || typeof target.closest !== 'function') return;
         if (target.closest('.sb-subscribe')) return;
 
+        // Confirmed class names on the social bar: like doubles as the reaction
+        // picker, bookmark is the "Lesezeichen" save.
         const trigger = target.closest(
-          '.action-like, .action-reaction, .action-comment, [class*="bookmark" i], [class*="save" i]',
+          '.action-like, .action-reaction, .action-comment, .action-bookmark',
         );
         if (!trigger) return;
 
