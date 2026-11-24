@@ -151,7 +151,11 @@
       const postId = postIdFor(bar);
       if (!postId) continue;
 
-      const bell = makeBell(bar.querySelector('.social-button'));
+      // Clone the comment or bookmark button, not the like button: like uses a
+      // different emotion variant that renders in the active blue.
+      const template =
+        bar.querySelector('.action-comment, .action-bookmark') || bar.querySelector('.social-button');
+      const bell = makeBell(template);
       bell.dataset.postId = postId;
       bar.appendChild(bell);
 
