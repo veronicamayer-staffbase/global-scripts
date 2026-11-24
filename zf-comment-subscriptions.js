@@ -93,10 +93,15 @@
     return button;
   }
 
+  // Only ever writes when something actually changed. Writing unconditionally
+  // would retrigger the MutationObserver below and spin forever.
   function render() {
     for (const button of document.querySelectorAll('.sb-subscribe')) {
       const postId = button.dataset.postId;
       const on = Boolean(state.get(postId));
+      if (button.dataset.rendered === String(on)) continue;
+      button.dataset.rendered = String(on);
+
       const label = on ? LABEL.on : LABEL.off;
       button.setAttribute('aria-pressed', String(on));
       button.classList.toggle('is-subscribed', on);
@@ -172,11 +177,26 @@
     document.head.appendChild(style);
   }
 
+  // The client re-renders constantly, so coalesce bursts of mutations into one
+  // pass instead of reacting to each node individually.
+  let scheduled = false;
+  function schedule() {
+    if (scheduled) return;
+    scheduled = true;
+    setTimeout(() => {
+      scheduled = false;
+      attach();
+    }, 150);
+  }
+
   function start() {
+    if (window.__sbSubscriptionsLoaded) return;
+    window.__sbSubscriptionsLoaded = true;
+
     injectStyle();
     watchInteractions();
     attach();
-    new MutationObserver(() => attach()).observe(document.body, {
+    new MutationObserver(schedule).observe(document.body, {
       childList: true,
       subtree: true,
     });
