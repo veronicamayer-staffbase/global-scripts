@@ -116,6 +116,10 @@
   // would retrigger the MutationObserver below and spin forever.
   function render() {
     for (const button of document.querySelectorAll('.sb-subscribe')) {
+      const text = button.querySelector('.description');
+      const bell = button.querySelector('.sb-bell-body');
+      if (!text || !bell) continue; // markup we did not build; leave it alone
+
       const postId = button.dataset.postId;
       const on = Boolean(state.get(postId));
       if (button.dataset.rendered === String(on)) continue;
@@ -124,12 +128,13 @@
       const label = on ? LABEL.on : LABEL.off;
       button.setAttribute('aria-pressed', String(on));
       button.title = label.title;
-      button.querySelector('.description').textContent = label.text;
+      text.textContent = label.text;
       // Subscribed reads as a filled bell, the way the platform fills its own
       // icons once an action is active.
-      button
-        .querySelector('.sb-bell-body')
-        .setAttribute('style', on ? ICON_STYLE.replace('fill: none', 'fill: currentcolor') : ICON_STYLE);
+      bell.setAttribute(
+        'style',
+        on ? ICON_STYLE.replace('fill: none', 'fill: currentcolor') : ICON_STYLE,
+      );
     }
   }
 

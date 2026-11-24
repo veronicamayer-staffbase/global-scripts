@@ -15,9 +15,16 @@
   const POST_HREF = /\/content\/news\/article\/([a-f0-9]{24})/i;
 
   const LABEL = {
-    on: { title: 'Benachrichtigungen aus', text: 'Abonniert' },
+    on: { title: 'Benachrichtigungen zu neuen Kommentaren aus', text: 'Abonniert' },
     off: { title: 'Bei neuen Kommentaren benachrichtigen', text: 'Abonnieren' },
   };
+
+  // Matches the stroke the platform uses on its own social icons.
+  const ICON_STYLE =
+    'fill: none; stroke: currentcolor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.5px;';
+  const BELL_BODY =
+    'M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326';
+  const BELL_CLAPPER = 'M10.268 21a2 2 0 0 0 3.464 0';
 
   let currentUser = null;
   const state = new Map(); // postId -> boolean
@@ -37,8 +44,7 @@
   // ------------------------------------------------------------------- state
 
   async function fetchState(postId) {
-    const url = `${API}?postId=${postId}&userId=${userId()}`;
-    const res = await fetch(url, { mode: 'cors' });
+    const res = await fetch(`${API}?postId=${postId}&userId=${userId()}`, { mode: 'cors' });
     if (!res.ok) throw new Error(`state ${res.status}`);
     const body = await res.json();
     state.set(postId, Boolean(body.subscribed));
@@ -76,14 +82,27 @@
     return fromUrl ? fromUrl[1] : null;
   }
 
-  function makeBell() {
+  /**
+   * Build the bell out of a real sibling button so it inherits the platform's
+   * own styling. The visual rules live in a generated emotion class whose hash
+   * changes between releases, so copy the class list at runtime instead of
+   * hardcoding it, and drop only the action-specific marker.
+   */
+  function makeBell(sibling) {
     const button = document.createElement('button');
     button.type = 'button';
-    button.className = 'social-button sb-subscribe';
-    button.setAttribute('aria-pressed', 'false');
+
+    const inherited = sibling
+      ? sibling.className.replace(/\baction-[\w-]+\b/g, ' ').replace(/\s+/g, ' ').trim()
+      : 'social-button light no-styles';
+    button.className = `${inherited} sb-subscribe`;
+
     button.innerHTML =
-      '<span class="sb-subscribe-icon" aria-hidden="true">☉</span>' +
-      '<span class="sb-subscribe-text"></span>';
+      '<svg aria-hidden="true" data-testid="bell-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">' +
+      `<path class="sb-bell-body" d="${BELL_BODY}" style="${ICON_STYLE}"></path>` +
+      `<path d="${BELL_CLAPPER}" style="${ICON_STYLE}"></path>` +
+      '</svg><span class="description"></span>';
+
     button.addEventListener('click', (event) => {
       event.preventDefault();
       event.stopPropagation();
@@ -97,6 +116,10 @@
   // would retrigger the MutationObserver below and spin forever.
   function render() {
     for (const button of document.querySelectorAll('.sb-subscribe')) {
+      const text = button.querySelector('.description');
+      const bell = button.querySelector('.sb-bell-body');
+      if (!text || !bell) continue; // markup we did not build; leave it alone
+
       const postId = button.dataset.postId;
       const on = Boolean(state.get(postId));
       if (button.dataset.rendered === String(on)) continue;
@@ -104,10 +127,14 @@
 
       const label = on ? LABEL.on : LABEL.off;
       button.setAttribute('aria-pressed', String(on));
-      button.classList.toggle('is-subscribed', on);
       button.title = label.title;
-      button.querySelector('.sb-subscribe-text').textContent = label.text;
-      button.querySelector('.sb-subscribe-icon').textContent = on ? '◉' : '☉';
+      text.textContent = label.text;
+      // Subscribed reads as a filled bell, the way the platform fills its own
+      // icons once an action is active.
+      bell.setAttribute(
+        'style',
+        on ? ICON_STYLE.replace('fill: none', 'fill: currentcolor') : ICON_STYLE,
+      );
     }
   }
 
@@ -124,9 +151,13 @@
       const postId = postIdFor(bar);
       if (!postId) continue;
 
-      const bell = makeBell();
+      const bell = makeBell(bar.querySelector('.social-button'));
       bell.dataset.postId = postId;
       bar.appendChild(bell);
+
+      // The bar sizes its columns from data-count, so keep it honest or the
+      // extra button wraps onto its own row.
+      bar.setAttribute('data-count', String(bar.children.length));
 
       if (!state.has(postId) && !pending.has(postId)) {
         pending.add(postId);
@@ -164,23 +195,6 @@
     );
   }
 
-  // ------------------------------------------------------------------- style
-
-  function injectStyle() {
-    const style = document.createElement('style');
-    style.textContent = `
-      .sb-subscribe {
-        display: inline-flex; align-items: center; gap: .4em;
-        background: none; border: 0; cursor: pointer;
-        font: inherit; color: inherit; opacity: .75; padding: .25em .5em;
-      }
-      .sb-subscribe:hover { opacity: 1; }
-      .sb-subscribe.is-subscribed { opacity: 1; font-weight: 600; }
-      .sb-subscribe-icon { font-size: 1.1em; line-height: 1; }
-    `;
-    document.head.appendChild(style);
-  }
-
   // The client re-renders constantly, so coalesce bursts of mutations into one
   // pass instead of reacting to each node individually.
   let scheduled = false;
@@ -197,7 +211,6 @@
     if (window.__sbSubscriptionsLoaded) return;
     window.__sbSubscriptionsLoaded = true;
 
-    injectStyle();
     watchInteractions();
     attach();
     new MutationObserver(schedule).observe(document.body, {
