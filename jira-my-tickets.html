@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Staffbase brand color via ?brand= URL param (sb-brand-url-param) -->
+<script>(function(){try{var b=new URLSearchParams(location.search).get('brand');if(b&&/^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$/.test(b)){document.documentElement.style.setProperty('--sb-brand',b);}}catch(e){}})();</script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="widget-name" content="Jira My Tickets">
+    <meta name="widget-description" content="Browse, search and inspect your assigned Jira tickets with live data.">
+    <meta name="widget-tags" content="Operations">
+    <title>Jira My Tickets</title>
+    <style>
+        :root {
+            color-scheme: only light;
+            --primary: var(--sb-brand, #2563eb);
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --text: #1f2937;
+            --text-light: #6b7280;
+            --bg: #ffffff;
+            --bg-gray: #f9fafb;
+            --border: #e5e7eb;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+        * { box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0; padding: 16px; color: var(--text); background: #ffffff;
+        }
+        .cw-window {
+            width: 100%; max-width: 480px; margin: 0 auto; background: var(--bg);
+            border: 1px solid var(--border); border-radius: 12px; box-shadow: var(--shadow);
+            overflow: hidden; display: flex; flex-direction: column; position: relative; min-height: 420px;
+        }
+        .cw-icon { width: 16px; height: 16px; flex-shrink: 0; }
+
+        /* Header */
+        .cw-header { padding: 20px 20px 12px; }
+        .cw-header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+        .cw-header h1 { font-size: 20px; margin: 0; font-weight: 800; }
+        .cw-icon-btn {
+            background: var(--bg-gray); border: 1px solid var(--border); width: 34px; height: 34px;
+            border-radius: 8px; display: flex; align-items: center; justify-content: center;
+            cursor: pointer; color: var(--text); padding: 0;
+        }
+        .cw-icon-btn:hover { background: var(--border); }
+        .cw-icon-btn:disabled { opacity: 0.5; cursor: default; }
+
+        .cw-search-wrap { position: relative; }
+        .cw-search-wrap .cw-icon {
+            position: absolute; left: 10px; top: 50%; transform: translateY(-50%);
+            color: var(--text-light); pointer-events: none;
+        }
+        .cw-search {
+            width: 100%; padding: 8px 8px 8px 34px; border: 1px solid var(--border);
+            border-radius: 6px; font-size: 14px; background: var(--bg); color: var(--text); font-family: inherit;
+        }
+        .cw-search:focus { outline: none; border-color: var(--primary); }
+        .cw-count { font-size: 12px; color: var(--text-light); margin-top: 8px; }
+
+        /* List */
+        .cw-list { flex: 1; overflow-y: auto; padding: 0 20px 16px; }
+        .cw-card {
+            display: block; width: 100%; text-align: left; background: var(--bg);
+            border: 1px solid var(--border); border-radius: 8px; padding: 12px 14px;
+            margin-bottom: 10px; cursor: pointer; font-family: inherit; color: var(--text);
+        }
+        .cw-card:hover { background: var(--bg-gray); }
+        .cw-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 4px; }
+        .cw-key { font-weight: 700; font-size: 13px; color: var(--primary); }
+        .cw-summary { font-size: 14px; line-height: 1.4; margin: 2px 0 6px; color: var(--text); }
+        .cw-meta { font-size: 12px; color: var(--text-light); }
+
+        /* Status / priority pills */
+        .cw-pill {
+            font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 999px;
+            border: 1px solid var(--border); background: var(--bg-gray); color: var(--text-light); white-space: nowrap;
+        }
+        .cw-pill.cat-new { background: #eff6ff; border-color: #bfdbfe; color: #1d4ed8; }
+        .cw-pill.cat-indeterminate { background: #fffbeb; border-color: #fde68a; color: #b45309; }
+        .cw-pill.cat-done { background: #ecfdf5; border-color: #a7f3d0; color: #047857; }
+        .cw-pill.prio-high { color: var(--danger); border-color: #fecaca; background: #fef2f2; }
+
+        /* Details overlay */
+        .cw-overlay {
+            position: absolute; inset: 0; background: var(--bg); z-index: 10;
+            display: none; flex-direction: column; overflow-y: auto;
+        }
+        .cw-overlay.active { display: flex; }
+        .cw-detail-head { display: flex; align-items: center; gap: 10px; padding: 16px 20px; border-bottom: 1px solid var(--border); }
+        .cw-detail-head .cw-key { font-size: 15px; }
+        .cw-detail-body { padding: 16px 20px 20px; }
+        .cw-detail-summary { font-size: 18px; font-weight: 700; line-height: 1.3; margin: 0 0 14px; }
+        .cw-facts { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 16px; margin-bottom: 16px; }
+        .cw-fact-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-light); margin-bottom: 2px; }
+        .cw-fact-value { font-size: 13px; color: var(--text); }
+        .cw-desc {
+            font-size: 13px; line-height: 1.5; white-space: pre-wrap; background: var(--bg-gray);
+            border: 1px solid var(--border); border-radius: 8px; padding: 12px; margin-bottom: 16px;
+            max-height: 260px; overflow-y: auto;
+        }
+        .cw-link {
+            display: inline-block; background: var(--primary); color: #fff; text-decoration: none;
+            padding: 10px 14px; border-radius: 6px; font-size: 14px; font-weight: 600;
+        }
+
+        /* States */
+        .cw-state { text-align: center; padding: 30px 20px; color: var(--text-light); font-size: 14px; }
+        .cw-state strong { display: block; color: var(--text); margin-bottom: 6px; }
+        .cw-state code { font-size: 12px; background: var(--bg-gray); padding: 2px 6px; border-radius: 4px; }
+        .cw-spinner {
+            display: inline-block; width: 16px; height: 16px; border: 2px solid var(--border);
+            border-top-color: var(--primary); border-radius: 50%; animation: cw-spin 0.8s linear infinite;
+            vertical-align: middle; margin-right: 8px;
+        }
+        @keyframes cw-spin { to { transform: rotate(360deg); } }
+        @media (max-width: 380px) { .cw-facts { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+
+    <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+        <defs>
+            <symbol id="ic-search" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></symbol>
+            <symbol id="ic-refresh" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></symbol>
+            <symbol id="ic-arrow-left" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></symbol>
+            <symbol id="ic-external" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></symbol>
+        </defs>
+    </svg>
+
+    <div class="cw-window">
+        <div class="cw-header">
+            <div class="cw-header-top">
+                <h1 data-i18n="title">My Jira Tickets</h1>
+                <button class="cw-icon-btn" id="refreshBtn" aria-label="Refresh" data-i18n-aria="refresh">
+                    <svg class="cw-icon"><use href="#ic-refresh"/></svg>
+                </button>
+            </div>
+            <div class="cw-search-wrap">
+                <svg class="cw-icon"><use href="#ic-search"/></svg>
+                <input type="search" id="searchInput" class="cw-search" data-i18n-placeholder="searchPlaceholder" placeholder="Search tickets" autocomplete="off">
+            </div>
+            <div class="cw-count" id="countLabel"></div>
+        </div>
+
+        <div class="cw-list" id="list"></div>
+
+        <div class="cw-overlay" id="detail">
+            <div class="cw-detail-head">
+                <button class="cw-icon-btn" id="backBtn" aria-label="Back" data-i18n-aria="back">
+                    <svg class="cw-icon"><use href="#ic-arrow-left"/></svg>
+                </button>
+                <span class="cw-key" id="dKey"></span>
+            </div>
+            <div class="cw-detail-body" id="dBody"></div>
+        </div>
+    </div>
+
+    <script>
+        // --- Language detection (MULTILANGUAGE.md) ---
+        const LANG = (() => {
+            const l = navigator.language || '';
+            if (l.startsWith('de')) return 'de';
+            if (l.startsWith('fr')) return 'fr';
+            if (l.startsWith('es')) return 'es';
+            if (l.startsWith('ja')) return 'ja';
+            if (l === 'en-GB') return 'en-GB';
+            return 'en-US';
+        })();
+        document.documentElement.lang = LANG;
+        const LOCALE = { de: 'de-DE', fr: 'fr-FR', es: 'es-ES', ja: 'ja-JP', 'en-GB': 'en-GB', 'en-US': 'en-US' }[LANG];
+
+        // --- Translations ---
+        const T = {
+            de: { title: 'Meine Jira-Tickets', searchPlaceholder: 'Tickets suchen', refresh: 'Aktualisieren', back: 'Zurück',
+                  loading: 'Lade Tickets …', count: n => `${n} Ticket${n === 1 ? '' : 's'}`, noMatch: 'Keine Treffer für die Suche.',
+                  empty: 'Dir sind aktuell keine Tickets zugewiesen.', errTitle: 'Keine Verbindung zu Jira',
+                  errHint: 'Läuft der lokale Proxy? Siehe README in Other-Integrations/jira-my-tickets-proxy.',
+                  status: 'Status', priority: 'Priorität', type: 'Typ', assignee: 'Bearbeiter', reporter: 'Melder',
+                  created: 'Erstellt', updated: 'Aktualisiert', labels: 'Labels', description: 'Beschreibung',
+                  noDesc: 'Keine Beschreibung hinterlegt.', openJira: 'In Jira öffnen', none: '–', unassigned: 'Nicht zugewiesen' },
+            fr: { title: 'Mes tickets Jira', searchPlaceholder: 'Rechercher des tickets', refresh: 'Actualiser', back: 'Retour',
+                  loading: 'Chargement des tickets …', count: n => `${n} ticket${n === 1 ? '' : 's'}`, noMatch: 'Aucun résultat pour la recherche.',
+                  empty: "Aucun ticket ne vous est actuellement assigné.", errTitle: 'Connexion à Jira impossible',
+                  errHint: 'Le proxy local est-il lancé ? Voir le README dans Other-Integrations/jira-my-tickets-proxy.',
+                  status: 'Statut', priority: 'Priorité', type: 'Type', assignee: 'Assigné à', reporter: 'Déclaré par',
+                  created: 'Créé', updated: 'Mis à jour', labels: 'Étiquettes', description: 'Description',
+                  noDesc: 'Aucune description.', openJira: 'Ouvrir dans Jira', none: '–', unassigned: 'Non assigné' },
+            es: { title: 'Mis tickets de Jira', searchPlaceholder: 'Buscar tickets', refresh: 'Actualizar', back: 'Atrás',
+                  loading: 'Cargando tickets …', count: n => `${n} ticket${n === 1 ? '' : 's'}`, noMatch: 'No hay resultados para la búsqueda.',
+                  empty: 'No tienes tickets asignados actualmente.', errTitle: 'No se puede conectar con Jira',
+                  errHint: '¿Está en marcha el proxy local? Consulta el README en Other-Integrations/jira-my-tickets-proxy.',
+                  status: 'Estado', priority: 'Prioridad', type: 'Tipo', assignee: 'Asignado a', reporter: 'Informado por',
+                  created: 'Creado', updated: 'Actualizado', labels: 'Etiquetas', description: 'Descripción',
+                  noDesc: 'Sin descripción.', openJira: 'Abrir en Jira', none: '–', unassigned: 'Sin asignar' },
+            ja: { title: '自分のJiraチケット', searchPlaceholder: 'チケットを検索', refresh: '更新', back: '戻る',
+                  loading: 'チケットを読み込み中 …', count: n => `${n} 件`, noMatch: '検索に一致するチケットはありません。',
+                  empty: '現在、割り当てられたチケットはありません。', errTitle: 'Jira に接続できません',
+                  errHint: 'ローカルプロキシが起動しているか確認してください（Other-Integrations/jira-my-tickets-proxy の README を参照）。',
+                  status: 'ステータス', priority: '優先度', type: '種類', assignee: '担当者', reporter: '報告者',
+                  created: '作成日', updated: '更新日', labels: 'ラベル', description: '説明',
+                  noDesc: '説明はありません。', openJira: 'Jira で開く', none: '–', unassigned: '未割り当て' },
+            'en-GB': { title: 'My Jira Tickets', searchPlaceholder: 'Search tickets', refresh: 'Refresh', back: 'Back',
+                  loading: 'Loading tickets …', count: n => `${n} ticket${n === 1 ? '' : 's'}`, noMatch: 'No tickets match your search.',
+                  empty: 'No tickets are assigned to you right now.', errTitle: 'Cannot reach Jira',
+                  errHint: 'Is the local proxy running? See the README in Other-Integrations/jira-my-tickets-proxy.',
+                  status: 'Status', priority: 'Priority', type: 'Type', assignee: 'Assignee', reporter: 'Reporter',
+                  created: 'Created', updated: 'Updated', labels: 'Labels', description: 'Description',
+                  noDesc: 'No description.', openJira: 'Open in Jira', none: '–', unassigned: 'Unassigned' },
+            'en-US': null, // filled below
+        };
+        T['en-US'] = { ...T['en-GB'] };
+        const t = T[LANG];
+
+        // --- Helpers ---
+        const PROXY = new URLSearchParams(location.search).get('api') || 'http://127.0.0.1:8787';
+        const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+        const fmtDate = iso => iso ? new Intl.DateTimeFormat(LOCALE, { dateStyle: 'medium', timeStyle: 'short' }).format(new Date(iso)) : t.none;
+        const catClass = cat => ['new', 'indeterminate', 'done'].includes(cat) ? `cat-${cat}` : '';
+
+        let issues = [];
+        let activeKey = null;
+
+        // --- Data ---
+        async function loadTickets() {
+            const list = document.getElementById('list');
+            const count = document.getElementById('countLabel');
+            list.innerHTML = `<div class="cw-state"><span class="cw-spinner"></span>${esc(t.loading)}</div>`;
+            count.textContent = '';
+            document.getElementById('refreshBtn').disabled = true;
+            try {
+                const res = await fetch(`${PROXY}/api/my-tickets`, { cache: 'no-store' });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.detail ? JSON.stringify(data.detail) : `HTTP ${res.status}`);
+                issues = data.issues || [];
+                renderList();
+            } catch (err) {
+                issues = [];
+                list.innerHTML = `<div class="cw-state"><strong>${esc(t.errTitle)}</strong>${esc(t.errHint)}<br><br><code>${esc(err.message)}</code></div>`;
+            } finally {
+                document.getElementById('refreshBtn').disabled = false;
+            }
+        }
+
+        // --- Rendering ---
+        function renderList() {
+            const q = document.getElementById('searchInput').value.trim().toLowerCase();
+            const list = document.getElementById('list');
+            const count = document.getElementById('countLabel');
+            if (!issues.length) {
+                list.innerHTML = `<div class="cw-state">${esc(t.empty)}</div>`;
+                count.textContent = '';
+                return;
+            }
+            const matches = issues.filter(i => !q || [i.key, i.summary, i.status?.name, i.priority, i.type, i.assignee]
+                .some(v => v && String(v).toLowerCase().includes(q)));
+            count.textContent = t.count(matches.length);
+            if (!matches.length) {
+                list.innerHTML = `<div class="cw-state">${esc(t.noMatch)}</div>`;
+                return;
+            }
+            list.innerHTML = matches.map(i => `
+                <button class="cw-card" data-key="${esc(i.key)}">
+                    <div class="cw-row">
+                        <span class="cw-key">${esc(i.key)}</span>
+                        ${i.status ? `<span class="cw-pill ${catClass(i.status.category)}">${esc(i.status.name)}</span>` : ''}
+                        ${i.priority ? `<span class="cw-pill ${/high|highest|critical/i.test(i.priority) ? 'prio-high' : ''}">${esc(i.priority)}</span>` : ''}
+                    </div>
+                    <div class="cw-summary">${esc(i.summary)}</div>
+                    <div class="cw-meta">${esc(t.updated)}: ${esc(fmtDate(i.updated))}</div>
+                </button>`).join('');
+            list.querySelectorAll('.cw-card').forEach(el =>
+                el.addEventListener('click', () => openDetail(el.dataset.key)));
+        }
+
+        function openDetail(key) {
+            const i = issues.find(x => x.key === key);
+            if (!i) return;
+            activeKey = key;
+            document.getElementById('dKey').textContent = i.key;
+            const fact = (label, value) => `<div><div class="cw-fact-label">${esc(label)}</div><div class="cw-fact-value">${esc(value || t.none)}</div></div>`;
+            document.getElementById('dBody').innerHTML = `
+                <h2 class="cw-detail-summary">${esc(i.summary)}</h2>
+                <div class="cw-facts">
+                    <div><div class="cw-fact-label">${esc(t.status)}</div>
+                        <div>${i.status ? `<span class="cw-pill ${catClass(i.status.category)}">${esc(i.status.name)}</span>` : esc(t.none)}</div></div>
+                    ${fact(t.priority, i.priority)}
+                    ${fact(t.type, i.type)}
+                    ${fact(t.assignee, i.assignee || t.unassigned)}
+                    ${fact(t.reporter, i.reporter)}
+                    ${fact(t.created, fmtDate(i.created))}
+                    ${fact(t.updated, fmtDate(i.updated))}
+                    ${fact(t.labels, i.labels.join(', '))}
+                </div>
+                <div class="cw-fact-label" style="margin-bottom:6px">${esc(t.description)}</div>
+                <div class="cw-desc">${i.description ? esc(i.description) : esc(t.noDesc)}</div>
+                <a class="cw-link" href="${esc(i.url)}" target="_blank" rel="noopener">${esc(t.openJira)} ↗</a>`;
+            document.getElementById('detail').classList.add('active');
+        }
+
+        function closeDetail() {
+            document.getElementById('detail').classList.remove('active');
+            activeKey = null;
+        }
+
+        // --- Static strings & wiring ---
+        function applyStaticI18n() {
+            document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = t[el.dataset.i18n]; });
+            document.querySelectorAll('[data-i18n-placeholder]').forEach(el => { el.placeholder = t[el.dataset.i18nPlaceholder]; });
+            document.querySelectorAll('[data-i18n-aria]').forEach(el => { el.setAttribute('aria-label', t[el.dataset.i18nAria]); });
+        }
+
+        function applySBBrand() {
+            const b = getComputedStyle(document.documentElement).getPropertyValue('--sb-brand').trim();
+            if (b) document.documentElement.style.setProperty('--primary', b);
+        }
+
+        applySBBrand();
+        applyStaticI18n();
+        document.getElementById('searchInput').addEventListener('input', renderList);
+        document.getElementById('refreshBtn').addEventListener('click', loadTickets);
+        document.getElementById('backBtn').addEventListener('click', closeDetail);
+        loadTickets();
+    </script>
+
+    <!-- Widget usage counter — see CLAUDE.md -->
+    <script>(function(){try{if(location.search.indexOf('preview=1')!==-1)return;var n=location.pathname.split('/').pop();if(!n||n==='index.html')return;var url='https://widget-counter.klauejohann.workers.dev/bump/'+encodeURIComponent(n);if(navigator.sendBeacon)navigator.sendBeacon(url);else fetch(url,{method:'POST',keepalive:true}).catch(function(){});var k='widgetCounts',c=JSON.parse(localStorage.getItem(k)||'{}');c[n]=(c[n]||0)+1;localStorage.setItem(k,JSON.stringify(c));}catch(e){}})();</script>
+</body>
+</html>
